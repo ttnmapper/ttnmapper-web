@@ -88,7 +88,7 @@
       maxZoom: 20,
       ext: 'png',
       fadeAnimation: false
-    }).addTo(map);
+    });
 
     var OpenStreetMap_HOT = L.tileLayer('https://{s}.tile.openstreetmap.fr/hot/{z}/{x}/{y}.png', {
         maxZoom: 19,
@@ -127,7 +127,23 @@
       fadeAnimation: false
     });
 
-
+    switch (findGetParameter("layer")) {
+      case "mapnik":
+        OpenStreetMap_Mapnik.addTo(map);
+        break;
+      case "mapnik_grayscale":
+        OpenStreetMap_Mapnik_Grayscale.addTo(map);
+        break;
+      case "terrain":
+        Esri_WorldShadedRelief.addTo(map);
+        break;
+      case "satellite":
+        Esri_WorldImagery.addTo(map);
+        break;
+      default:
+        // use default layer
+        Stamem_TonerLite.addTo(map);
+    }
 
     L.control.layers({
       "Stamen TonerLite": Stamen_TonerLite,
