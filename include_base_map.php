@@ -142,7 +142,7 @@
         break;
       default:
         // use default layer
-        Stamem_TonerLite.addTo(map);
+        Stamen_TonerLite.addTo(map);
     }
 
     L.control.layers({
