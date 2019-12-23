@@ -4,9 +4,6 @@
 [submodule "web/libs/open-iconic"]
 	path = web/libs/open-iconic
 	url = https://github.com/iconic/open-iconic.git
-[submodule "web/libs/Leaflet.markercluster"]
-	path = web/libs/Leaflet.markercluster
-	url = https://github.com/Leaflet/Leaflet.markercluster.git
 [submodule "web/libs/Leaflet.loading"]
 	path = web/libs/Leaflet.loading
 	url = https://github.com/ebrelsford/Leaflet.loading.git
