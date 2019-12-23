@@ -1,0 +1,5 @@
+Authtype Basic
+AuthName "TTN Mapper Admin"
+# Point to the htpasswd file in the TTNMAPPER_HOME location
+AuthUserFile /opt/ttnmapper-oss-stack/.htpasswd
+Require valid-user

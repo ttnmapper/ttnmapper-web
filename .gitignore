@@ -1,0 +1,13 @@
+web/dumps/
+web/geojson/
+web/kml/
+*-lock
+*.log
+*.lock
+*.pyc
+log-*
+error-log-*
+tms/tiles/
+
+settings.conf
+.htpasswd

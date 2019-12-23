@@ -1,0 +1,136 @@
+Introduction:
+
+To use this API, you are required to POST JSON data to this URL (http://ttnmapper.org/api/ - including the trailing backslash). The JSON should contain the fields as described below.
+
+Production:
+
+{
+"time":"2016-01-31T22:01:00.948Z",
+"devid":"my-device-id",
+"appid":"my-application-id",
+"gwaddr":"eui-fffeb827eb686374",
+"snr":10.8,
+"rssi":-79,
+"freq":868.3,
+"datarate":"SF12BW125",
+"lat":52.24771038,
+"lon":6.85348461,
+"alt":29.8,
+"accuracy":3.0,
+"mqtt_topic":"my-application-id/devices/my-device-id/up",
+"provider":"sodaq_universal_tracker_v2",
+"user_id":"JPMeijers - Enschede",
+"experiment":"My unique experiment name"
+}
+
+Staging:
+
+{
+"time":"2016-01-31T22:01:00.948Z",
+"nodeaddr":"0000000002E00612",
+"gwaddr":"FFFEB827EB686374",
+"snr":10.8,
+"rssi":-79,
+"freq":868.3,
+"lat":52.24771038,
+"lon":6.85348461,
+"datarate":"SF12BW125",
+"appeui":"70B3D57ED00001CE",
+"alt":29.8,
+"accuracy":3.0,
+"mqtt_topic":"70B3D57ED00001CE/devices/0000000002E00612/up",
+"experiment":"My unique experiment name",
+"provider":"sodaq universal tracker",
+"user_id":"JPMeijers - Enschede"
+}
+
+
+Croft:
+
+{
+"time":"2016-01-31T22:01:00.948Z",
+"nodeaddr":"03FFEEBB",
+"gwaddr":"FFFEB827EB686374",
+"snr":10.8,
+"rssi":-79,
+"freq":868.3,
+"lat":52.24771038,
+"lon":6.85348461,
+"datarate":"SF12BW125",
+"alt":29.8,
+"accuracy":3.0,
+"mqtt_topic":"nodes/03FFEEBB/packets",
+"experiment":"My unique experiment name",
+"provider":"sodaq universal tracker",
+"user_id":"JPMeijers - Enschede"
+}
+
+
+Description of JSON fields:
+
+time
+required
+The "server time" as received via MQTT.
+
+devid
+required
+The device id of the node you are using to do the measurement. This is the same as the third part of the MQTT topic.
+
+appid
+required
+The application id of the application to which the device is registered. A device is only unique in its own application, so to globally uniquely identify a device we also need the application id.
+
+gwaddr
+required
+The gateway ID of the gateway that received  the packet. For the case where multiple gateways received a packet, multiple posts should be done to this api, one post per gateway EUI.
+
+snr
+required
+The signal-to-noise ratio as reported by the gateway.
+
+rssi
+required
+The received signal strength indicator as reported by the gateway.
+
+freq
+required
+The frequency of the channel on which the packet was received.
+
+lat
+required
+The latitude of the location where the packet was transmitted.
+
+lon
+required
+The longitude of the location where a packet was transmitted.
+
+datarate
+required
+The datarate at which a packet was transmitted.
+
+alt
+optional
+The altitude of the location where the packet was transmitted.
+
+accuracy
+hdop
+One of these is required
+The gps accuracy or hdop value, indicating the certainty of the location. When using the 'accuracy' key the value should be in metres. If the acucracy is above 10m, and this is not an experiment, the packet will be discarded.
+When using the the hdop key, the value should be the unitless hdop value from the gps. If the value is above 5, and this is not an experiment, the packet will be discarded.
+
+provider
+required
+The source of the location data (location provider). This can be "gps" if you get the values directly from a gps module. Otherwise use "wifi", "network", "estimated" or a string describing your device and the software it runs, like "sodaq_universal_tracker_v2", "lopy_gps", "cayenne_lpp". If the location was obtained from an Android phone: "gps", "network" or "fused" depending on what the phone reports. For iOS: "ios" or "corelocation".
+
+user_id
+required
+A unique string describing you. See it as a username. Your name and city works well. This is required to assign the uploaded packets to you. This user name needs to be registered to be able to upload to the main map. Otherwise only uploads to experiments are allowed.
+
+mqtt_topic
+optional
+The mqtt topic on which this packet was received.
+
+experiment
+optional
+If this field is set, your packets will not contribute to the global TTNmapper coverage map. It will be saved in a separate database so that the experiment can be shown on its own map. This is useful when you want to measure a gateway that is temporarily at a different location, or you are at an unrealistic high location.
+

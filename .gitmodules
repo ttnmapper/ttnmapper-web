@@ -1,0 +1,15 @@
+[submodule "web/libs/leaflet.measure"]
+	path = web/libs/leaflet.measure
+	url = https://github.com/aprilandjan/leaflet.measure.git
+[submodule "web/libs/open-iconic"]
+	path = web/libs/open-iconic
+	url = https://github.com/iconic/open-iconic.git
+[submodule "web/libs/Leaflet.markercluster"]
+	path = web/libs/Leaflet.markercluster
+	url = https://github.com/Leaflet/Leaflet.markercluster.git
+[submodule "web/libs/Leaflet.loading"]
+	path = web/libs/Leaflet.loading
+	url = https://github.com/ebrelsford/Leaflet.loading.git
+[submodule "web/libs/he"]
+	path = web/libs/he
+	url = https://github.com/mathiasbynens/he.git

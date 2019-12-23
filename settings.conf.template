@@ -1,0 +1,20 @@
+[database_mysql]
+host = dbhost.ip
+username = dbuser
+password = dbpass
+database = dbname
+
+[twitter]
+consumer_key = key
+consumer_secret = secret
+access_token_key = key
+access_token_secret = secret
+
+[oauth]
+app_secret = app_secret
+
+[slack]
+new_gateway_hook = slack_hook_new_gateways
+
+[google]
+api_key = rev_geocode_api_key
