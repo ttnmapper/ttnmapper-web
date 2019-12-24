@@ -322,7 +322,7 @@
 
         <div class="form-group">
           <button type="submit" class="btn btn-secondary" formaction="/gateways/csv.php">CSV data</button>
-          <button type="submit" class="btn btn-primary" formaction="/gateways/map.php">View Map</button>
+          <button type="submit" class="btn btn-primary" formaction="/gateways/">View Map</button>
         </div>
       </form>
 
