@@ -104,7 +104,7 @@
           </a>
         </li>
         <li class="nav-item">
-          <a href="https://www.patreon.com/bePatron?u=24672712" data-patreon-widget-type="become-patron-button"><img src="/resources/become_a_patron_button@2x.png" class="d-inline-block align-middle" alt="" height="36" title="Patreon"></a>
+          <a href="https://www.patreon.com/ttnmapper" data-patreon-widget-type="become-patron-button"><img src="/resources/become_a_patron_button@2x.png" class="d-inline-block align-middle" alt="" height="36" title="Patreon"></a>
         </li>
       </ul>
     </div>
@@ -214,7 +214,7 @@
 
         <div class="form-group">
           <button type="submit" class="btn btn-secondary" formaction="/devices/csv.php">CSV data</button>
-          <button type="submit" class="btn btn-primary" formaction="/devices/map.php">View Map</button>
+          <button type="submit" class="btn btn-primary" formaction="/devices/">View Map</button>
         </div>
       </form>
 

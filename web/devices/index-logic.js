@@ -171,6 +171,9 @@ function addBackgroundLayers() {
 function getData()
 {
     loadingControl._showIndicator();
+    $("div.spanner").addClass("show");
+    $("div.overlay").addClass("show");
+
     $.getJSON('json.php', 
     {
       device: findGetParameter("device"),
@@ -178,7 +181,7 @@ function getData()
       enddate: findGetParameter("enddate")
     }, 
     function(data) {
-      loadingControl._hideIndicator();
+
       pointData = data;
 
       var gateways = [];
@@ -187,6 +190,11 @@ function getData()
           gateways.push(data['points'][point]['gwaddr']);
         }
       }
+      
+      // loadingControl._hideIndicator();
+      // $("div.spanner").addClass("hide");
+      // $("div.overlay").addClass("hide");
+
       addGateways(gateways);
     });
 }
@@ -394,7 +402,10 @@ function addGateways(gateways)
     }
   }
 
-  loadingControl._showIndicator();
+  // loadingControl._showIndicator();
+  // $("div.spanner").addClass("show");
+  // $("div.overlay").addClass("show");
+
   $.ajax({
     type: "POST",
     url: "/webapi/gwdetailslist.php",
@@ -403,15 +414,22 @@ function addGateways(gateways)
     contentType: "application/json; charset=utf-8",
     dataType: "json",
     success: function(data){
-      loadingControl._hideIndicator();
+
       gatewayData = data;
       for(gateway in data) {
         addGatewayMarker(gateway, data[gateway]);
       }
       addPointsAndLines();
+
+      loadingControl._hideIndicator();
+      $("div.spanner").addClass("hide");
+      $("div.overlay").addClass("hide");
     },
     failure: function(errMsg) {
       loadingControl._hideIndicator();
+      $("div.spanner").addClass("hide");
+      $("div.overlay").addClass("hide");
+
       console.log(errMsg);
     }
   });
