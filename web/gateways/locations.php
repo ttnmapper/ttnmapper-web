@@ -11,11 +11,7 @@
   <meta name="author" content="JP Meijers">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
 
-  <link rel="stylesheet" href="../libs/leaflet/v0.7.7/leaflet.css" />
-    <link rel="stylesheet" href="../libs/Leaflet.draw/dist/leaflet.draw.css" />
-    <link rel="stylesheet" href="../libs/Leaflet.MeasureControl/leaflet.measurecontrol.css" />
-    <link rel="stylesheet" href="http://code.ionicframework.com/ionicons/1.5.2/css/ionicons.min.css">
-    <link rel="stylesheet" href="../libs/Leaflet.awesome-markers-2.0-develop/dist/leaflet.awesome-markers.css">
+  <link rel="stylesheet" href="../libs/leaflet/leaflet.css" />
     
   <style>
   body {
@@ -77,17 +73,14 @@
       border-color: #555555;
       padding: 5px;
   }
+
+  .toGrayscale img {
+    filter: grayscale(1);
+  }
   </style>
 </head>
 <body>
-  <div id="map">
-  </div>
-  <div id="leftcontainer">
-    <div id="menu" class="dropSheet"><?php include("../menu.php");?></div>
-    <div style="height: 30px"></div>
-    <div id="legend" class="dropSheet"><?php include("../legend.html");?></div>
-  </div>
-  <div id="stats" class="dropSheet"><?php include("../stats.php");?></div>
+  <div id="map" />
 
   <!-- Google analytics-->
   <script>
@@ -107,36 +100,14 @@
   </script>
 
   <script>L_PREFER_CANVAS = true;</script>
-  <script src="../libs/leaflet/v0.7.7/leaflet.js"></script>
-  <!--<script src='//api.tiles.mapbox.com/mapbox.js/plugins/leaflet-omnivore/v0.3.1/leaflet-omnivore.min.js'></script>-->
-  <script src="../libs/leaflet.geojsoncss.min.js"></script>
-  <script src="../libs/oms.min.js"></script>
-  <script src="../libs/Leaflet.draw/dist/leaflet.draw.js"></script>
-  <script src="../libs/Leaflet.MeasureControl/leaflet.measurecontrol.js"></script>
-  <script src="../libs/Leaflet.awesome-markers-2.0-develop/dist/leaflet.awesome-markers.js"></script>
-  <script src="../libs/leaflet-grayscale-master/TileLayer.Grayscale.js"></script>
+  <script src="../libs/leaflet/leaflet.js"></script>
   <script>
     function showHideMenu()
     {
-      if(window.innerWidth >= 800 && window.innerHeight >= 600){
-        document.getElementById('leftcontainer').style.visibility = 'visible';
-        document.getElementById('menu').style.visibility = 'visible';
-        document.getElementById('legend').style.visibility = 'visible';
-        document.getElementById('stats').style.visibility = 'visible';
-      }
-      else
-      {
-        document.getElementById('menu').style.visibility = 'hidden';
-        document.getElementById('legend').style.visibility = 'hidden';
-        document.getElementById('stats').style.visibility = 'hidden';
-        document.getElementById('leftcontainer').style.visibility = 'hidden';
-      }
+
     }
 
-    //var map = L.map('map').setView([52.260742, 5.817245], 8);
     var map = L.map('map').setView([48.209661, 10.251494], 6);
-    //var map = L.map('map').setView([0, 0], 6);
-    L.Control.measureControl().addTo(map);
 
     // https: also suppported.
     var Esri_WorldImagery = L.tileLayer('http://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
@@ -160,13 +131,12 @@
       maxZoom: 18,
       attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
     });
-    // var OpenMapSurfer_Grayscale = L.tileLayer('http://korona.geog.uni-heidelberg.de/tiles/roadsg/x={x}&y={y}&z={z}', {
-    // maxZoom: 19,
-    // attribution: 'Imagery from <a href="http://giscience.uni-hd.de/">GIScience Research Group @ University of Heidelberg</a> &mdash; Map data &copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
-    // });
-    var OpenStreetMap_Mapnik_Grayscale = L.tileLayer.grayscale('http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+
+    var OpenStreetMap_Mapnik_Grayscale = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
       maxZoom: 19,
-      attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
+      attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>',
+      fadeAnimation: false,
+      className: 'toGrayscale'
     });
 
     // https: also suppported.
@@ -192,17 +162,6 @@
       "Satellite": Esri_WorldImagery
     })
     .addTo(map);
-    
-    //spiderfier for markers
-    var oms = new OverlappingMarkerSpiderfier(map, {keepSpiderfied: true, legWeight: 2});
-
-    //add popups to marker click action
-    var popup = new L.Popup();
-    oms.addListener('click', function(marker) {
-      popup.setContent(marker.desc);
-      popup.setLatLng(marker.getLatLng());
-      map.openPopup(popup);
-    });
 
     // Listen for orientation changes
     window.addEventListener("orientationchange", showHideMenu(), false);
