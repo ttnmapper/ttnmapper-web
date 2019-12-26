@@ -124,7 +124,7 @@ function addBackgroundLayers() {
     maxZoom: 20,
     ext: 'png',
     fadeAnimation: false
-  }).addTo(map);
+  });
 
 
   var OpenStreetMap_Mapnik_Grayscale = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
@@ -148,6 +148,23 @@ function addBackgroundLayers() {
     fadeAnimation: false
   });
 
+  switch (findGetParameter("layer")) {
+    case "mapnik":
+      OpenStreetMap_Mapnik.addTo(map);
+      break;
+    case "mapnik_grayscale":
+      OpenStreetMap_Mapnik_Grayscale.addTo(map);
+      break;
+    case "terrain":
+      Esri_WorldShadedRelief.addTo(map);
+      break;
+    case "satellite":
+      Esri_WorldImagery.addTo(map);
+      break;
+    default:
+      // use default layer
+      Stamen_TonerLite.addTo(map);
+  }
 
   L.control.layers({
     "Stamen TonerLite": Stamen_TonerLite,
