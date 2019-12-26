@@ -2,7 +2,7 @@
 // ?tile=12/2125/1348
 $cache_location = "/mnt/localssd/tiles";
 $enable_caching = true;
-$zoom_switchover = 14;
+$zoom_switchover = 18; // never switch over to raw packet mode as that creates too high db load
 
 main();
 
