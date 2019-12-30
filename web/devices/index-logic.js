@@ -233,11 +233,16 @@ function addPointsAndLines()
 
       var distance = 0;
       if( data['gwaddr'] in gatewayData ) {
+        if (gatewayData[data['gwaddr']]['lat'] == null || gatewayData[data['gwaddr']]['lon'] == null) {
+          console.log("Gateway "+data['gwaddr']+" lat or lon is NULL");
+          continue;
+        }
         var gwLat = Number(gatewayData[data['gwaddr']]['lat']);
         var gwLon = Number(gatewayData[data['gwaddr']]['lon']);
 
         if(gwLat == 0 && gwLon == 0) {
-          break;
+          console.log("Gateway "+data['gwaddr']+" on NULL island");
+          continue;
         }
 
         distance = Math.round(getDistance(lat, lon, gwLat, gwLon));
@@ -456,13 +461,16 @@ function addGateways(gateways)
 function addGatewayMarker(gateway, data)
 {
   if(gateway in loadedGateways) {
+    console.log("Gateway already added: "+gateway);
     return;
   } else {
-    console.log("Adding gateway "+gateway);
 
     if (data['lat'] == null || data['lon'] == null) {
+      console.log("Gateway location unknown: "+gateway);
       return;
     }
+
+    console.log("Adding gateway "+gateway);
 
     var gwdescriptionHead = "";
     if (data['description'] != null) {
