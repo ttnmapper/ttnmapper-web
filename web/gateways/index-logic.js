@@ -192,9 +192,14 @@ function getData()
     $("div.spanner").addClass("show");
     $("div.overlay").addClass("show");
 
+    var gatewayID = findGetParameter("gateway");
+    if(gatewayID.startsWith("eui-")) {
+      gatewayID = gatewayID.substring(4).toUpperCase();
+    }
+
     $.getJSON('json.php', 
     {
-      gateway: findGetParameter("gateway"),
+      gateway: gatewayID,
       startdate: findGetParameter("startdate"),
       enddate: findGetParameter("enddate")
     }, 
@@ -291,7 +296,9 @@ function addPointsAndLines()
     }
 
     // Zoom map to fit points and gateways
-    map.fitBounds(lineMarkers.getBounds());
+    if(lineMarkers.getBounds().isValid()) {
+      map.fitBounds(lineMarkers.getBounds());
+    }
 }
 
 function getDistance(lat1, lon1, lat2, lon2) {
