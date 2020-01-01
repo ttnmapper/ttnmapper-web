@@ -24,10 +24,12 @@ $enddate = time();
 if(!isset($_REQUEST["startdate"]) or $_REQUEST["startdate"]=="") {
   $startdate = 0; // 1970-01-01
 }
-else if(!is_numeric($_REQUEST["startdate"])) {
+else {
   $startdate = strtotime($_REQUEST["startdate"]);
-} else {
-  $startdate = $_REQUEST["startdate"];
+  if($enddate === false) {
+    echo '{"error": true, "error_message": "Could not parse startdate"}';
+    die();
+  }
 }
 
 
@@ -35,9 +37,12 @@ if(!isset($_REQUEST["enddate"]) or $_REQUEST["enddate"]=="") {
   // End of today's server time
   $enddate = strtotime("today") + 24*60*60;
 }
-else if(!is_numeric($_REQUEST["enddate"])) {
+else {
   $enddate = strtotime($_REQUEST["enddate"]);
-  echo ($enddate);
+  if($enddate === false) {
+    echo '{"error": true, "error_message": "Could not parse enddate"}';
+    die();
+  }
 
   // When only a date is given the time part will be set to all 0's in the parsed timestamp.
   // Increment by one day to include the speicified day's data.
@@ -59,9 +64,6 @@ else if(!is_numeric($_REQUEST["enddate"])) {
       $enddate = $enddate + 24*60*60;
     }
   }
-
-} else {
-  $enddate = $_REQUEST["enddate"];
 }
 
 
@@ -77,8 +79,8 @@ try {
   $endDateStr = $endDateObj->format('Y-m-d H:i:s');
 
 } catch  (Exception $e) {
-  echo "Can not parse datetime";
-  die;
+  echo '{"error": true, "error_message": "Could not parse datetime"}';
+  die();
 }
 
 
