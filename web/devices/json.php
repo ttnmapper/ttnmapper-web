@@ -23,6 +23,19 @@ if(!isset($_REQUEST["enddate"]) or $_REQUEST["enddate"]=="") {
   $_REQUEST["enddate"] = time(); // today
 }
 
+if($_REQUEST["startdate"]=="today") {
+  $_REQUEST["startdate"] = time();
+}
+else if($_REQUEST["startdate"]=="yesterday") {
+  $_REQUEST["startdate"] = time() - (24*60*60);
+}
+
+if($_REQUEST["enddate"]=="today") {
+  $_REQUEST["enddate"] = time();
+}
+else if($_REQUEST["enddate"]=="yesterday") {
+  $_REQUEST["enddate"] = time() - (24*60*60);
+}
 
 $device = $_REQUEST["device"];
 $startdate = $_REQUEST["startdate"];

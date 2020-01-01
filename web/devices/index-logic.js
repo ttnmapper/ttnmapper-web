@@ -296,7 +296,9 @@ function addPointsAndLines()
     }
 
     // Zoom map to fit points and gateways
-    map.fitBounds(lineMarkers.getBounds());
+    if(lineMarkers.getBounds().isValid()) {
+      map.fitBounds(lineMarkers.getBounds());
+    }
 }
 
 function getDistance(lat1, lon1, lat2, lon2) {
