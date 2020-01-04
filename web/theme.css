@@ -1,0 +1,19 @@
+.toGrayscale img {
+  filter: grayscale(1);
+}
+
+.dropSheet
+{
+    background-color/**/: #FFFFFF;
+    border-width: 0px;
+    border-style: solid;
+    border-color: #555555;
+    padding: 5px;
+}
+#rightcontainer
+{
+  position: absolute;
+  right: 20px;
+  bottom: 30px;
+  z-index: 500;
+}

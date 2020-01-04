@@ -1,6 +1,42 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+<?php
+$settings = parse_ini_file(getenv("TTNMAPPER_HOME")."/settings.conf",true);
+
+if($settings['theming']['site_name'] === NULL) {
+  $siteName = "TTN Mapper";
+} else {
+  $siteName = $settings['theming']['site_name'];
+}
+
+if($settings['theming']['site_description'] === NULL) {
+  $siteDescription = "Map the coverage for gateways of The Things Network.";
+} else {
+  $siteDescription = $settings['theming']['site_description'];
+}
+
+if($settings['theming']['brand_icon'] === NULL) {
+  $brandIcon = "/favicons/favicon-96x96.png";
+} else {
+  $brandIcon = "/resources/".$settings['theming']['brand_icon'];
+}
+
+if($settings['theming']['brand_name'] === NULL) {
+  $brandName = "TTN Mapper";
+} else {
+  $brandName = $settings['theming']['brand_name'];
+}
+
+if($settings['analytics']['site_id'] === NULL) {
+  $googleAnalyticsSiteId = "UA-75921430-1";
+} else {
+  $googleAnalyticsSiteId = $settings['analytics']['site_id'];
+}
+
+
+?>
+
   <!-- Required meta tags -->
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
@@ -9,7 +45,7 @@
   <meta name="robots" content="index,follow" />
   <meta name="author" content="JP Meijers">
 
-  <title>TTN Mapper</title>
+  <title><?php echo $siteName; ?></title>
 
   <!--favicons-->
   <link rel="apple-touch-icon" sizes="57x57" href="/favicons/apple-icon-57x57.png">
@@ -32,7 +68,10 @@
 
 
   <!-- Bootstrap -->
-  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous" />
+
+  <!-- Page theme -->
+  <link rel="stylesheet" href="/theme.css" />
 
   <!-- Leaflet -->
   <link rel="stylesheet" href="/libs/leaflet/leaflet.css" />
@@ -50,9 +89,6 @@
     #map {
       flex-grow : 1;
     }
-    .toGrayscale img {
-      filter: grayscale(1);
-    }
   </style>
 
 </head>
@@ -64,9 +100,9 @@
   <!-- Image and text -->
   <nav class="navbar navbar-fixed-top navbar-expand-lg navbar-light bg-light">
     
-   <a class="navbar-brand" href="/">
-      <img src="/favicons/favicon-96x96.png" width="32" height="32" class="d-inline-block align-top" alt="">
-      TTN Mapper
+    <a class="navbar-brand" href="/">
+      <img src="<?php echo $brandIcon; ?>" width="auto" height="32" class="d-inline-block align-top" alt="">
+      <?php echo $brandName; ?>
     </a>
     
     <button class="navbar-toggler" type="button" data-toggle="collapse" data-target=".dual-collapse2" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
@@ -75,47 +111,97 @@
 
     <div class="navbar-collapse collapse w-100 order-1 order-md-0 dual-collapse2">
       <ul class="navbar-nav mr-auto">
+        <?php
+        if($settings['menu']['menu_advanced'] === NULL or $settings['menu']['menu_advanced'] == true) {
+        ?>
         <li class="nav-item">
-          <a class="nav-link active" href="/advanced-maps/">Advanced maps</a>
+          <a class="nav-link" href="/advanced-maps/">Advanced maps</a>
         </li>
+        <?php
+        }
+
+        if($settings['menu']['menu_heatmap'] === NULL or $settings['menu']['menu_heatmap'] == true) {
+        ?>
         <li class="nav-item">
           <a class="nav-link" href="/heatmap/">Heatmap (beta)</a>
         </li>
+        <?php
+        }
+
+        if($settings['menu']['menu_colour_radar'] === NULL or $settings['menu']['menu_colour_radar'] == true) {
+        ?>
         <li class="nav-item">
           <a class="nav-link" href="/colour-radar/">Colour Radar</a>
         </li>
-        <li class="nav-item">
-          <a class="nav-link active" href="/alpha-shapes/">Area Plot</a>
+        <?php
+        }
+
+        if($settings['menu']['menu_area_plot'] === NULL or $settings['menu']['menu_area_plot'] == true) {
+        ?>
+        <li class="nav-item active">
+          <a class="nav-link" href="/alpha-shapes/">Area Plot</a>
         </li>
+        <?php
+        }
+
+        if($settings['menu']['menu_leaderboard'] === NULL or $settings['menu']['menu_leaderboard'] == true) {
+        ?>
         <li class="nav-item">
           <a class="nav-link" href="/leaderboard/">Leader board</a>
         </li>
+        <?php
+        }
+
+        if($settings['menu']['menu_acknowledgements'] === NULL or $settings['menu']['menu_acknowledgements'] == true) {
+        ?>
         <li class="nav-item">
           <a class="nav-link" href="/acknowledgements/">Acknowledgements</a>
         </li>
+        <?php
+        }
+
+        if($settings['menu']['menu_faq'] === NULL or $settings['menu']['menu_faq'] == true) {
+        ?>
         <li class="nav-item">
           <a class="nav-link" href="/faq/">FAQ</a>
         </li>
+        <?php
+        }
+        ?>
       </ul>
     </div>
 
     <div class="navbar-collapse collapse w-100 order-3 dual-collapse2">
       <ul class="navbar-nav ml-auto">
+        <?php
+        if($settings['menu']['teespring'] === NULL or $settings['menu']['teespring'] == true) {
+        ?>
         <li class="nav-item mr-2">
           <a class="nav-link" href="https://teespring.com/ttnmapper">
             <img src="/resources/teespring.svg" height="25" class="d-inline-block align-middle" alt="" title="Teespring">
             Get the T-Shirt
           </a>
         </li>
+        <?php
+        }
+
+        if($settings['menu']['patreon'] === NULL or $settings['menu']['patreon'] == true) {
+        ?>
         <li class="nav-item">
-          <a href="https://www.patreon.com/bePatron?u=24672712" data-patreon-widget-type="become-patron-button"><img src="/resources/become_a_patron_button@2x.png" class="d-inline-block align-middle" alt="" height="36" title="Patreon"></a>
+          <a href="https://www.patreon.com/ttnmapper" data-patreon-widget-type="become-patron-button"><img src="/resources/become_a_patron_button@2x.png" class="d-inline-block align-middle" alt="" height="36" title="Patreon"></a>
         </li>
+        <?php
+        }
+        ?>
       </ul>
     </div>
 
   </nav>
 
   <div id="map"></div>
+  <div id="rightcontainer">
+    <div id="legend" class="dropSheet"></div>
+  </div>
 </div>
 
 
@@ -130,7 +216,7 @@
   var GA_LOCAL_STORAGE_KEY = 'ga:clientId';
 
   if (window.localStorage) {
-    ga('create', 'UA-75921430-1', {
+    ga('create', '<?php echo $googleAnalyticsSiteId; ?>', {
       'storage': 'none',
       'clientId': localStorage.getItem(GA_LOCAL_STORAGE_KEY)
     });
@@ -139,7 +225,7 @@
     });
   }
   else {
-    ga('create', 'UA-75921430-1', 'auto');
+    ga('create', '<?php echo $googleAnalyticsSiteId; ?>', 'auto');
   }
 
   ga('send', 'pageview');
@@ -159,6 +245,15 @@
   <!-- HTML entity escaping -->
   <script src="/libs/he/he.js"></script>
 
+  <script> 
+    $(function(){
+      $("#legend").load("/legend.html"); 
+    });
+  </script>
+
+  <!-- The map style -->
+  <script type="text/javascript" src="/theme.php"></script>
+  <script type="text/javascript" src="/common.js"></script>
   <!-- The actual main logic for this page -->
   <script src="index-logic.js"></script>
 

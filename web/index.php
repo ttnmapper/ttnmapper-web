@@ -89,9 +89,6 @@ if($settings['analytics']['site_id'] === NULL) {
     #map {
       flex-grow : 1;
     }
-    .toGrayscale img {
-      filter: grayscale(1);
-    }
   </style>
 
 </head>
@@ -247,6 +244,7 @@ if($settings['analytics']['site_id'] === NULL) {
 
   <!-- The map style -->
   <script type="text/javascript" src="/theme.php"></script>
+  <script type="text/javascript" src="/common.js"></script>
   <!-- The actual main logic for this page -->
   <script src="index-logic.js"></script>
 
