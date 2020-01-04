@@ -95,6 +95,12 @@ if($settings['theming']['marker_cluster_radius'] === NULL) {
   $markerClusterRadius = $settings['theming']['marker_cluster_radius'];
 }
 
+if($settings['theming']['show_unmapped_gateways'] === NULL) {
+  $showUnmappedGateways = false;
+} else {
+  $showUnmappedGateways = $settings['theming']['show_unmapped_gateways'];
+}
+
 ?>
 
 
@@ -131,6 +137,8 @@ var clusterGateways = "<?php echo $clusterGateways; ?>";
 var gatewayMarkers = L.markerClusterGroup({
   maxClusterRadius: <?php echo $markerClusterRadius; ?>
 });
+
+var showUnmappedGateways = "<?php echo $showUnmappedGateways; ?>";
 
 // When less than this number of gateways are in view we display the full resolution coverage
 var layerSwapGwCount = 300;

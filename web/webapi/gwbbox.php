@@ -1,5 +1,13 @@
 <?php
 
+$settings = parse_ini_file(getenv("TTNMAPPER_HOME")."/settings.conf",true);
+
+$username = $settings['database_mysql']['username'];
+$password = $settings['database_mysql']['password'];
+$dbname = $settings['database_mysql']['database'];
+$servername = $settings['database_mysql']['host'];
+
+
 $received = file_get_contents('php://input');
 $json_data = json_decode($received, $assoc = true, $depth = 2);
 $json_data = json_decode( preg_replace('/[\x00-\x1F\x80-\xFF]/', '', $received), true );
@@ -11,13 +19,6 @@ if($json_data==FALSE or $json_data==NULL)
 }
 
 #{"_southWest":{"lng":6.715497156312011,"lat":52.159068901046254},"_northEast":{"lng":7.0063341279171425,"lat":52.296423335685716}, "iid":12345}
-
-$settings = parse_ini_file(getenv("TTNMAPPER_HOME")."/settings.conf",true);
-
-$username = $settings['database_mysql']['username'];
-$password = $settings['database_mysql']['password'];
-$dbname = $settings['database_mysql']['database'];
-$servername = $settings['database_mysql']['host'];
 
 $gateways = array();
 

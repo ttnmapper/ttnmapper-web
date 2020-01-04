@@ -215,6 +215,18 @@ function addGatewayMarker(gateway, data)
       marker = L.marker([data['lat'], data['lon']], {icon: gatewayMarkerOffline});
       marker.bindPopup(gwdescriptionHead+'<br /><br /><font color="red">Offline.</font> Will be removed from the map in 5 days.<br />'+gwdescription);
     }
+    else if(data['channels'] == 0)
+    {
+      // Online but not mapped
+      if(showUnmappedGateways === "1") {
+        marker = L.marker([data['lat'], data['lon']], {icon: gatewayMarkerOnlineNotMapped});
+        marker.desc = gwdescriptionHead+'<br /><br /><font color="green">Online but no coverage mapped yet.</font><br />'+gwdescription;
+      }
+      else {
+        return;
+      }
+
+    }
     else if(data['channels']<3)
     {
       //Single channel gateway
