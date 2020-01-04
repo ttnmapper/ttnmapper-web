@@ -242,33 +242,34 @@ function addPointsAndLines()
         var gwLon = Number(gatewayData[data['gwaddr']]['lon']);
 
         if(gwLat == 0 && gwLon == 0) {
-          break;
+          console.log("Gateway location unknown");
+        } else {
+
+          distance = Math.round(getDistance(lat, lon, gwLat, gwLon));
+
+          // Line
+          lineOptions = {
+              radius: 10,
+              color: colour,
+              fillColor: colour,
+              opacity: 0.3,
+              weight: 2
+          };
+          marker = L.polyline([ [data['lat'], data['lon']], [gwLat, gwLon] ], lineOptions);
+          marker.bindPopup(
+            data['time']+
+            '<br /><b>Node:</b> '+data['nodeaddr']+
+            '<br /><b>Received by gateway:</b> <br />'+data['gwaddr']+
+            '<br /><b>Location accuracy:</b> '+data['accuracy']+
+            '<br /><b>Packet id:</b> '+data['id']+
+            '<br /><b>RSSI:</b> '+data['rssi']+'dBm'+
+            '<br /><b>SNR:</b> '+data['snr']+'dB'+
+            '<br /><b>Signal:</b> '+signal+'dBm'+
+            '<br /><b>DR:</b> '+data['datarate']+
+            '<br /><b>Distance:</b> '+distance+'m'+
+            '<br /><b>Altitude: </b>'+data['alt']+'m');
+          lineMarkers.addLayer(marker);
         }
-
-        distance = Math.round(getDistance(lat, lon, gwLat, gwLon));
-
-        // Line
-        lineOptions = {
-            radius: 10,
-            color: colour,
-            fillColor: colour,
-            opacity: 0.3,
-            weight: 2
-        };
-        marker = L.polyline([ [data['lat'], data['lon']], [gwLat, gwLon] ], lineOptions);
-        marker.bindPopup(
-          data['time']+
-          '<br /><b>Node:</b> '+data['nodeaddr']+
-          '<br /><b>Received by gateway:</b> <br />'+data['gwaddr']+
-          '<br /><b>Location accuracy:</b> '+data['accuracy']+
-          '<br /><b>Packet id:</b> '+data['id']+
-          '<br /><b>RSSI:</b> '+data['rssi']+'dBm'+
-          '<br /><b>SNR:</b> '+data['snr']+'dB'+
-          '<br /><b>Signal:</b> '+signal+'dBm'+
-          '<br /><b>DR:</b> '+data['datarate']+
-          '<br /><b>Distance:</b> '+distance+'m'+
-          '<br /><b>Altitude: </b>'+data['alt']+'m');
-        lineMarkers.addLayer(marker);
       }
 
       // Point
@@ -297,6 +298,7 @@ function addPointsAndLines()
 
     // Zoom map to fit points and gateways
     if(lineMarkers.getBounds().isValid()) {
+      // Point markers should also be taken into account in zoom, as the gateway location may be unknown
       map.fitBounds(lineMarkers.getBounds());
     }
 }
