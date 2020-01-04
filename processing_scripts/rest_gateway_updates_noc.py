@@ -11,6 +11,13 @@ from geopy.distance import great_circle
 import urllib, urllib2
 import configparser
 
+try:  
+   os.environ["TTNMAPPER_HOME"]
+except KeyError: 
+   print ("Please set the environment variable TTNMAPPER_HOME")
+   sys.exit(1)
+
+
 
 lockfile = os.environ['TTNMAPPER_HOME']+"/lockfiles/gateways-rest-lock"
 #This is to check if there is already a lock file existing#
@@ -37,6 +44,8 @@ newpid = str(os.getpid())
 print ("PID="+newpid)
 pidfile.write(newpid)
 pidfile.close()
+
+
 
 
 config = configparser.ConfigParser()
@@ -228,9 +237,23 @@ start_time = time.time()
 current_offset = 0;
 more_lines = True;
 
-#url = "http://noc.thethingsnetwork.org:2020/api/v1/gateways"
-url = "http://noc.thethingsnetwork.org:8085/api/v2/gateways"
-response = urllib.urlopen(url)
+url = config['network']['noc_gateway_url']
+if(url == None):
+  #url = "http://noc.thethingsnetwork.org:2020/api/v1/gateways"
+  url = "http://noc.thethingsnetwork.org:8085/api/v2/gateways"
+
+# If the NOC needs Basic Auth, install an opener
+if(config['network'].getboolean('noc_use_basic_auth')):
+  username = config['network']['noc_username']
+  password = config['network']['noc_password']
+
+  request = urllib2.Request(url)
+  base64string = base64.b64encode('%s:%s' % (username, password))
+  request.add_header("Authorization", "Basic %s" % base64string)   
+  response = urllib2.urlopen(request)
+else:
+  response = urllib.urlopen(url)
+  
 jsonobject = json.loads(response.read())
 
 gateway_count = len(jsonobject["statuses"])
@@ -242,6 +265,7 @@ argv = sys.argv[1:]
 for gwid in sorted(jsonobject["statuses"]):
   i+=1
 
+  # Force process specific gateways
   if(len(argv)>0):
     if not gwid in argv:
       continue
