@@ -1,15 +1,51 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+<?php
+$settings = parse_ini_file(getenv("TTNMAPPER_HOME")."/settings.conf",true);
+
+if($settings['theming']['site_name'] === NULL) {
+  $siteName = "TTN Mapper";
+} else {
+  $siteName = $settings['theming']['site_name'];
+}
+
+if($settings['theming']['site_description'] === NULL) {
+  $siteDescription = "Map the coverage for gateways of The Things Network.";
+} else {
+  $siteDescription = $settings['theming']['site_description'];
+}
+
+if($settings['theming']['brand_icon'] === NULL) {
+  $brandIcon = "/favicons/favicon-96x96.png";
+} else {
+  $brandIcon = "/resources/".$settings['theming']['brand_icon'];
+}
+
+if($settings['theming']['brand_name'] === NULL) {
+  $brandName = "TTN Mapper";
+} else {
+  $brandName = $settings['theming']['brand_name'];
+}
+
+if($settings['analytics']['site_id'] === NULL) {
+  $googleAnalyticsSiteId = "UA-75921430-1";
+} else {
+  $googleAnalyticsSiteId = $settings['analytics']['site_id'];
+}
+
+
+?>
+
   <!-- Required meta tags -->
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-  <meta name="description" content="Map the coverage for gateways of The Things Network." />
+  <meta name="description" content="<?php echo $siteDescription; ?>" />
   <meta name="keywords" content="ttn coverage, the things network coverage, gateway reception area, contribute to ttn" />
   <meta name="robots" content="index,follow" />
   <meta name="author" content="JP Meijers">
 
-  <title>TTN Mapper</title>
+  <title><?php echo $siteName; ?></title>
 
   <!--favicons-->
   <link rel="apple-touch-icon" sizes="57x57" href="/favicons/apple-icon-57x57.png">
@@ -34,13 +70,14 @@
   <!-- Bootstrap -->
   <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous" />
 
+  <!-- Page theme -->
+  <link rel="stylesheet" href="/theme.css" />
+
   <!-- Leaflet -->
   <link rel="stylesheet" href="/libs/leaflet/leaflet.css" />
   <link rel="stylesheet" href="/libs/Leaflet.markercluster/dist/MarkerCluster.css" />
   <link rel="stylesheet" href="/libs/Leaflet.markercluster/dist/MarkerCluster.Default.css" />
   <link rel="stylesheet" href="/libs/leaflet.measure/leaflet.measure.css" />
-  <link rel="stylesheet" href="/libs/Leaflet.loading/src/Control.Loading.css" />
-
 
   <style>
     html {
@@ -52,138 +89,6 @@
     #map {
       flex-grow : 1;
     }
-    .toGrayscale img {
-      filter: grayscale(1);
-    }
-
-    .dropSheet
-    {
-      background-color/**/: #FFFFFF;
-      border-width: 2px; 
-      border-style: solid; 
-      border-color: #555555;
-      padding: 5px;
-    }
-    #rightcontainer
-    {
-      position: absolute;
-      right: 20px;
-      bottom: 30px;
-      z-index: 500;
-    }
-
-/*https://codepen.io/huange/pen/QGbRxX*/
-.wrapper{
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  width: 300px;
-  text-align:center;
-  transform: translateX(-50%);
-}
-
-.spanner{
-  position:absolute;
-  top: 50%;
-  left: 0;
-  background: #2a2a2a;
-  width: 100%;
-  display:block;
-  text-align:center;
-  height: 300px;
-  color: #FFF;
-  transform: translateY(-50%);
-  z-index: 1000;
-  visibility: hidden;
-}
-
-.overlay{
-  position: fixed;
-  width: 100%;
-  height: 100%;
-  background: rgba(0,0,0,0.5);
-  visibility: hidden;
-}
-
-.loader,
-.loader:before,
-.loader:after {
-  border-radius: 50%;
-  width: 2.5em;
-  height: 2.5em;
-  -webkit-animation-fill-mode: both;
-  animation-fill-mode: both;
-  -webkit-animation: load7 1.8s infinite ease-in-out;
-  animation: load7 1.8s infinite ease-in-out;
-}
-.loader {
-  color: #ffffff;
-  font-size: 10px;
-  margin: 80px auto;
-  position: relative;
-  text-indent: -9999em;
-  -webkit-transform: translateZ(0);
-  -ms-transform: translateZ(0);
-  transform: translateZ(0);
-  -webkit-animation-delay: -0.16s;
-  animation-delay: -0.16s;
-}
-.loader:before,
-.loader:after {
-  content: '';
-  position: absolute;
-  top: 0;
-}
-.loader:before {
-  left: -3.5em;
-  -webkit-animation-delay: -0.32s;
-  animation-delay: -0.32s;
-}
-.loader:after {
-  left: 3.5em;
-}
-@-webkit-keyframes load7 {
-  0%,
-  80%,
-  100% {
-    box-shadow: 0 2.5em 0 -1.3em;
-  }
-  40% {
-    box-shadow: 0 2.5em 0 0;
-  }
-}
-@keyframes load7 {
-  0%,
-  80%,
-  100% {
-    box-shadow: 0 2.5em 0 -1.3em;
-  }
-  40% {
-    box-shadow: 0 2.5em 0 0;
-  }
-}
-
-.show{
-  visibility: visible;
-}
-
-.hide{
-  visibility: hidden;
-}
-
-.spanner, .overlay{
-  opacity: 0;
-  -webkit-transition: all 0.3s;
-  -moz-transition: all 0.3s;
-  transition: all 0.3s;
-}
-
-.spanner.show, .overlay.show {
-  opacity: 1
-}
-.spanner.hide, .overlay.hide {
-  opacity: 0
-}
   </style>
 
 </head>
@@ -195,9 +100,9 @@
   <!-- Image and text -->
   <nav class="navbar navbar-fixed-top navbar-expand-lg navbar-light bg-light">
     
-   <a class="navbar-brand" href="/">
-      <img src="/favicons/favicon-96x96.png" width="32" height="32" class="d-inline-block align-top" alt="">
-      TTN Mapper
+    <a class="navbar-brand" href="/">
+      <img src="<?php echo $brandIcon; ?>" width="auto" height="32" class="d-inline-block align-top" alt="">
+      <?php echo $brandName; ?>
     </a>
     
     <button class="navbar-toggler" type="button" data-toggle="collapse" data-target=".dual-collapse2" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
@@ -206,41 +111,88 @@
 
     <div class="navbar-collapse collapse w-100 order-1 order-md-0 dual-collapse2">
       <ul class="navbar-nav mr-auto">
+        <?php
+        if($settings['menu']['menu_advanced'] === NULL or $settings['menu']['menu_advanced'] == true) {
+        ?>
         <li class="nav-item">
           <a class="nav-link" href="/advanced-maps/">Advanced maps</a>
         </li>
+        <?php
+        }
+
+        if($settings['menu']['menu_heatmap'] === NULL or $settings['menu']['menu_heatmap'] == true) {
+        ?>
         <li class="nav-item">
           <a class="nav-link" href="/heatmap/">Heatmap (beta)</a>
         </li>
+        <?php
+        }
+
+        if($settings['menu']['menu_colour_radar'] === NULL or $settings['menu']['menu_colour_radar'] == true) {
+        ?>
         <li class="nav-item">
           <a class="nav-link" href="/colour-radar/">Colour Radar</a>
         </li>
+        <?php
+        }
+
+        if($settings['menu']['menu_area_plot'] === NULL or $settings['menu']['menu_area_plot'] == true) {
+        ?>
         <li class="nav-item">
           <a class="nav-link" href="/alpha-shapes/">Area Plot</a>
         </li>
+        <?php
+        }
+
+        if($settings['menu']['menu_leaderboard'] === NULL or $settings['menu']['menu_leaderboard'] == true) {
+        ?>
         <li class="nav-item">
           <a class="nav-link" href="/leaderboard/">Leader board</a>
         </li>
+        <?php
+        }
+
+        if($settings['menu']['menu_acknowledgements'] === NULL or $settings['menu']['menu_acknowledgements'] == true) {
+        ?>
         <li class="nav-item">
           <a class="nav-link" href="/acknowledgements/">Acknowledgements</a>
         </li>
+        <?php
+        }
+
+        if($settings['menu']['menu_faq'] === NULL or $settings['menu']['menu_faq'] == true) {
+        ?>
         <li class="nav-item">
           <a class="nav-link" href="/faq/">FAQ</a>
         </li>
+        <?php
+        }
+        ?>
       </ul>
     </div>
 
     <div class="navbar-collapse collapse w-100 order-3 dual-collapse2">
       <ul class="navbar-nav ml-auto">
+        <?php
+        if($settings['menu']['teespring'] === NULL or $settings['menu']['teespring'] == true) {
+        ?>
         <li class="nav-item mr-2">
           <a class="nav-link" href="https://teespring.com/ttnmapper">
             <img src="/resources/teespring.svg" height="25" class="d-inline-block align-middle" alt="" title="Teespring">
             Get the T-Shirt
           </a>
         </li>
+        <?php
+        }
+
+        if($settings['menu']['patreon'] === NULL or $settings['menu']['patreon'] == true) {
+        ?>
         <li class="nav-item">
           <a href="https://www.patreon.com/ttnmapper" data-patreon-widget-type="become-patron-button"><img src="/resources/become_a_patron_button@2x.png" class="d-inline-block align-middle" alt="" height="36" title="Patreon"></a>
         </li>
+        <?php
+        }
+        ?>
       </ul>
     </div>
 
@@ -270,7 +222,7 @@
   var GA_LOCAL_STORAGE_KEY = 'ga:clientId';
 
   if (window.localStorage) {
-    ga('create', 'UA-75921430-1', {
+    ga('create', '<?php echo $googleAnalyticsSiteId; ?>', {
       'storage': 'none',
       'clientId': localStorage.getItem(GA_LOCAL_STORAGE_KEY)
     });
@@ -279,7 +231,7 @@
     });
   }
   else {
-    ga('create', 'UA-75921430-1', 'auto');
+    ga('create', '<?php echo $googleAnalyticsSiteId; ?>', 'auto');
   }
 
   ga('send', 'pageview');
@@ -295,17 +247,13 @@
   <script src="/libs/leaflet/leaflet.js"></script>
   <script src="/libs/leaflet.measure/leaflet.measure.js"></script>
   <script src="/libs/Leaflet.markercluster/dist/leaflet.markercluster.js"></script>
-  <script src="/libs/Leaflet.loading/src/Control.Loading.js"></script>
 
   <!-- HTML entity escaping -->
   <script src="/libs/he/he.js"></script>
 
-  <script> 
-    $(function(){
-      $("#legend").load("/legend.html"); 
-    });
-  </script>
-
+  <!-- The map style -->
+  <script type="text/javascript" src="/theme.php"></script>
+  <script type="text/javascript" src="/common.js"></script>
   <!-- The actual main logic for this page -->
   <script src="index-logic.js"></script>
 

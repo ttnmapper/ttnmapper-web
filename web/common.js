@@ -235,6 +235,12 @@ function addGatewayMarker(gateway, data)
     return;
   } else {
     // console.log("Adding "+gateway);
+
+    if(data['lat'] === null || data['lon'] === null) {
+      console.log("Gateway "+gateway+" location is null");
+      return;
+    }
+
     var gwdescriptionHead = "";
     if (data['description'] != null) {
       gwdescriptionHead = "<b>"+he.encode(data['description'])+"</b><br />"+he.encode(gateway);

@@ -498,7 +498,7 @@ if($settings['analytics']['site_id'] === NULL) {
             </label>
           </div>
           <div class="form-check">
-            <input type='hidden' value='off' name='lines' id="experimentShowLines">
+            <input type='hidden' value='on' name='lines' id="experimentShowLines">
             <input type="checkbox" 
                     class="form-check-input"
                     onclick="this.checked ? document.getElementById('experimentShowLines').value = 'on' : document.getElementById('experimentShowLines').value = 'off' "
@@ -508,7 +508,7 @@ if($settings['analytics']['site_id'] === NULL) {
             </label>
           </div>
           <div class="form-check">
-            <input type='hidden' value='off' name='points' id="experimentShowPoints">
+            <input type='hidden' value='on' name='points' id="experimentShowPoints">
             <input type="checkbox" 
                     class="form-check-input"
                     onclick="this.checked ? document.getElementById('experimentShowPoints').value = 'on' : document.getElementById('experimentShowPoints').value = 'off' "
@@ -521,7 +521,7 @@ if($settings['analytics']['site_id'] === NULL) {
         
         <div class="form-group">
           <button type="submit" class="btn btn-secondary" formaction="/experiments/csv.php">CSV data</button>
-          <button type="submit" class="btn btn-primary" formaction="/experiments/map.php">View Map</button>
+          <button type="submit" class="btn btn-primary" formaction="/experiments/">View Map</button>
         </div>
 
       </form>
