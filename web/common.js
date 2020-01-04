@@ -6,6 +6,8 @@ var gatewaysInView = [];
 var default_zoom = true;
 var zoom_override = false;
 
+var gatewayMarkersNoCluster = L.featureGroup();
+
 var map;
 
 function initMap() {
@@ -115,7 +117,7 @@ function addBackgroundLayers() {
 
 //Create a map that remembers where it was zoomed to
 function boundsChanged () {
-  getGatewaysInView();
+  boundsChangedCallback();
   localStorage.setItem('bounds', JSON.stringify(map.getBounds()));
   default_zoom = false;
 }
@@ -196,7 +198,6 @@ function getGatewaysInView()
 
 function addGateways(gateways)
 {
-  showOrHideLayers();
   // First add the gateway markers, then do the layers. 
   // Because we only download layers for gateways in our bounding box = gatewaysInView
 
@@ -219,9 +220,10 @@ function addGateways(gateways)
       for(gateway in data) {
         addGatewayMarker(gateway, data[gateway]);
       }
+      showOrHideLayers();
     },
     failure: function(errMsg) {
-        console.log(errMsg);
+      console.log(errMsg);
     }
   });
 
@@ -285,7 +287,8 @@ function addGatewayMarker(gateway, data)
       gatewayMarkers.addLayer(marker);
     }
     else{
-      marker.addTo(map);
+      gatewayMarkersNoCluster.addLayer(marker);
+      // marker.addTo(map);
     }
 
     loadedGateways[gateway] = marker;
@@ -296,4 +299,68 @@ function formatTime(timestamp)
 {
   var date = new Date(timestamp*1000);
   return date.toISOString();
+}
+
+function getDistance(lat1, lon1, lat2, lon2) {
+  Number.prototype.toRad = function() {
+    return this * Math.PI / 180;
+  }
+
+  var R = 6371000; // metre
+  //has a problem with the .toRad() method below.
+  var x1 = lat2-lat1;
+  var dLat = x1.toRad();  
+  var x2 = lon2-lon1;
+  var dLon = x2.toRad();  
+  var a = Math.sin(dLat/2) * Math.sin(dLat/2) + 
+                  Math.cos(lat1.toRad()) * Math.cos(lat2.toRad()) * 
+                  Math.sin(dLon/2) * Math.sin(dLon/2);  
+  var c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a)); 
+  var d = R * c;
+
+  return d;
+}
+
+function getColour(data) {
+
+  // TODO: if we use signal to determine colour
+
+  var rssi = Number(data["rssi"]);
+  var snr = Number(data["snr"]);
+
+  if(snr<0) {
+    rssi = rssi + snr;
+  }
+
+  colour = "#0000ff";
+  if (rssi==0)
+  {
+    colour = "black";
+  }
+  else if (rssi<-120)
+  {
+    colour = "blue";
+  }
+  else if (rssi<-115)
+  {
+    colour = "cyan";
+  }
+  else if (rssi<-110)
+  {
+    colour = "green";
+  }
+  else if (rssi<-105)
+  {
+    colour = "yellow";
+  }
+  else if (rssi<-100)
+  {
+    colour = "orange";
+  }
+  else
+  {
+    colour = "red";
+  }
+
+  return colour;
 }

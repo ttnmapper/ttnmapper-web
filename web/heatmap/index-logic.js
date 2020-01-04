@@ -8,6 +8,13 @@ function setUp() {
   getGatewaysInView();
 
   gatewayMarkers.addTo(map);
+  gatewayMarkersNoCluster.addTo(map);
+}
+
+// Callback to refresh layers when the maps was panned or zoomed
+function boundsChangedCallback() {
+  // Refresh the visible gateways, which will also trigger a layer refresh
+  getGatewaysInView();
 }
 
 function addForegroundLayers() {

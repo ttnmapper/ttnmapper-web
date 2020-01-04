@@ -199,6 +199,15 @@ if($settings['analytics']['site_id'] === NULL) {
   </nav>
 
   <div id="map"></div>
+  <div id="rightcontainer">
+    <div id="legend" class="dropSheet"></div>
+  </div>
+
+  <div class="overlay"></div>
+  <div class="spanner">
+    <div class="loader"></div>
+    <p>Fetching data, please be patient.</p>
+  </div>
 </div>
 
 
