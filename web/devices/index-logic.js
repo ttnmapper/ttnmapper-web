@@ -1,9 +1,3 @@
-var loadedRadarLayers = {};
-var visibleRadarLayers = {};
-
-var loadedCircleLayers = {};
-var visibleCircleLayers = {};
-
 var dataAlreadyAdded = false;
 
 var pointMarkers = L.featureGroup();
@@ -45,7 +39,6 @@ function showOrHideLayers() {
     addPointsAndLines();
   }
 
-  // loadingControl._hideIndicator();
   $("div.spanner").addClass("hide");
   $("div.overlay").addClass("hide");
 }

@@ -1,5 +1,4 @@
 <?php
-// http://ttnmapper.org/device/csv.php?device=oyster&startdate=2019-09-21&enddate=2019-09-21&gateways=on&gateways=on&gateways=on
 
 $columns_blacklist = array("user_id", "mqtt_topic");
 
@@ -85,75 +84,45 @@ try {
 }
 
 
+header("Content-Type: application/json");
+$points = array();
 
-header("Content-Type: text/plain");
-$columns = [];
+try 
+{
+  $conn = new PDO("mysql:host=$servername;dbname=$dbname", $username, $password);
+  // set the PDO error mode to exception
+  $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
-  try {
-    $conn = new PDO("mysql:host=$servername;dbname=$dbname", $username, $password);
-    $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-    
-    $stmt = $conn->prepare("SELECT `COLUMN_NAME` 
-      FROM `INFORMATION_SCHEMA`.`COLUMNS` 
-      WHERE `TABLE_SCHEMA`='ttnmapper' 
-      AND `TABLE_NAME`='experiments';");
-    $stmt->execute();
-    
-    foreach($stmt->fetchAll() as $k=>$v) { 
-      // Ignore blacklisted columns
-      if(in_array($v[0], $columns_blacklist)) {
-        continue;
+  // Run data query
+  $stmt = $conn->prepare("SELECT * FROM experiments WHERE name=:experiment AND `time` > :startdate AND `time` < :enddate ORDER BY `time` DESC LIMIT 10000");
+  $stmt->bindParam(':experiment', $experiment, PDO::PARAM_STR);
+  $stmt->bindParam(':startdate', $startDateStr, PDO::PARAM_STR);
+  $stmt->bindParam(':enddate', $endDateStr, PDO::PARAM_STR);
+  $stmt->execute();
+
+  $stmt->setFetchMode(PDO::FETCH_ASSOC); 
+  
+  foreach($stmt->fetchAll() as $lineNr=>$row) { 
+    $point = array();
+
+    foreach ($row as $key => $value) {
+      if(!in_array($key, $columns_blacklist)) {
+        $point[$key] = $value;
       }
-      $columns[] = $v[0];
     }
 
-    // Print column headings
-    $i = 0;
-    foreach($columns as $col)
-    {
-      print $col;
-
-      if($i!=count($columns)-1)
-      {
-        print ", ";
-      }
-      $i++;
-    }
-    print "\n";
-    
-    // Run data query
-    $stmt = $conn->prepare("SELECT * FROM experiments WHERE name=:experiment AND `time` > :startdate AND `time` < :enddate ORDER BY `time` DESC LIMIT 10000");
-    $stmt->bindParam(':experiment', $experiment, PDO::PARAM_STR);
-    $stmt->bindParam(':startdate', $startDateStr, PDO::PARAM_STR);
-    $stmt->bindParam(':enddate', $endDateStr, PDO::PARAM_STR);
-    $stmt->execute();
-
-    $number_of_rows = $stmt->rowCount();
-    
-    foreach($stmt->fetchAll() as $k=>$v) { 
-      $i = 0;
-      foreach($columns as $col)
-      {
-        if($v[$i]!="")
-        {
-          print $v[$i];
-        }
-        else
-        {
-          print "null";
-        }
-        if($i!=count($columns)-1)
-        {
-          print ", ";
-        }
-        $i++;
-      }
-      print "\n";
-    }
-    print "\nNumber of rows dumped: ".$number_of_rows;
+    $points[] = $point;
   }
-  catch(PDOException $e) {
-    echo "Error: " . $e->getMessage();
-    echo "An error occured running the query.";
-  }
+  
+  $json_response = array("points" => $points, "error" => false);
+  echo json_encode($json_response);
+
+}
+catch(PDOException $e)
+{
+  echo '{"error": true, "error_message": "' . $e->getMessage().'"}';
+}
+$conn = null;
+
+
 ?>
