@@ -10,6 +10,7 @@ import os, sys
 from geopy.distance import great_circle
 import urllib, urllib2
 import configparser
+import base64
 
 try:  
    os.environ["TTNMAPPER_HOME"]
@@ -84,18 +85,25 @@ def postToSlack(message):
   response = urllib2.urlopen(req, json.dumps(payload))
 
 def doReverseGeocoding(gwaddr, datetime, lat, lon):
-  url = "https://maps.googleapis.com/maps/api/geocode/json?language=en&latlng="+str(lat)+","+str(lon)+"&key="+config['google']['api_key']+"&result_type=locality|political|country"
-  response = urllib.urlopen(url)
-  location = json.loads(response.read())
+  
+  pretty = str(lat)+","+str(lon)
+  
+  if(config['features'].getboolean('reverse_geocode_gw_location') == True):
+    url = "https://maps.googleapis.com/maps/api/geocode/json?language=en&latlng="+str(lat)+","+str(lon)+"&key="+config['google']['api_key']+"&result_type=locality|political|country"
+    response = urllib.urlopen(url)
+    location = json.loads(response.read())
 
-  if("status" in location and location["status"] == "ZERO_RESULTS"):
-    # use lat and lon
-    pretty = str(lat)+","+str(lon)
-  else:
-    pretty = location["results"][0]["formatted_address"]
+    if("status" in location and location["status"] == "ZERO_RESULTS"):
+      # use lat and lon
+      pass
+    else:
+      pretty = location["results"][0]["formatted_address"]
 
-  postToTwitter("New gateway: "+gwaddr+"\nLocation: "+pretty+"\nhttps://www.google.com/maps/search/?api=1&query="+str(lat)+","+str(lon)+"")
-  postToSlack("A new gateway, *"+gwaddr+"*, was installed at <https://www.google.com/maps/search/?api=1&query="+str(lat)+","+str(lon)+"|"+pretty+">")
+  if(config['features'].getboolean('announce_new_gw_twitter') == True):
+    postToTwitter("New gateway: "+gwaddr+"\nLocation: "+pretty+"\nhttps://www.google.com/maps/search/?api=1&query="+str(lat)+","+str(lon)+"")
+
+  if(config['features'].getboolean('announce_new_gw_slack') == True):
+    postToSlack("A new gateway, *"+gwaddr+"*, was installed at <https://www.google.com/maps/search/?api=1&query="+str(lat)+","+str(lon)+"|"+pretty+">")
 
 def on_message(gwid, gwdata):
   gwaddr = gwid
@@ -220,6 +228,7 @@ def on_message(gwid, gwdata):
 
   if update == True and exists == False:
     print("New gateway "+gwaddr)
+
     try:
       doReverseGeocoding(gwaddr, datetime, gwlatjs, gwlonjs)
     except:
