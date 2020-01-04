@@ -1,6 +1,14 @@
 <?php
 // ?tile=12/2125/1348
-$cache_location = "/mnt/localssd/tiles";
+$settings = parse_ini_file(getenv("TTNMAPPER_HOME")."/settings.conf",true);
+
+//$cache_location = "/mnt/localssd/tiles";
+if($settings['tms']['tile_cache_location'] === NULL or $settings['tms']['tile_cache_location'] === "") {
+  $cache_location = getenv("TTNMAPPER_HOME")."/tms/tiles";
+} else {
+  $cache_location = $settings['tms']['tile_cache_location'];
+}
+
 $enable_caching = true;
 $zoom_switchover = 18; // never switch over to raw packet mode as that creates too high db load
 
