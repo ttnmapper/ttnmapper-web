@@ -387,8 +387,16 @@ function loadRadarsInView()
             if("gateway" in getParameters && Object.keys(loadedRadarLayers).length > 0
               && findGetParameter("lat")==null && findGetParameter("lon")==null 
                 && findGetParameter("zoom")==null) {
-              var group = L.featureGroup(Object.values(loadedRadarLayers));
-              map.fitBounds(group.getBounds());
+              var bounds = L.featureGroup(Object.values(loadedRadarLayers)).getBounds();
+
+              var gatewayGroupBounds = L.featureGroup(Object.values(loadedGateways)).getBounds();
+              if(gatewayGroupBounds.isValid()) {
+                bounds.extend(gatewayGroupBounds);
+              }
+
+              if(bounds.isValid()) {
+                map.fitBounds(bounds);
+              }
             }
           }
         }

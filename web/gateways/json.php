@@ -15,7 +15,13 @@ if(!isset($_REQUEST["gateway"])) {
   die();
 }
 
-$gateway = $_REQUEST["gateway"];
+$gateway = urldecode($_REQUEST["gateway"]);
+
+if(substr($gateway, 0, 4) === "eui-") {
+  $gateway = substr($gateway, 4);
+  $gateway = strtoupper($gateway);
+}
+
 $startdate = 0;
 $enddate = time();
 

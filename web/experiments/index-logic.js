@@ -56,7 +56,7 @@ function getData()
       enddate: findGetParameter("enddate")
     }, 
     function(data) {
-
+      console.log(data);
       pointData = data;
 
       var gateways = [];

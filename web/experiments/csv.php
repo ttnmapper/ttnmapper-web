@@ -17,7 +17,7 @@ if(!isset($_REQUEST["experiment"])) {
 }
 
 
-$experiment = $_REQUEST["experiment"];
+$experiment = urldecode($_REQUEST["experiment"]);
 $startdate = 0;
 $enddate = time();
 

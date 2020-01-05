@@ -16,7 +16,7 @@ if(!isset($_REQUEST["device"])) {
 }
 
 
-$device = $_REQUEST["device"];
+$device = urldecode($_REQUEST["device"]);
 $startdate = 0;
 $enddate = time();
 

@@ -48,14 +48,9 @@ function getData()
     $("div.spanner").addClass("show");
     $("div.overlay").addClass("show");
 
-    var gatewayID = findGetParameter("gateway");
-    if(gatewayID.startsWith("eui-")) {
-      gatewayID = gatewayID.substring(4).toUpperCase();
-    }
-
     $.getJSON('json.php', 
     {
-      gateway: gatewayID,
+      gateway: findGetParameter("gateway"),
       startdate: findGetParameter("startdate"),
       enddate: findGetParameter("enddate")
     }, 
