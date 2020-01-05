@@ -270,7 +270,7 @@ function addGatewayMarker(gateway, data)
       // Online but not mapped
       if(showUnmappedGateways === "1") {
         marker = L.marker([data['lat'], data['lon']], {icon: gatewayMarkerOnlineNotMapped});
-        marker.desc = gwdescriptionHead+'<br /><br /><font color="green">Online but no coverage mapped yet.</font><br />'+gwdescription;
+        marker.bindPopup(gwdescriptionHead+'<br /><br /><font color="green">Online but no coverage mapped yet.</font><br />'+gwdescription);
       }
       else {
         return;
