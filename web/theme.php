@@ -2,103 +2,103 @@
 $settings = parse_ini_file(getenv("TTNMAPPER_HOME")."/settings.conf",true);
 
 
-if($settings['theming']['gateway_online'] === NULL) {
-  $gatewayMarkerOnline = "/resources/gateway_dot.png";
-} else {
+if(isset($settings['theming']['gateway_online'])) {
   $gatewayMarkerOnline = "/resources/".$settings['theming']['gateway_online'];
+} else {
+  $gatewayMarkerOnline = "/resources/gateway_dot.png";
 }
 
-if($settings['theming']['gateway_online_not_mapped'] === NULL) {
-  $gatewayMarkerOnlineNotMapped = "/resources/gateway_dot_green.png";
-} else {
+if(isset($settings['theming']['gateway_online_not_mapped'])) {
   $gatewayMarkerOnlineNotMapped = "/resources/".$settings['theming']['gateway_online_not_mapped'];
+} else {
+  $gatewayMarkerOnlineNotMapped = "/resources/gateway_dot_green.png";
 }
 
-if($settings['theming']['gateway_offline'] === NULL) {
-  $gatewayMarkerOffline = "/resources/gateway_dot_red.png";
-} else {
+if(isset($settings['theming']['gateway_offline'])) {
   $gatewayMarkerOffline = "/resources/".$settings['theming']['gateway_offline'];
+} else {
+  $gatewayMarkerOffline = "/resources/gateway_dot_red.png";
 }
 
-if($settings['theming']['gateway_single_channel'] === NULL) {
-  $gatewayMarkerSingleChannel = "/resources/gateway_dot_yellow.png";
-} else {
+if(isset($settings['theming']['gateway_single_channel'])) {
   $gatewayMarkerSingleChannel = "/resources/".$settings['theming']['gateway_single_channel'];
+} else {
+  $gatewayMarkerSingleChannel = "/resources/gateway_dot_yellow.png";
 }
 
 
-if($settings['theming']['gateway_icon_size_x'] === NULL) {
-  $gatewayIconSizeX = "20";
-} else {
+if(isset($settings['theming']['gateway_icon_size_x'])) {
   $gatewayIconSizeX = $settings['theming']['gateway_icon_size_x'];
+} else {
+  $gatewayIconSizeX = "20";
 }
 
-if($settings['theming']['gateway_icon_size_y'] === NULL) {
-  $gatewayIconSizeY = "20";
-} else {
+if(isset($settings['theming']['gateway_icon_size_y'])) {
   $gatewayIconSizeY = $settings['theming']['gateway_icon_size_y'];
+} else {
+  $gatewayIconSizeY = "20";
 }
 
-if($settings['theming']['gateway_icon_anchor_x'] === NULL) {
-  $gatewayIconAnchorX = "10";
-} else {
+if(isset($settings['theming']['gateway_icon_anchor_x'])) {
   $gatewayIconAnchorX = $settings['theming']['gateway_icon_anchor_x'];
+} else {
+  $gatewayIconAnchorX = "10";
 }
 
-if($settings['theming']['gateway_icon_anchor_y'] === NULL) {
-  $gatewayIconAnchorY = "10";
-} else {
+if(isset($settings['theming']['gateway_icon_anchor_y'])) {
   $gatewayIconAnchorY = $settings['theming']['gateway_icon_anchor_y'];
+} else {
+  $gatewayIconAnchorY = "10";
 }
 
-if($settings['theming']['gateway_popup_anchor_x'] === NULL) {
-  $gatewayPopupAnchorX = "0";
-} else {
+if(isset($settings['theming']['gateway_popup_anchor_x'])) {
   $gatewayPopupAnchorX = $settings['theming']['gateway_popup_anchor_x'];
+} else {
+  $gatewayPopupAnchorX = "0";
 }
 
-if($settings['theming']['gateway_popup_anchor_y'] === NULL) {
-  $gatewayPopupAnchorY = "0";
-} else {
+if(isset($settings['theming']['gateway_popup_anchor_y'])) {
   $gatewayPopupAnchorY = $settings['theming']['gateway_popup_anchor_y'];
+} else {
+  $gatewayPopupAnchorY = "0";
 }
 
 
-if($settings['theming']['map_start_lat'] === NULL) {
-  $mapStartLat = "48.209661";
-} else {
+if(isset($settings['theming']['map_start_lat'])) {
   $mapStartLat = $settings['theming']['map_start_lat'];
+} else {
+  $mapStartLat = "48.209661";
 }
 
-if($settings['theming']['map_start_lon'] === NULL) {
-  $mapStartLon = "10.251494";
-} else {
+if(isset($settings['theming']['map_start_lon'])) {
   $mapStartLon = $settings['theming']['map_start_lon'];
+} else {
+  $mapStartLon = "10.251494";
 }
 
-if($settings['theming']['map_start_zoom'] === NULL) {
-  $mapStartZoom = "6";
-} else {
+if(isset($settings['theming']['map_start_zoom'])) {
   $mapStartZoom = $settings['theming']['map_start_zoom'];
+} else {
+  $mapStartZoom = "6";
 }
 
 
-if($settings['theming']['cluster_gateways'] === NULL) {
-  $clusterGateways = true;
-} else {
+if(isset($settings['theming']['cluster_gateways'])) {
   $clusterGateways = $settings['theming']['cluster_gateways'];
+} else {
+  $clusterGateways = true;
 }
 
-if($settings['theming']['marker_cluster_radius'] === NULL) {
-  $markerClusterRadius = "40";
-} else {
+if(isset($settings['theming']['marker_cluster_radius'])) {
   $markerClusterRadius = $settings['theming']['marker_cluster_radius'];
+} else {
+  $markerClusterRadius = "40";
 }
 
-if($settings['theming']['show_unmapped_gateways'] === NULL) {
-  $showUnmappedGateways = false;
-} else {
+if(isset($settings['theming']['show_unmapped_gateways'])) {
   $showUnmappedGateways = $settings['theming']['show_unmapped_gateways'];
+} else {
+  $showUnmappedGateways = false;
 }
 
 ?>

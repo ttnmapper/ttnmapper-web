@@ -4,34 +4,34 @@
 <?php
 $settings = parse_ini_file(getenv("TTNMAPPER_HOME")."/settings.conf",true);
 
-if($settings['theming']['site_name'] === NULL) {
-  $siteName = "TTN Mapper";
-} else {
+if(isset($settings['theming']['site_name'])) {
   $siteName = $settings['theming']['site_name'];
+} else {
+  $siteName = "TTN Mapper";
 }
 
-if($settings['theming']['site_description'] === NULL) {
-  $siteDescription = "Map the coverage for gateways of The Things Network.";
-} else {
+if(isset($settings['theming']['site_description'])) {
   $siteDescription = $settings['theming']['site_description'];
+} else {
+  $siteDescription = "Map the coverage for gateways of The Things Network.";
 }
 
-if($settings['theming']['brand_icon'] === NULL) {
-  $brandIcon = "/favicons/favicon-96x96.png";
-} else {
+if(isset($settings['theming']['brand_icon'])) {
   $brandIcon = "/resources/".$settings['theming']['brand_icon'];
+} else {
+  $brandIcon = "/favicons/favicon-96x96.png";
 }
 
-if($settings['theming']['brand_name'] === NULL) {
-  $brandName = "TTN Mapper";
-} else {
+if(isset($settings['theming']['brand_name'])) {
   $brandName = $settings['theming']['brand_name'];
+} else {
+  $brandName = "TTN Mapper";
 }
 
-if($settings['analytics']['site_id'] === NULL) {
-  $googleAnalyticsSiteId = "UA-75921430-1";
-} else {
+if(isset($settings['analytics']['site_id'])) {
   $googleAnalyticsSiteId = $settings['analytics']['site_id'];
+} else {
+  $googleAnalyticsSiteId = "UA-75921430-1";
 }
 
 
@@ -111,7 +111,7 @@ if($settings['analytics']['site_id'] === NULL) {
   <div class="navbar-collapse collapse w-100 order-1 order-md-0 dual-collapse2">
     <ul class="navbar-nav mr-auto">
       <?php
-      if($settings['menu']['menu_advanced'] === NULL or $settings['menu']['menu_advanced'] == true) {
+      if(!isset($settings['menu']['menu_advanced']) or $settings['menu']['menu_advanced'] == true) {
       ?>
       <li class="nav-item">
         <a class="nav-link" href="/advanced-maps/">Advanced maps</a>
@@ -119,7 +119,7 @@ if($settings['analytics']['site_id'] === NULL) {
       <?php
       }
 
-      if($settings['menu']['menu_heatmap'] === NULL or $settings['menu']['menu_heatmap'] == true) {
+      if(!isset($settings['menu']['menu_heatmap']) or $settings['menu']['menu_heatmap'] == true) {
       ?>
       <li class="nav-item">
         <a class="nav-link" href="/heatmap/">Heatmap (beta)</a>
@@ -127,7 +127,7 @@ if($settings['analytics']['site_id'] === NULL) {
       <?php
       }
 
-      if($settings['menu']['menu_colour_radar'] === NULL or $settings['menu']['menu_colour_radar'] == true) {
+      if(!isset($settings['menu']['menu_colour_radar']) or $settings['menu']['menu_colour_radar'] == true) {
       ?>
       <li class="nav-item">
         <a class="nav-link" href="/colour-radar/">Colour Radar</a>
@@ -135,7 +135,7 @@ if($settings['analytics']['site_id'] === NULL) {
       <?php
       }
 
-      if($settings['menu']['menu_area_plot'] === NULL or $settings['menu']['menu_area_plot'] == true) {
+      if(!isset($settings['menu']['menu_area_plot']) or $settings['menu']['menu_area_plot'] == true) {
       ?>
       <li class="nav-item">
         <a class="nav-link" href="/alpha-shapes/">Area Plot</a>
@@ -143,7 +143,7 @@ if($settings['analytics']['site_id'] === NULL) {
       <?php
       }
 
-      if($settings['menu']['menu_leaderboard'] === NULL or $settings['menu']['menu_leaderboard'] == true) {
+      if(!isset($settings['menu']['menu_leaderboard']) or $settings['menu']['menu_leaderboard'] == true) {
       ?>
       <li class="nav-item">
         <a class="nav-link" href="/leaderboard/">Leader board</a>
@@ -151,7 +151,7 @@ if($settings['analytics']['site_id'] === NULL) {
       <?php
       }
 
-      if($settings['menu']['menu_acknowledgements'] === NULL or $settings['menu']['menu_acknowledgements'] == true) {
+      if(!isset($settings['menu']['menu_acknowledgements']) or $settings['menu']['menu_acknowledgements'] == true) {
       ?>
       <li class="nav-item">
         <a class="nav-link" href="/acknowledgements/">Acknowledgements</a>
@@ -159,7 +159,7 @@ if($settings['analytics']['site_id'] === NULL) {
       <?php
       }
 
-      if($settings['menu']['menu_faq'] === NULL or $settings['menu']['menu_faq'] == true) {
+      if(!isset($settings['menu']['menu_faq']) or $settings['menu']['menu_faq'] == true) {
       ?>
       <li class="nav-item active">
         <a class="nav-link" href="/faq/">FAQ</a>
@@ -173,7 +173,7 @@ if($settings['analytics']['site_id'] === NULL) {
   <div class="navbar-collapse collapse w-100 order-3 dual-collapse2">
     <ul class="navbar-nav ml-auto">
       <?php
-      if($settings['menu']['teespring'] === NULL or $settings['menu']['teespring'] == true) {
+      if(!isset($settings['menu']['teespring']) or $settings['menu']['teespring'] == true) {
       ?>
       <li class="nav-item mr-2">
         <a class="nav-link" href="https://teespring.com/ttnmapper">
@@ -184,7 +184,7 @@ if($settings['analytics']['site_id'] === NULL) {
       <?php
       }
 
-      if($settings['menu']['patreon'] === NULL or $settings['menu']['patreon'] == true) {
+      if(!isset($settings['menu']['patreon']) or $settings['menu']['patreon'] == true) {
       ?>
       <li class="nav-item">
         <a href="https://www.patreon.com/ttnmapper" data-patreon-widget-type="become-patron-button"><img src="/resources/become_a_patron_button@2x.png" class="d-inline-block align-middle" alt="" height="36" title="Patreon"></a>
