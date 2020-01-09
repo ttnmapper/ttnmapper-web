@@ -322,7 +322,7 @@ def main(argv):
   # Retry some using NOC
   print("Retrying using NOC")
   print(retry_using_noc)
-  noc_process = subprocess.Popen(["./rest_gateway_updates_noc.py"] + retry_using_noc)
+  noc_process = subprocess.Popen([os.environ['TTNMAPPER_HOME']+"/processing/rest_gateway_updates_noc.py"] + retry_using_noc)
   noc_process.wait()
 
 
