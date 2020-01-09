@@ -19,7 +19,8 @@ db = MySQLdb.connect(host=  config['database_mysql']['host'],      # your host, 
                      user=  config['database_mysql']['username'],  # your username
                      passwd=config['database_mysql']['password'],  # your password
                      db=    config['database_mysql']['database'],  # name of the data base
-                     cursorclass=MySQLdb.cursors.DictCursor)
+                     cursorclass=MySQLdb.cursors.DictCursor,
+                     charset='utf8')
 
 
 def main(argv):
