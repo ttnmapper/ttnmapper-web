@@ -41,6 +41,32 @@ pidfile.write(newpid)
 pidfile.close()
 
 
+
+# If either the web or noc importers are running, do not start, as that will cause too much load on the same db table
+lockfile = os.environ['TTNMAPPER_HOME']+"/lockfiles/gateway-updates-web-lock"
+if os.access(lockfile, os.F_OK):
+  pidfile = open(lockfile, "r")
+  pidfile.seek(0)
+  oldpid = pidfile.readline()
+  if oldpid.strip() != "" and os.path.exists("/proc/%s" % oldpid):
+    print ("Gateway status web importer running")
+    print ("It is running as process %s," % oldpid)
+    sys.exit(1)
+
+
+lockfile = os.environ['TTNMAPPER_HOME']+"/lockfiles/gateway-updates-noc-lock"
+if os.access(lockfile, os.F_OK):
+  pidfile = open(lockfile, "r")
+  pidfile.seek(0)
+  oldpid = pidfile.readline()
+  if oldpid.strip() != "" and os.path.exists("/proc/%s" % oldpid):
+    print ("Gateway status noc importer running")
+    print ("It is running as process %s," % oldpid)
+    sys.exit(1)
+
+
+
+
 config = configparser.ConfigParser()
 config.read(os.environ.get('TTNMAPPER_HOME')+"/settings.conf")
 

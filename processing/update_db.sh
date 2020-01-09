@@ -1,6 +1,6 @@
 #!/bin/bash -l
 
-$TTNMAPPER_HOME/processing/aggregate_gateways_lastheard.py
+#$TTNMAPPER_HOME/processing/aggregate_gateways_lastheard.py
 #$TTNMAPPER_HOME/processing/aggregate_gateways_details.py
 #$TTNMAPPER_HOME/processing/aggregate_to_db.py
 #$TTNMAPPER_HOME/processing/aggregate_to_db_5mdeg.py

@@ -10,11 +10,13 @@ import os, sys
 from geopy.distance import great_circle
 import urllib, urllib2
 import configparser
+import subprocess
 
 ignored_euis = ["0102030405060708", "0000000000001DEE", "000000000000000E", "000000000000FFFE"]
 
+retry_using_noc = [] # gateways that does not have a lastheard set on this api
 
-lockfile = os.environ['TTNMAPPER_HOME']+"/lockfiles/gateways-rest-lock"
+lockfile = os.environ['TTNMAPPER_HOME']+"/lockfiles/gateway-updates-web-lock"
 #This is to check if there is already a lock file existing#
 if os.access(lockfile, os.F_OK):
   #if the lockfile is already there then check the PID number 
@@ -123,7 +125,8 @@ def on_message(gwid, gwdata):
   gwlondb=0
 
   if not "last_seen" in gwdata:
-    print("Last seen not set")
+    print("Last seen not set. Trying NOC")
+    retry_using_noc.append(gwid)
     return
   
   # 2019-09-09T14:38:03Z
@@ -221,11 +224,13 @@ def on_message(gwid, gwdata):
 
   elif exists == True:
     print ("Updating last seen.", end=' ')
-    cur.execute(
-      'UPDATE `gateway_updates` SET `last_update`=%s '+
-      'WHERE gwaddr=%s AND (last_update<%s OR last_update IS NULL)',
-      (lastSeen, gwaddr, lastSeen)
-    )
+
+    # To speed things up do not update last seen column in raw data table
+    # cur.execute(
+    #   'UPDATE `gateway_updates` SET `last_update`=%s '+
+    #   'WHERE gwaddr=%s AND (last_update<%s OR last_update IS NULL)',
+    #   (lastSeen, gwaddr, lastSeen)
+    # )
 
     # If it exist it is likely also in the aggregate table, so try and update the last heard
     try:
@@ -275,8 +280,12 @@ def main(argv):
   for gwid in sorted(jsonobject):
     i+=1
 
+    gwaddr = gwid
+    if(gwaddr.startswith("eui-")):
+      gwaddr = str(gwaddr[4:]).upper()
+
     if(len(argv)>0):
-      if not gwid in argv:
+      if not gwid in argv and not gwaddr in argv:
         continue
 
     print(str(i)+"/"+str(gateway_count)+"\t", end=" ")
@@ -309,6 +318,12 @@ def main(argv):
     for row in cur.fetchall():
       count = float(row[0])
       print(str(gwaddr) + "\t" + str(count))
+
+  # Retry some using NOC
+  print("Retrying using NOC")
+  print(retry_using_noc)
+  noc_process = subprocess.Popen(["./rest_gateway_updates_noc.py"] + retry_using_noc)
+  noc_process.wait()
 
 
 if __name__ == "__main__":

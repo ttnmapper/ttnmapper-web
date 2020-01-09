@@ -20,7 +20,7 @@ except KeyError:
 
 
 
-lockfile = os.environ['TTNMAPPER_HOME']+"/lockfiles/gateways-rest-lock"
+lockfile = os.environ['TTNMAPPER_HOME']+"/lockfiles/gateway-updates-noc-lock"
 #This is to check if there is already a lock file existing#
 if os.access(lockfile, os.F_OK):
   #if the lockfile is already there then check the PID number 
@@ -208,7 +208,7 @@ def on_message(gwid, gwdata):
     db.commit()
 
   elif exists == True:
-    #print ("Updating last seen.", end=' ')
+    print ("Updating last seen.", end=' ')
     #print ('UPDATE `gateway_updates` SET `last_update`=FROM_UNIXTIME('+str(lastSeen)+') '+
     #  'WHERE gwaddr="'+str(gwaddr)+'" AND (last_update<FROM_UNIXTIME('+str(lastSeen)+') OR last_update IS NULL)')
     cur.execute('UPDATE `gateway_updates` SET `last_update`=FROM_UNIXTIME('+str(lastSeen)+') '+
@@ -274,9 +274,13 @@ argv = sys.argv[1:]
 for gwid in sorted(jsonobject["statuses"]):
   i+=1
 
+  gwaddr = gwid
+  if(gwaddr.startswith("eui-")):
+    gwaddr = str(gwaddr[4:]).upper()
+
   # Force process specific gateways
   if(len(argv)>0):
-    if not gwid in argv:
+    if not gwid in argv and not gwaddr in argv:
       continue
 
   print(str(i)+"/"+str(gateway_count)+"\t", end=" ")
