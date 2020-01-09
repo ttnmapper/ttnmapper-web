@@ -325,6 +325,12 @@ if(isset($settings['analytics']['site_id'])) {
     <p>For a gateway to appear on TTN Mapper its location needs to be known, and it needs to have at least one coverage mapping point uploaded to TTN Mapper. In other words if a gateway has not been measured yet, the gateway will not appear on TTN Mapper.</p>
 
     <p>Make sure your gateway's GPS coordinates are configured correctly on the TTN Console. Also make sure fake_gps is disabled in the gateway's local_conf.json file. </p>
+    
+    <p>Also check that your privacy settings make the status and location of your gateway public.</p>
+    
+    <p>
+    <img src="/resources/TTNConsolePrivacy.png" />
+    </p>
 
     <p>TTN Mapper will use the location configured on the TTN Console first. If the location is not configured there it will use the location which the gateway reports. That means that a gateway with a built in GPS will be located at the location set on the Console, not the location the gateway reports. Only if the location is not set on the Console the fallback location - the location reported by the gateway - will be used.</p>
 
