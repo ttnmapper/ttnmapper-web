@@ -11,7 +11,7 @@
   <meta name="author" content="JP Meijers">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
 
-  <link rel="stylesheet" href="../libs/leaflet/leaflet.css" />
+  <link rel="stylesheet" href="/libs/leaflet/leaflet.css" />
     
   <style>
   body {
@@ -100,7 +100,7 @@
   </script>
 
   <script>L_PREFER_CANVAS = true;</script>
-  <script src="../libs/leaflet/leaflet.js"></script>
+  <script src="/libs/leaflet/leaflet.js"></script>
   <script>
     function showHideMenu()
     {
