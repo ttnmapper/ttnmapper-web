@@ -3,25 +3,25 @@ $settings = parse_ini_file(getenv("TTNMAPPER_HOME")."/settings.conf",true);
 
 
 if(isset($settings['theming']['gateway_online'])) {
-  $gatewayMarkerOnline = "/resources/".$settings['theming']['gateway_online'];
+  $gatewayMarkerOnline = $settings['theming']['gateway_online'];
 } else {
   $gatewayMarkerOnline = "/resources/gateway_dot.png";
 }
 
 if(isset($settings['theming']['gateway_online_not_mapped'])) {
-  $gatewayMarkerOnlineNotMapped = "/resources/".$settings['theming']['gateway_online_not_mapped'];
+  $gatewayMarkerOnlineNotMapped = $settings['theming']['gateway_online_not_mapped'];
 } else {
   $gatewayMarkerOnlineNotMapped = "/resources/gateway_dot_green.png";
 }
 
 if(isset($settings['theming']['gateway_offline'])) {
-  $gatewayMarkerOffline = "/resources/".$settings['theming']['gateway_offline'];
+  $gatewayMarkerOffline = $settings['theming']['gateway_offline'];
 } else {
   $gatewayMarkerOffline = "/resources/gateway_dot_red.png";
 }
 
 if(isset($settings['theming']['gateway_single_channel'])) {
-  $gatewayMarkerSingleChannel = "/resources/".$settings['theming']['gateway_single_channel'];
+  $gatewayMarkerSingleChannel = $settings['theming']['gateway_single_channel'];
 } else {
   $gatewayMarkerSingleChannel = "/resources/gateway_dot_yellow.png";
 }

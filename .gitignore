@@ -13,3 +13,6 @@ error-log-*
 
 settings.conf
 htpasswd
+
+favicons-*
+resources-*
