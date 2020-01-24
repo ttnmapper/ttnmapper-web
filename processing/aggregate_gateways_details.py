@@ -1,9 +1,11 @@
 #!/usr/bin/python
+from __future__ import print_function
 import MySQLdb
 import MySQLdb.cursors
 import sys, os
 from datetime import datetime, timedelta
 import configparser
+import time
 
 try:  
    os.environ["TTNMAPPER_HOME"]
@@ -91,45 +93,67 @@ def main(argv):
     else:
       gateways_aggregated.append(gwaddr)
 
-
+  i = 0
   for gwaddr in gateways_updates:
-    print (gwaddr)
 
     if(len(argv)>0):
       if not gwaddr in argv:
         continue
 
+    i+=1
+    print(str(i)+"/"+str(len(gateways_updates))+"\t", end="\t")
+    print (gwaddr, end="\t")
+
+    start_time = time.time()
+
     cur_select.execute('SELECT count(distinct(`freq`)) as channel_count, count(*) as packet_count FROM packets WHERE gwaddr="'+gwaddr+'"')
     row = cur_select.fetchone()
+    end_time = time.time()
+    print("freqcnt="+str(end_time - start_time), end="\t")
+
     channel_count = row["channel_count"]
     packet_count = row["packet_count"]
     #print (`channel_count` + " " + `packet_count`)
 
     cur_select.execute('SELECT * FROM gateway_updates WHERE gwaddr="'+gwaddr+'" ORDER BY datetime DESC LIMIT 1')
     row = cur_select.fetchone()
+    end_time = time.time()
+    print("updates="+str(end_time - start_time), end="\t")
+
     lat = row["lat"]
     lon = row["lon"]
-    last_heard = row["last_update"]
-    if(last_heard==None):
-      last_heard = row["datetime"]
-    print ("Last heard="+str(last_heard))
+    # last_heard = row["last_update"]
+    # if(last_heard==None):
+    first_heard = row["datetime"]
+    # print ("Last heard="+str(last_heard))
 
     # if(packet_count>0):
     cur_select.execute('SELECT count(*) as count FROM gateways_aggregated WHERE gwaddr="'+gwaddr+'"')
     rowcount = cur_select.fetchone()["count"]
+    end_time = time.time()
+    print("bboxcnt="+str(end_time - start_time), end="\t")
     if(rowcount > 1):
       cur_update.execute('DELETE FROM `gateways_aggregated` WHERE gwaddr="'+gwaddr+'"')
-      cur_update.execute('INSERT INTO `gateways_aggregated`(`gwaddr`, `channels`, `lat`, `lon`, `last_heard`) VALUES ("'+gwaddr+'","'+str(channel_count)+'", '+str(lat)+', '+str(lon)+', "'+str(last_heard)+'")')
+      cur_update.execute('INSERT INTO `gateways_aggregated`(`gwaddr`, `channels`, `lat`, `lon`, `last_heard`) VALUES ("'+gwaddr+'","'+str(channel_count)+'", '+str(lat)+', '+str(lon)+', "'+str(first_heard)+'")')
+      end_time = time.time()
+      print("delinsert="+str(end_time - start_time), end="\t")
     elif(rowcount > 0):
-      cur_update.execute('UPDATE `gateways_aggregated` SET `channels`='+str(channel_count)+', lat='+str(lat)+', lon='+str(lon)+', last_heard="'+str(last_heard)+'" WHERE gwaddr="'+gwaddr+'"')
+      cur_update.execute('UPDATE `gateways_aggregated` SET `channels`='+str(channel_count)+', lat='+str(lat)+', lon='+str(lon)+' WHERE gwaddr="'+gwaddr+'"')
+      end_time = time.time()
+      print("update="+str(end_time - start_time), end="\t")
     else:
-      cur_update.execute('INSERT INTO `gateways_aggregated`(`gwaddr`, `channels`, `lat`, `lon`, `last_heard`) VALUES ("'+gwaddr+'","'+str(channel_count)+'", '+str(lat)+', '+str(lon)+', "'+str(last_heard)+'")')
+      cur_update.execute('INSERT INTO `gateways_aggregated`(`gwaddr`, `channels`, `lat`, `lon`, `last_heard`) VALUES ("'+gwaddr+'","'+str(channel_count)+'", '+str(lat)+', '+str(lon)+', "'+str(first_heard)+'")')
+      end_time = time.time()
+      print("insert="+str(end_time - start_time), end="\t")
     
-    if(last_heard < (datetime.now() - timedelta(days=5))):
-      print ("Offline")
-      clear_bbox(gwaddr)
-    else:
-      update_bbox(gwaddr)
+    # if(last_heard < (datetime.now() - timedelta(days=5))):
+    #   print ("Offline")
+    #   clear_bbox(gwaddr)
+    # else:
+    update_bbox(gwaddr)
+
+    end_time = time.time()
+    print("total="+str(end_time - start_time))
 
   db.commit()
   cur_update.close()
