@@ -260,7 +260,16 @@ function addGatewayMarker(gateway, data)
             '\">alpha shape</a><br>'+
       '</ul>';
 
-    if(data['last_heard'] < (Date.now()/1000)-(60*60*1)) //1 hour
+    if(data['last_heard'] < (Date.now()/1000)-(60*60*24*5)) //5 days
+    {
+      // do not show on map
+      index = gatewaysInView.indexOf(gateway);
+      if(index != -1) {
+        gatewaysInView.splice(index, 1);
+      }
+      return;
+    }
+    else if(data['last_heard'] < (Date.now()/1000)-(60*60*1)) //1 hour
     {
       marker = L.marker([data['lat'], data['lon']], {icon: gatewayMarkerOffline});
       marker.bindPopup(gwdescriptionHead+'<br /><br /><font color="red">Offline.</font> Will be removed from the map in 5 days.<br />'+gwdescription);
