@@ -69,10 +69,10 @@ def main():
     gateways_radar.append(str(gwrow['gwid']))
   
   #cur_gateways.execute("SELECT gwaddr,lat,lon,max(`datetime`) AS moved FROM gateway_updates GROUP BY gwaddr")
-  cursor.execute("SELECT DISTINCT(`gwaddr`) AS gwid FROM gateway_updates WHERE `last_update` > (NOW() - INTERVAL 5 DAY)")
+  cursor.execute("SELECT `gwaddr` FROM gateways_aggregated WHERE `last_heard` > (NOW() - INTERVAL 5 DAY)")
   #Iterate over all known gateways
   for gwrow in cursor.fetchall():
-    gateways_active.append(str(gwrow['gwid']))
+    gateways_active.append(str(gwrow['gwaddr']))
 
   print("Iterating gateways "+str(len(gateways_radar)))
   #remove radar for old gateways
@@ -99,19 +99,21 @@ def main():
 def process_gateway(gwid):
     cursor = db.cursor()
 
+    # get the start time from when the gateway was moved/installed
+    cursor.execute('SELECT lat,lon,datetime FROM gateway_updates WHERE gwaddr="'+gwid+'" ORDER BY datetime DESC LIMIT 1')
+    location_row = cursor.fetchone()
+
+    gwlat = location_row['lat']
+    gwlon = location_row['lon']
+    moved = location_row['datetime']
+
+    select_from_timestamp = moved
+
     if gwid in FORCE_UPDATE:
       print("Force updating", gwid)
       add_zeros_to_memcache(gwid)
       cursor.execute('DELETE FROM `radar` WHERE gwaddr="'+gwid+'" ')
       db.commit()
-
-      # get the start time from when the gateway was moved/installed
-      cursor.execute('SELECT lat,lon,datetime FROM gateway_updates WHERE gwaddr="'+gwid+'" ORDER BY datetime DESC LIMIT 1')
-      location_row = cursor.fetchone()
-
-      gwlat = location_row['lat']
-      gwlon = location_row['lon']
-      moved = location_row['datetime']
 
       select_from_timestamp = moved
 
@@ -120,28 +122,20 @@ def process_gateway(gwid):
 
     else:
       
-      # get the start time from when the gateway was moved/installed
-      # print("SELECT last gateway location")
-      cursor.execute('SELECT lat,lon,datetime FROM gateway_updates WHERE gwaddr="'+gwid+'" ORDER BY datetime DESC LIMIT 1')
-      location_row = cursor.fetchone()
-
-      gwlat = location_row['lat']
-      gwlon = location_row['lon']
-      moved = location_row['datetime']
-
       # print("SELECT all packets since move")
-      cursor.execute('SELECT count(*) as samples FROM packets WHERE gwaddr = "'+gwid+'" AND time>"'+moved.strftime('%Y-%m-%d %H:%M:%S')+'"')
-      samples_to_include = cursor.fetchone()['samples']
+      # cursor.execute('SELECT count(*) as samples FROM packets WHERE gwaddr = "'+gwid+'" AND time>"'+moved.strftime('%Y-%m-%d %H:%M:%S')+'"')
+      # samples_to_include = cursor.fetchone()['samples']
       
       #check if we need to update or not
       # print("SELECT radar stats")
       cursor.execute('SELECT max(last_update) as last_update, sum(samples) as samples FROM radar WHERE gwaddr = "'+gwid+'"')
       row = cursor.fetchone()
       last_update_radar = row['last_update']
-      samples_radar = row['samples']
+      # samples_radar = row['samples']
 
-      print("samples_include="+str(samples_to_include)+"\tsamples_radar="+str(samples_radar))
+      # print("samples_include="+str(samples_to_include)+"\tsamples_radar="+str(samples_radar))
 
+      """
       if(samples_to_include == 0 and (samples_radar == 0 or samples_radar == None)):
         print("Gateway has no measurements")
         return
@@ -175,15 +169,16 @@ def process_gateway(gwid):
         add_zeros_to_memcache(gwid)
 
       # else check if the gateway has been updated yet
-      elif(last_update_radar!=None):
+      el"""
+      if(last_update_radar!=None):
         select_from_timestamp = max(last_update_radar, moved)
-        cursor.execute('SELECT * FROM packets WHERE gwaddr = %s AND time > %s LIMIT 1', (gwid, select_from_timestamp))
-        if(cursor.rowcount==0):
-          #no new data
-          print("Gateway "+gwid+" already up to date")
-          return
-        else:
-          print ("New data for "+gwid)
+        # cursor.execute('SELECT * FROM packets WHERE gwaddr = %s AND time > %s LIMIT 1', (gwid, select_from_timestamp))
+        # if(cursor.rowcount==0):
+        #   #no new data
+        #   print("Gateway "+gwid+" already up to date")
+        #   return
+        # else:
+        #   print ("New data for "+gwid)
 
 
     # Select all new points and process
