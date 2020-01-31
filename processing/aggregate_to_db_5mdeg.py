@@ -56,12 +56,12 @@ def main(argv):
   for gwrow in cur_gateways.fetchall():
     gwid=str(gwrow[0])
 
-    cur_gatewayloc.execute('SELECT * FROM gateway_updates WHERE gwaddr=%s AND `last_update` > (NOW() - INTERVAL 5 DAY)', [gwid])
+    cur_gatewayloc.execute('SELECT * FROM gateways_aggregated WHERE gwaddr=%s AND `last_heard` > (NOW() - INTERVAL 5 DAY)', [gwid])
     if(cur_gatewayloc.rowcount<1):
       cur_gatewayloc.execute('DELETE FROM 5mdeg WHERE gwaddr=%s', [gwid])
 
   #Iterate over all known gateways
-  cur_gateways.execute("SELECT DISTINCT(`gwaddr`) FROM gateway_updates WHERE `last_update` > (NOW() - INTERVAL 5 DAY)")
+  cur_gateways.execute("SELECT DISTINCT(`gwaddr`) FROM gateways_aggregated WHERE `last_heard` > (NOW() - INTERVAL 5 DAY)")
   for gwrow in cur_gateways.fetchall():
     gwid=str(gwrow[0])
 
@@ -81,13 +81,13 @@ def main(argv):
     print ("Processing gateway "+gwid)
     
     try:
-      sql = '''DROP TABLE temp_table'''
+      sql = '''DROP TABLE temp_table_5mdeg'''
       cur_limits.execute(sql)
     except:
       pass
     
     sql = '''CREATE TEMPORARY TABLE
-    temp_table ( INDEX(time), INDEX(lat), INDEX(lon) ) 
+    temp_table_5mdeg ( INDEX(time), INDEX(lat), INDEX(lon) ) 
     ENGINE=MyISAM 
     AS (
       SELECT * FROM `packets`
@@ -98,7 +98,7 @@ def main(argv):
     cur_limits.execute(sql, values)
     
     # sql = "SELECT max(lat),min(lat),max(lon),min(lon),max(time),count(*) FROM `packets` WHERE gwaddr=\""+gwid+"\" AND time>\""+moved.strftime('%Y-%m-%d %H:%M:%S')+"\""
-    sql = "SELECT max(lat),min(lat),max(lon),min(lon),max(time),count(*) FROM `temp_table`"
+    sql = "SELECT max(lat),min(lat),max(lon),min(lon),max(time),count(*) FROM `temp_table_5mdeg`"
     cur_limits.execute(sql)
 
     if cur_limits.rowcount==0:
@@ -179,7 +179,7 @@ def main(argv):
         print("  "+`current_cell`+" of "+str(int(total_cells))+" - "+`round(float(current_cell)/float(total_cells)*100.0)`+"%                  ", end='\r')
         
         query = """
-        SELECT count(*) FROM `temp_table`
+        SELECT count(*) FROM `temp_table_5mdeg`
           WHERE lat>=%s
           AND lat<%s
           AND lon>=%s
@@ -205,7 +205,7 @@ def main(argv):
             MAX(plr.`snr`),
             MAX(plr.`time`)
             FROM (
-              SELECT * FROM temp_table
+              SELECT * FROM temp_table_5mdeg
               WHERE lat>=%s
                AND lat<%s
                AND lon>=%s

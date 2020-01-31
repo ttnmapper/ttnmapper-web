@@ -4,8 +4,9 @@ import csv
 import sys, os
 import time
 import configparser
+import MySQLdb, MySQLdb.cursors
 
-filename = os.environ['TTNMAPPER_HOME']+'/dumps/packets-'+time.strftime('%Y%m%d')+'.csv'
+filename = os.environ['TTNMAPPER_HOME']+'/web/dumps/packets-'+time.strftime('%Y%m%d')+'.csv'
 
 config = configparser.ConfigParser()
 config.read(os.environ.get('TTNMAPPER_HOME')+"/settings.conf")
@@ -21,8 +22,8 @@ cursor = db.cursor()
 
 dbFields = ['id', 'time', 'nodeaddr', 'appeui', 'gwaddr', 'modulation', 'datarate', 'snr', 'rssi', 'freq', 'lat', 'lon', 'alt', 'accuracy', 'hdop', 'sats', 'provider', 'user_agent']
 
-#dbQuery='SELECT '+','.join(dbFields)+' FROM packets WHERE `lat`<52.137516 AND `lon`>4.967000 AND `lat`>52.045832 AND `lon`<5.194977'
-dbQuery='SELECT '+','.join(dbFields)+' FROM packets'
+dbQuery='SELECT '+','.join(dbFields)+' FROM packets WHERE lat>54.161681 AND lat<54.473828 AND lon>9.807358 AND lon<10.427243'
+#dbQuery='SELECT '+','.join(dbFields)+' FROM packets'
 
 cursor.execute(dbQuery)
 
