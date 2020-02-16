@@ -15,14 +15,13 @@ db = MySQLdb.connect(host=  config['database_mysql']['host'],      # your host, 
                      user=  config['database_mysql']['username'],  # your username
                      passwd=config['database_mysql']['password'],  # your password
                      db=    config['database_mysql']['database'],  # name of the data base
-                     cursorclass=MySQLdb.cursors.DictCursor)
+                     cursorclass=MySQLdb.cursors.SSCursor)
 
-#cursor = db.cursor(pymysql.cursors.SSCursor)
 cursor = db.cursor()
 
 dbFields = ['id', 'time', 'nodeaddr', 'appeui', 'gwaddr', 'modulation', 'datarate', 'snr', 'rssi', 'freq', 'lat', 'lon', 'alt', 'accuracy', 'hdop', 'sats', 'provider', 'user_agent']
 
-dbQuery='SELECT '+','.join(dbFields)+' FROM packets WHERE lat>54.161681 AND lat<54.473828 AND lon>9.807358 AND lon<10.427243'
+dbQuery='SELECT '+','.join(dbFields)+' FROM packets WHERE lat>53.437823 AND lat<55.121245 AND lon>7.484045 AND lon<11.516027'
 #dbQuery='SELECT '+','.join(dbFields)+' FROM packets'
 
 cursor.execute(dbQuery)
@@ -32,10 +31,14 @@ csv_writer = csv.writer(ofile, delimiter=',', quotechar='"', quoting=csv.QUOTE_M
 
 csv_writer.writerow(dbFields)
 
+counter = 0
 while True:
+  counter += 1
+  print(counter)
   line = cursor.fetchone()
+  # print(line)
   if line:
-    csv_writer.writerow(line)
+    csv_writer.writerow(list(line))
   else:
     break
 
