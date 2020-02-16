@@ -56,12 +56,12 @@ def main(argv):
   for gwrow in cur_gateways.fetchall():
     gwid=str(gwrow[0])
 
-    cur_gatewayloc.execute('SELECT * FROM gateway_updates WHERE gwaddr=%s AND `last_update` > (NOW() - INTERVAL 5 DAY)', [gwid])
+    cur_gatewayloc.execute('SELECT * FROM gateways_aggregated WHERE gwaddr=%s AND `last_heard` > (NOW() - INTERVAL 5 DAY)', [gwid])
     if(cur_gatewayloc.rowcount<1):
       cur_gatewayloc.execute('DELETE FROM 500udeg WHERE gwaddr=%s', [gwid])
 
   #Iterate over all known gateways
-  cur_gateways.execute("SELECT DISTINCT(`gwaddr`) FROM gateway_updates WHERE `last_update` > (NOW() - INTERVAL 5 DAY)")
+  cur_gateways.execute("SELECT DISTINCT(`gwaddr`) FROM gateways_aggregated WHERE `last_heard` > (NOW() - INTERVAL 5 DAY)")
   for gwrow in cur_gateways.fetchall():
     gwid=str(gwrow[0])
 
