@@ -20,4 +20,4 @@ $TTNMAPPER_HOME/processing/concave_huls_multi.py
 #$TTNMAPPER_HOME/processing/createDump.py
 
 $TTNMAPPER_HOME/processing/aggregate_to_db_5mdeg.py
-$TTNMAPPER_HOME/processing/aggregate_to_db.py
+#$TTNMAPPER_HOME/processing/aggregate_to_db.py

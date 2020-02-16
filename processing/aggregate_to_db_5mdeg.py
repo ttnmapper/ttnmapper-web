@@ -6,6 +6,7 @@ from pprint import pprint
 import sys, getopt, os, json
 from operator import itemgetter
 import configparser
+import time
 
 try:  
    os.environ["TTNMAPPER_HOME"]
@@ -62,8 +63,13 @@ def main(argv):
 
   #Iterate over all known gateways
   cur_gateways.execute("SELECT DISTINCT(`gwaddr`) FROM gateways_aggregated WHERE `last_heard` > (NOW() - INTERVAL 5 DAY)")
+  
+  i = 0
   for gwrow in cur_gateways.fetchall():
+    i+=1
     gwid=str(gwrow[0])
+
+    print(str(i)+"/"+str(cur_gateways.rowcount)+"")
 
     if(len(argv)):
       if(argv[0]=="--force"):
@@ -79,6 +85,7 @@ def main(argv):
     gwlon = location_row[1]
     moved = location_row[2]
     print ("Processing gateway "+gwid)
+    startTime = time.time()
     
     try:
       sql = '''DROP TABLE temp_table_5mdeg'''
@@ -87,15 +94,28 @@ def main(argv):
       pass
     
     sql = '''CREATE TEMPORARY TABLE
-    temp_table_5mdeg ( INDEX(time), INDEX(lat), INDEX(lon) ) 
-    ENGINE=MyISAM 
+    temp_table_5mdeg 
     AS (
       SELECT * FROM `packets`
       WHERE gwaddr=%s 
-      AND time>%s)'''
-    values = [gwid, moved.strftime('%Y-%m-%d %H:%M:%S')]
+      )'''
+    values = [gwid]
 
     cur_limits.execute(sql, values)
+
+    print("Temp table created")
+    endTime = time.time()
+    print(endTime - startTime)
+
+    startTime = time.time()
+
+    sql = "DELETE FROM temp_table_5mdeg WHERE time<%s"
+    values = [moved.strftime('%Y-%m-%d %H:%M:%S')]
+    cur_limits.execute(sql, values)
+
+    print("Old data filtered")
+    endTime = time.time()
+    print(endTime - startTime)
     
     # sql = "SELECT max(lat),min(lat),max(lon),min(lon),max(time),count(*) FROM `packets` WHERE gwaddr=\""+gwid+"\" AND time>\""+moved.strftime('%Y-%m-%d %H:%M:%S')+"\""
     sql = "SELECT max(lat),min(lat),max(lon),min(lon),max(time),count(*) FROM `temp_table_5mdeg`"
@@ -125,8 +145,14 @@ def main(argv):
     #if the last update in packets is newer than the last update in 5mdeg,
     #do the aggregation, otherwise skip this gateway
     #also handle when zero entries for gateway in 5mdeg
+    startTime = time.time()
+
     sql_last = "SELECT max(last_update),sum(samples) FROM `5mdeg` WHERE gwaddr=%s"
     cur_lastagg.execute(sql_last, [gwid])
+
+    print("Last update read from aggregates")
+    endTime = time.time()
+    print(endTime - startTime)
     
     if(cur_lastagg.rowcount>0):
       last_agg_time = 0
