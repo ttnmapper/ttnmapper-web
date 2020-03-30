@@ -12,7 +12,7 @@ import urllib, urllib2
 import configparser
 import subprocess
 
-ignored_euis = ["0102030405060708", "0000000000001DEE", "000000000000000E", "000000000000FFFE", "3135323512003300"]
+ignored_euis = ["0102030405060708", "0000000000001DEE", "000000000000000E", "000000000000FFFE", "3135323512003300", "323433362D005800"]
 
 retry_using_noc = [] # gateways that does not have a lastheard set on this api
 
