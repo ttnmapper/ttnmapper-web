@@ -20,7 +20,8 @@ config.read(os.environ.get('TTNMAPPER_HOME')+"/settings.conf")
 db = MySQLdb.connect(host=  config['database_mysql']['host'],      # your host, usually localhost
                      user=  config['database_mysql']['username'],  # your username
                      passwd=config['database_mysql']['password'],  # your password
-                     db=    config['database_mysql']['database'],  # name of the data base
+                     db=    config['database_mysql']['database'],  # name of the data base,
+                     autocommit=True
                     )
 
 block_size = 0.005
