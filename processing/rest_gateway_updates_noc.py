@@ -8,7 +8,8 @@ import datetime
 import dateutil.parser
 import os, sys
 from geopy.distance import great_circle
-import urllib, urllib2
+import requests
+from requests.auth import HTTPBasicAuth
 import configparser
 import base64
 
@@ -256,14 +257,11 @@ if(config['network'].getboolean('noc_use_basic_auth')):
   username = config['network']['noc_username']
   password = config['network']['noc_password']
 
-  request = urllib2.Request(url)
-  base64string = base64.b64encode('%s:%s' % (username, password))
-  request.add_header("Authorization", "Basic %s" % base64string)   
-  response = urllib2.urlopen(request)
+  r = requests.get(url=url, auth=HTTPBasicAuth(username, password))
 else:
-  response = urllib.urlopen(url)
-  
-jsonobject = json.loads(response.read())
+  r = requests.get(url=url)
+
+jsonobject = r.json()
 
 gateway_count = len(jsonobject["statuses"])
 i = 0

@@ -8,7 +8,7 @@ import datetime
 import dateutil.parser
 import os, sys
 from geopy.distance import great_circle
-import urllib, urllib2
+import requests
 import configparser
 import subprocess
 
@@ -269,8 +269,8 @@ def main(argv):
 
   url = "https://www.thethingsnetwork.org/gateway-data/"
 
-  response = urllib.urlopen(url)
-  jsonobject = json.loads(response.read())
+  r = requests.get(url=url)
+  jsonobject = r.json()
 
   gateway_count = len(jsonobject)
   i = 0

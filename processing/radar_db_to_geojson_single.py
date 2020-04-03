@@ -167,8 +167,7 @@ def main(argv):
         features.append(feature)
         gwfeatures.append(feature)
       except Exception as e: 
-        print str(e)
-        # print "Exception"
+        print (e)
         # exceptions.append(gwaddr)
 
       #create geojson file for this gateway only
