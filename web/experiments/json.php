@@ -93,11 +93,20 @@ try
   // set the PDO error mode to exception
   $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
-  // Run data query
-  $stmt = $conn->prepare("SELECT * FROM experiments WHERE name=:experiment AND `time` > :startdate AND `time` < :enddate ORDER BY `time` DESC LIMIT 10000");
-  $stmt->bindParam(':experiment', $experiment, PDO::PARAM_STR);
-  $stmt->bindParam(':startdate', $startDateStr, PDO::PARAM_STR);
-  $stmt->bindParam(':enddate', $endDateStr, PDO::PARAM_STR);
+  if(isset($_REQUEST['gateway']) and $_REQUEST['gateway']!="") {
+    $stmt = $conn->prepare("SELECT * FROM experiments WHERE name=:experiment AND gwaddr=:gateway AND `time` > :startdate AND `time` < :enddate ORDER BY `time` DESC LIMIT 10000");
+    $stmt->bindParam(':experiment', $experiment, PDO::PARAM_STR);
+    $stmt->bindParam(':startdate', $startDateStr, PDO::PARAM_STR);
+    $stmt->bindParam(':enddate', $endDateStr, PDO::PARAM_STR);
+    $stmt->bindParam(':gateway', $_REQUEST['gateway'], PDO::PARAM_STR);
+  }
+  else {
+    // Run data query
+    $stmt = $conn->prepare("SELECT * FROM experiments WHERE name=:experiment AND `time` > :startdate AND `time` < :enddate ORDER BY `time` DESC LIMIT 10000");
+    $stmt->bindParam(':experiment', $experiment, PDO::PARAM_STR);
+    $stmt->bindParam(':startdate', $startDateStr, PDO::PARAM_STR);
+    $stmt->bindParam(':enddate', $endDateStr, PDO::PARAM_STR);
+  }
   $stmt->execute();
 
   $stmt->setFetchMode(PDO::FETCH_ASSOC); 

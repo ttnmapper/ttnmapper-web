@@ -53,7 +53,9 @@ function getData()
     {
       experiment: findGetParameter("experiment"),
       startdate: findGetParameter("startdate"),
-      enddate: findGetParameter("enddate")
+      enddate: findGetParameter("enddate"),
+      gateway: findGetParameter("gateway"),
+      datarate: findGetParameter("datarate")
     }, 
     function(data) {
       console.log(data);
