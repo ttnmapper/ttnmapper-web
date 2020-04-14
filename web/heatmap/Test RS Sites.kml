@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<kml xmlns="http://www.opengis.net/kml/2.2" xmlns:gx="http://www.google.com/kml/ext/2.2" xmlns:kml="http://www.opengis.net/kml/2.2" xmlns:atom="http://www.w3.org/2005/Atom">
+<Document>
+	<name>Test RS Sites.kmz</name>
+	<open>1</open>
+	<Style id="waypoint">
+		<icon><href>root://icons/palette-3.png?x=192<![CDATA[&]]>y=96<![CDATA[&]]>w=32<![CDATA[&]]>h=32</href></icon>
+	</Style>
+	<Folder>
+		<name>Waypoints</name>
+		<open>1</open>
+		<Placemark>
+			<name>Noordhoek</name>
+			<description>18-JAN-13 13:02:16</description>
+			<styleUrl>#waypoint</styleUrl>
+			<Point>
+				<coordinates>18.37496,-34.0972,0</coordinates>
+			</Point>
+			<end>
+    <TimeInstant><timePosition><time>2018-01-22T14:07:15Z</time></timePosition></TimeInstant>
+    </end>
+		</Placemark>
+		<Placemark>
+			<name>Partridge Point</name>
+			<description>18-JAN-13 10:59:32</description>
+			<styleUrl>#waypoint</styleUrl>
+			<Point>
+				<coordinates>18.47532,-34.24989,0</coordinates>
+			</Point>
+			<end>
+    <TimeInstant><timePosition><time>2018-01-22T14:07:15Z</time></timePosition></TimeInstant>
+    </end>
+		</Placemark>
+		<Placemark>
+			<name>Klaasjagersberg</name>
+			<description>18-JAN-13 11:28:58</description>
+			<styleUrl>#waypoint</styleUrl>
+			<Point>
+				<coordinates>18.41082,-34.22969,0</coordinates>
+			</Point>
+			<end>
+    <TimeInstant><timePosition><time>2018-01-22T14:07:15Z</time></timePosition></TimeInstant>
+    </end>
+		</Placemark>
+		<Placemark>
+			<name>Perdekloof</name>
+			<description>18-JAN-13 11:42:35</description>
+			<styleUrl>#waypoint</styleUrl>
+			<Point>
+				<coordinates>18.40609,-34.20592,0</coordinates>
+			</Point>
+			<end>
+    <TimeInstant><timePosition><time>2018-01-22T14:07:15Z</time></timePosition></TimeInstant>
+    </end>
+		</Placemark>
+	</Folder>
+</Document>
+</kml>

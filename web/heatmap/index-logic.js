@@ -18,13 +18,35 @@ function boundsChangedCallback() {
 }
 
 function addForegroundLayers() {
-  var coveragetiles = L.tileLayer('/tms/index.php?tile={z}/{x}/{y}', {
+  var coverageBlocks = L.tileLayer('/tms/index.php?tile={z}/{x}/{y}', {
+    maxZoom: 10,
     maxNativeZoom: 18,
-    maxZoom: 20,
     zIndex: 10,
     opacity: 0.5
   });
-  coveragetiles.addTo(map);
+  coverageBlocks.addTo(map);
+  var coverageCircles = L.tileLayer('http://private.ttnmapper.org:8000/{z}/{x}/{y}', {
+    minZoom: 11,
+    maxZoom: 20,
+    maxNativeZoom: 20,
+    zIndex: 10,
+    opacity: 0.5
+  });
+  coverageCircles.addTo(map);
+
+  fetch('Cycle Tour 20 Route.kml')
+    .then(res => res.text())
+    .then(kmltext => {
+        // Create new kml overlay
+        const parser = new DOMParser();
+        const kml = parser.parseFromString(kmltext, 'text/xml');
+        const track = new L.KML(kml);
+        map.addLayer(track);
+
+        // Adjust map to show the kml
+        // const bounds = track.getBounds();
+        // map.fitBounds(bounds);
+    });
 }
 
 function showOrHideLayers() {
