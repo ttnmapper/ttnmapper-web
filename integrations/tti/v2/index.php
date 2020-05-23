@@ -22,7 +22,7 @@ file_put_contents($logfile, $received."\n\n" , FILE_APPEND | LOCK_EX);
 
 
 // Also forward to new backend
-/*$url = 'https://test-integrations.ttnmapper.org/ttn/v2';
+$url = 'https://test-integrations.ttnmapper.org/ttn/v2';
 
 $opts = array('http' =>
     array(
@@ -34,16 +34,16 @@ $opts = array('http' =>
         'content' => $received,
 	'timeout' => 1  //1 Second
     )
-);*/
+);
 
-//$context  = stream_context_create($opts);
+$context  = stream_context_create($opts);
 
-//$result = @file_get_contents($url, false, $context);
+$result = @file_get_contents($url, false, $context);
 //print($result);
 
-//echo $result;
+echo $result;
 
-//die();
+die();
 
 // Also forward to new backend
 // $url = 'http://dev.ttnmapper.org:8080/v1/ttn/v2';

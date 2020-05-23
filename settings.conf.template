@@ -18,3 +18,15 @@ new_gateway_hook = slack_hook_new_gateways
 
 [google]
 api_key = rev_geocode_api_key
+
+[network]
+noc_gateway_url = http://noc.thethingsnetwork.org:8085/api/v2/gateways
+noc_use_basic_auth = false
+noc_username = noc-user
+noc_password = noc-password
+
+account_server_gateways = https://account.thethingsnetwork.org/gateways/
+
+v3_gateway_list = http://server/api/v3/gateways
+v3_gateway_status = http://server/api/v3/gs/gateways/<gateway_id>/connection/stats
+v3_api_key = NNSXS.redacted

@@ -2,12 +2,12 @@
 <html>
 <head>
   <?php
-  include("../include_head.php");
+  include("../web/testAndOld/include_head.php");
   ?>
 </head>
 <body>
   <?php
-  include("../include_body_top.php");
+  include("../web/testAndOld/include_body_top.php");
   ?>
   <script>
   var geojsonLayer500udeg;
@@ -19,7 +19,7 @@
   }
 
 <?php
-include("../include_base_map.php");
+include("../web/testAndOld/include_base_map.php");
 ?>
     
 
@@ -200,7 +200,8 @@ catch(PDOException $e) {
 
 
   echo "
-    var coveragetiles = L.tileLayer('/tms/index-dev.php?tile={z}/{x}/{y}', {
+    //var coveragetiles = L.tileLayer('/tms/index-dev.php?tile={z}/{x}/{y}', {
+    var coveragetiles = L.tileLayer('http://private.ttnmapper.org:8000/{z}/{x}/{y}', {
       maxNativeZoom: 18,
       maxZoom: 20,
       zIndex: 10,

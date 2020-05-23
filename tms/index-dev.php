@@ -3,13 +3,78 @@ ini_set('display_errors', 1);
 ini_set('display_startup_errors', 1);
 error_reporting(E_ALL);
 // ?tile=12/2125/1348
-$cache_location = "/tmp/ttnmappertiles-circlesheatmapdev";
-$enable_caching = false;
-$zoom_switchover = 14;
+$settings = parse_ini_file(getenv("TTNMAPPER_HOME")."/settings.conf",true);
+
+//$cache_location = "/mnt/localssd/tiles";
+if($settings['tms']['tile_cache_location'] === NULL or $settings['tms']['tile_cache_location'] === "") {
+  $cache_location = getenv("TTNMAPPER_HOME")."/tms/tiles";
+} else {
+  $cache_location = $settings['tms']['tile_cache_location'];
+}
+
+$enable_caching = true;
+$zoom_switchover = 18; // never switch over to raw packet mode as that creates too high db load
 
 main();
 
+/**
+* Strong Blur
+*
+* @param resource $gdImageResource 
+* @param int $blurFactor optional 
+*  This is the strength of the blur
+*  0 = no blur, 3 = default, anything over 5 is extremely blurred
+* @return GD image resource
+* @author Martijn Frazer, idea based on http://stackoverflow.com/a/20264482
+*/
+function blur($gdImageResource, $blurFactor = 3)
+{
+  // blurFactor has to be an integer
+  $blurFactor = round($blurFactor);
+  
+  $originalWidth = imagesx($gdImageResource);
+  $originalHeight = imagesy($gdImageResource);
 
+  $smallestWidth = ceil($originalWidth * pow(0.5, $blurFactor));
+  $smallestHeight = ceil($originalHeight * pow(0.5, $blurFactor));
+
+  // for the first run, the previous image is the original input
+  $prevImage = $gdImageResource;
+  $prevWidth = $originalWidth;
+  $prevHeight = $originalHeight;
+
+  // scale way down and gradually scale back up, blurring all the way
+  for($i = 0; $i < $blurFactor; $i += 1)
+  {    
+    // determine dimensions of next image
+    $nextWidth = $smallestWidth * pow(2, $i);
+    $nextHeight = $smallestHeight * pow(2, $i);
+
+    // resize previous image to next size
+    $nextImage = imagecreatetruecolor($nextWidth, $nextHeight);
+    imagecopyresized($nextImage, $prevImage, 0, 0, 0, 0, 
+      $nextWidth, $nextHeight, $prevWidth, $prevHeight);
+
+    // apply blur filter
+    imagefilter($nextImage, IMG_FILTER_GAUSSIAN_BLUR);
+
+    // now the new image becomes the previous image for the next step
+    $prevImage = $nextImage;
+    $prevWidth = $nextWidth;
+      $prevHeight = $nextHeight;
+  }
+
+  // scale back to original size and blur one more time
+  imagecopyresized($gdImageResource, $nextImage, 
+    0, 0, 0, 0, $originalWidth, $originalHeight, $nextWidth, $nextHeight);
+  imagefilter($gdImageResource, IMG_FILTER_GAUSSIAN_BLUR);
+
+  // clean up
+  imagedestroy($prevImage);
+
+  // return result
+  return $gdImageResource;
+}
 
 function main()
 {
@@ -64,32 +129,32 @@ function main()
   */
   global $enable_caching;
   global $zoom_switchover;
-  if($z<$zoom_switchover)
-  {
-    if( !$enable_caching or (time()-@filemtime($filename) > 24 * 3600) ) { //24 hour caching
-      createTileAggregatedSamples($x, $y, $z);
-      //createTileRawSamples($x, $y, $z);
-    }
-  }
-  elseif($z<17)
-  {
-    if( !$enable_caching or (time()-@filemtime($filename) > 24 * 3600) ) { //24 hour caching
-      createTileRawSamples($x, $y, $z);
-    }
-  }
-  elseif($z<18)
-  {
-    if( !$enable_caching or (time()-@filemtime($filename) > 6 * 3600) ) { //6 hour caching
-      createTileRawSamples($x, $y, $z);
-    }
-  }
-  else
-  {
+  // if($z<$zoom_switchover)
+  // {
+  //   if( !$enable_caching or (time()-@filemtime($filename) > 48 * 3600) ) { //48 hour caching
+  //     createTileAggregatedSamples($x, $y, $z);
+  //     //createTileRawSamples($x, $y, $z);
+  //   }
+  // }
+  // elseif($z<17)
+  // {
+  //   if( !$enable_caching or (time()-@filemtime($filename) > 48 * 3600) ) { //48 hour caching
+  //     createTileRawSamples($x, $y, $z);
+  //   }
+  // }
+  // elseif($z<18)
+  // {
+  //   if( !$enable_caching or (time()-@filemtime($filename) > 48 * 3600) ) { //48 hour caching
+  //     createTileRawSamples($x, $y, $z);
+  //   }
+  // }
+  // else
+  // {
     createTileRawSamples($x, $y, $z);
-  }
+  // }
 
   tileToBrowser($x, $y, $z);
-  logTile($x, $y, $z);
+  // logTile($x, $y, $z);
 }
 
 function logTile($x, $y, $z)
@@ -174,7 +239,7 @@ function createTileAggregatedSamples($x, $y, $z)
     // echo "db entries: ".($stmt->rowCount());
 
     // set the resulting array to associative
-    $stmt->setFetchMode(PDO::FETCH_ASSOC);
+    $result = $stmt->setFetchMode(PDO::FETCH_ASSOC);
     foreach($stmt->fetchAll() as $k=>$v) {
       $cx = ($v['lon']-$lon_min)/$lon_width * 256.0;
       $cy = 256-($v['lat']-$lat_min)/$lat_height * 256.0;
@@ -243,6 +308,16 @@ function createTileRawSamples($x, $y, $z)
   $lat_min_data = $lat_min - $lat_height;
   $lat_max_data = $lat_max + $lat_height;
 
+  // echo $lon_min_data;
+  // echo "<br />";
+  // echo $lon_max_data;
+  // echo "<br />";
+  // echo $lat_min_data;
+  // echo "<br />";
+  // echo $lat_max_data;
+
+  $conn=null; //closes the db connection
+
   //create the image from the array
   $image = @imagecreate(768, 768) or die("Cannot Initialize new GD image stream");
   imagesavealpha($image, true);
@@ -261,16 +336,30 @@ function createTileRawSamples($x, $y, $z)
   // {
     $settings = parse_ini_file(getenv("TTNMAPPER_HOME")."/settings.conf",true);
 
-    $username = $settings['database_mysql']['username'];
-    $password = $settings['database_mysql']['password'];
-    $dbname = $settings['database_mysql']['database'];
-    $servername = $settings['database_mysql']['host'];
+    $pgusername = $settings['database_postgres']['username'];
+    $pgpassword = $settings['database_postgres']['password'];
+    $pgdbname = $settings['database_postgres']['database'];
+    $pgservername = $settings['database_postgres']['host'];
 
-    $conn = new PDO("mysql:host=$servername;dbname=$dbname;charset=utf8mb4", $username, $password);
-    $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+    $connPG = new PDO("pgsql:host=$pgservername;dbname=$pgdbname", $pgusername, $pgpassword);
+    $connPG->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
-    $stmt = $conn->prepare("SELECT gweui FROM gateway_bbox 
-      WHERE lat_max>:latmax AND lat_min<:latmin AND lon_max>:lonmax AND lon_min<:lonmin");
+
+    // $myusername = $settings['database_mysql']['username'];
+    // $mypassword = $settings['database_mysql']['password'];
+    // $mydbname = $settings['database_mysql']['database'];
+    // $myservername = $settings['database_mysql']['host'];
+    $myusername = "ttnmapper";
+    $mypassword = "ttnmapperpassword";
+    $mydbname = "ttnmapper";
+    $myservername = "10.6.27.53";
+
+    $connMY = new PDO("mysql:host=$myservername;dbname=$mydbname", $myusername, $mypassword);
+    $connMY->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+
+
+    $stmt = $connMY->prepare("SELECT gweui FROM gateway_bbox 
+      WHERE lat_max>:latmin AND lat_min<:latmax AND lon_max>:lonmin AND lon_min<:lonmax");
     $stmt->bindParam(':latmin', $lat_min);
     $stmt->bindParam(':lonmin', $lon_min);
     $stmt->bindParam(':latmax', $lat_max);
@@ -287,32 +376,56 @@ function createTileRawSamples($x, $y, $z)
     global $zoom_switchover;
 
 header( 'Content-type: text/html; charset=utf-8' );
-    //ob_end_flush();
+    ob_end_flush();
+
+    echo("Gateway count: ".sizeof($gateways)."<br />");
 
     foreach ($gateways as $key => $value) {
 
       $time_start = microtime(true);
 
-      $stmt = $conn->prepare("SELECT datetime FROM gateway_updates WHERE gwaddr = :gwaddr ORDER BY datetime DESC LIMIT 1");
+      echo($value);
+
+      // Get the time the gateway was installed at the current location
+      $stmt = $connMY->prepare("SELECT datetime FROM gateway_updates WHERE gwaddr = :gwaddr ORDER BY datetime DESC LIMIT 1");
       $stmt->bindParam(':gwaddr', $value);
       $stmt->execute();
       $time = $stmt->fetch()["datetime"];
 
-      $stmt = $conn->prepare("SELECT lat,lon,rssi FROM packets ".
-        "WHERE gwaddr = :gwaddr ".
-        "AND time > :time ".
-        // "AND lat>:lat_min_pad ".
-        // "AND lon>:lon_min_pad ".
-        // "AND lat<:lat_max_pad ".
-        // "AND lon<:lon_max_pad ".
-        "ORDER BY time DESC LIMIT 2000");
+      $time_end = microtime(true);
+      $execution_time = ($time_end - $time_start);
+      echo '<br /><b>Last move:</b> '.$execution_time.'s ';
+      echo($time);
 
+      // Get the foreign key for this gateway
+      $stmt = $connPG->prepare("SELECT id FROM ttnmapper_gateways WHERE gtw_id = :gwaddr");
       $stmt->bindParam(':gwaddr', $value);
+      $stmt->execute();
+      $gtw_pg_id = $stmt->fetch()["id"];
+
+      $time_end = microtime(true);
+      $execution_time = ($time_end - $time_start);
+      echo '<br /><b>PG ID:</b> '.$execution_time.'s ';
+      echo($gtw_pg_id);
+
+      // Get the data for this gateway, for this block, since the last move
+      $stmt = $connPG->prepare(
+        "SELECT latitude,longitude,rssi FROM ttnmapper_packets_ts ".
+        "WHERE gateway_id = :gtw_pg_id ".
+        "AND   time > :time ".
+        "AND   latitude>:lat_min_pad ".
+        "AND   longitude>:lon_min_pad ".
+        "AND   latitude<:lat_max_pad ".
+        "AND   longitude<:lon_max_pad "
+        //"ORDER BY time DESC LIMIT 1"
+      );
+
+      $stmt->bindParam(':lat_min_pad', $lat_min_data);
+      $stmt->bindParam(':lon_min_pad', $lon_min_data);
+      $stmt->bindParam(':lat_max_pad', $lat_max_data);
+      $stmt->bindParam(':lon_max_pad', $lon_max_data);
+      $stmt->bindParam(':gtw_pg_id', $gtw_pg_id);
       $stmt->bindParam(':time', $time);
-      // $stmt->bindParam(':lat_min_pad', $lat_min_data);
-      // $stmt->bindParam(':lon_min_pad', $lon_min_data);
-      // $stmt->bindParam(':lat_max_pad', $lat_max_data);
-      // $stmt->bindParam(':lon_max_pad', $lon_max_data);
       
       $stmt->execute();
       
@@ -323,21 +436,21 @@ header( 'Content-type: text/html; charset=utf-8' );
 
       $time_end = microtime(true);
       $execution_time = ($time_end - $time_start);
-      echo '<b>Total Execution Time:</b> '.$execution_time.'s';
-          // die();
+      echo '<br /><b>Total Execution Time:</b> '.$execution_time.'s<br />';
       flush();
-    ob_flush();
+      //ob_flush();
     }
 
-    //Sort the data by RSSI ASC
     usort($data, function ($item1, $item2) {
         return $item1['rssi'] <=> $item2['rssi'];
     });
 
+    die();
+
     foreach ($data as $k => $v) {
-      //coordinates to pixels
-      $cx = ($v['lon']-$lon_min_data)/$lon_width * 256.0;
-      $cy = 768-($v['lat']-$lat_min_data)/$lat_height * 256.0;
+
+      $cx = ($v['longitude']-$lon_min_data)/$lon_width * 256.0;
+      $cy = 768-($v['latitude']-$lat_min_data)/$lat_height * 256.0;
 
       if($v['rssi'] < -120)
       {
