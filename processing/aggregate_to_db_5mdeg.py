@@ -20,7 +20,8 @@ config.read(os.environ.get('TTNMAPPER_HOME')+"/settings.conf")
 db = MySQLdb.connect(host=  config['database_mysql']['host'],      # your host, usually localhost
                      user=  config['database_mysql']['username'],  # your username
                      passwd=config['database_mysql']['password'],  # your password
-                     db=    config['database_mysql']['database'],  # name of the data base
+                     db=    config['database_mysql']['database'],  # name of the data base,
+                     autocommit=True
                     )
 
 block_size = 0.005
@@ -64,12 +65,12 @@ def main(argv):
   #Iterate over all known gateways
   cur_gateways.execute("SELECT DISTINCT(`gwaddr`) FROM gateways_aggregated WHERE `last_heard` > (NOW() - INTERVAL 5 DAY)")
   
-  i = 0
+  gateway_count = 0
   for gwrow in cur_gateways.fetchall():
-    i+=1
+    gateway_count+=1
     gwid=str(gwrow[0])
 
-    print(str(i)+"/"+str(cur_gateways.rowcount)+"")
+    print(str(gateway_count)+"/"+str(cur_gateways.rowcount)+"")
 
     if(len(argv)):
       if(argv[0]=="--force"):
@@ -95,6 +96,7 @@ def main(argv):
     
     sql = '''CREATE TEMPORARY TABLE
     temp_table_5mdeg 
+    ( INDEX lat_lon_idx (lat, lon), INDEX lat_idx (lat), INDEX lon_idx (lon) )
     AS (
       SELECT * FROM `packets`
       WHERE gwaddr=%s 
@@ -210,10 +212,8 @@ def main(argv):
           AND lat<%s
           AND lon>=%s
           AND lon<%s
-          AND gwaddr=%s
-          AND time>%s
         """
-        values = [block_start_lat, block_end_lat, block_start_lon, block_end_lon, gwid, moved.strftime('%Y-%m-%d %H:%M:%S')]
+        values = [block_start_lat, block_end_lat, block_start_lon, block_end_lon]
         cur_limits.execute(query, values)
         row = cur_limits.fetchone()
         samples = row[0]
@@ -236,14 +236,12 @@ def main(argv):
                AND lat<%s
                AND lon>=%s
                AND lon<%s
-               AND gwaddr=%s
-               AND time>%s
                ORDER BY `time` DESC
                LIMIT 10
             ) AS plr
             """
 
-          values = [block_start_lat, block_end_lat, block_start_lon, block_end_lon, gwid, moved.strftime('%Y-%m-%d %H:%M:%S')]
+          values = [block_start_lat, block_end_lat, block_start_lon, block_end_lon]
           
           cur_limits.execute(query, values)
           row = cur_limits.fetchone()

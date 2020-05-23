@@ -20,19 +20,19 @@ db = MySQLdb.connect(host=  config['database_mysql']['host'],      # your host, 
                      passwd=config['database_mysql']['password'],  # your password
                      db=    config['database_mysql']['database'],  # name of the data base
                      cursorclass=MySQLdb.cursors.DictCursor,
-                     charset='utf8')
-
+                     charset='utf8',
+                     autocommit=True)
 
 def main(argv):
   cursor = db.cursor()
-  cursor_update = db.cursor()
 
-  cursor_update.execute('SET NAMES utf8mb4;')
-  cursor_update.execute('SET CHARACTER SET utf8mb4;')
-  cursor_update.execute('SET character_set_connection=utf8mb4;')
+  cursor.execute('SET NAMES utf8mb4;')
+  cursor.execute('SET CHARACTER SET utf8mb4;')
+  cursor.execute('SET character_set_connection=utf8mb4;')
 
   cursor.execute("SELECT DISTINCT(gwaddr) FROM  `gateways_aggregated`")
   gateway_list = cursor.fetchall()
+
   for gateway in gateway_list:
 
     gwaddr = gateway["gwaddr"]
@@ -53,11 +53,10 @@ def main(argv):
         values = (description, gateway["gwaddr"])
         print values
 
-        cursor_update.execute("UPDATE `gateways_aggregated` SET `description` = %s WHERE `gwaddr` = %s", values)
+        cursor.execute("UPDATE `gateways_aggregated` SET `description` = %s WHERE `gwaddr` = %s", values)
 
-  db.commit()
+  # db.commit()
   cursor.close()
-  cursor_update.close()
   db.close()
 
 

@@ -150,6 +150,7 @@
   <script src="/libs/leaflet/leaflet.js"></script>
   <script src="/libs/leaflet.measure/leaflet.measure.js"></script>
   <script src="/libs/Leaflet.markercluster/dist/leaflet.markercluster.js"></script>
+  <script src="leaflet-kml-master/L.KML.js"></script>
 
   <!-- HTML entity escaping -->
   <script src="/libs/he/he.js"></script>

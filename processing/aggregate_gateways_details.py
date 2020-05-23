@@ -20,7 +20,8 @@ db = MySQLdb.connect(host=  config['database_mysql']['host'],      # your host, 
                      user=  config['database_mysql']['username'],  # your username
                      passwd=config['database_mysql']['password'],  # your password
                      db=    config['database_mysql']['database'],  # name of the data base
-                     cursorclass=MySQLdb.cursors.DictCursor)
+                     cursorclass=MySQLdb.cursors.DictCursor,
+                     autocommit=True)
 
 cur_select = db.cursor()
 cur_update = db.cursor()
@@ -42,25 +43,19 @@ def update_bbox(gwaddr):
       lon_max = float(row['lon'])
       lon_min = float(row['lon'])
     
+
     sql = "SELECT max(lat) as maxlat, min(lat) as minlat, max(lon) as maxlon, min(lon) as minlon, count(*) as count FROM `packets` WHERE gwaddr=\""+gwaddr+"\" AND time>\""+moved.strftime('%Y-%m-%d %H:%M:%S')+"\""
     cur_select.execute(sql)
 
     for row in cur_select.fetchall():
-      # if(row['maxlat']==None or row['minlat']==None or row['maxlon']==None or row['minlon']==None):
-      #   print ("No data")
-      #   clear_bbox(gwaddr)
-      #   return
       if(row['maxlat']!=None and row['minlat']!=None and row['maxlon']!=None and row['minlon']!=None):
-        lat_max = float(row['maxlat'])
-        lat_min = float(row['minlat'])
-        lon_max = float(row['maxlon'])
-        lon_min = float(row['minlon'])
-    # if(lat_max==None or lat_min==None or lon_max==None or lon_min==None):
-    #   clear_bbox(gwaddr)
-    #   return
+        lat_max = max( lat_max, float(row['maxlat']) )
+        lat_min = min( lat_min, float(row['minlat']) )
+        lon_max = max( lon_max, float(row['maxlon']) )
+        lon_min = min( lon_min, float(row['minlon']) )
 
     #save bounding box
-    clear_bbox(gwaddr)
+    # clear_bbox(gwaddr)
     cur_update.execute("""INSERT INTO gateway_bbox
       (gweui, lon_min, lat_min, lon_max, lat_max)
     VALUES
@@ -105,15 +100,18 @@ def main(argv):
     print (gwaddr, end="\t")
 
     start_time = time.time()
-
-    cur_select.execute('SELECT count(distinct(`freq`)) as channel_count, count(*) as packet_count FROM packets WHERE gwaddr="'+gwaddr+'"')
+    cur_select.execute('SELECT count(distinct(`freq`)) as channel_count FROM packets WHERE gwaddr="'+gwaddr+'"')
     row = cur_select.fetchone()
     end_time = time.time()
-    print("freqcnt="+str(end_time - start_time), end="\t")
-
+    print("channel count = "+str(end_time - start_time), end="\t")
     channel_count = row["channel_count"]
+
+    start_time = time.time()
+    cur_select.execute('SELECT count(*) as packet_count FROM packets WHERE gwaddr="'+gwaddr+'"')
+    row = cur_select.fetchone()
+    end_time = time.time()
+    print("packet count = "+str(end_time - start_time), end="\t")
     packet_count = row["packet_count"]
-    #print (`channel_count` + " " + `packet_count`)
 
     cur_select.execute('SELECT * FROM gateway_updates WHERE gwaddr="'+gwaddr+'" ORDER BY datetime DESC LIMIT 1')
     row = cur_select.fetchone()
@@ -122,12 +120,9 @@ def main(argv):
 
     lat = row["lat"]
     lon = row["lon"]
-    # last_heard = row["last_update"]
-    # if(last_heard==None):
     first_heard = row["datetime"]
-    # print ("Last heard="+str(last_heard))
 
-    # if(packet_count>0):
+
     cur_select.execute('SELECT count(*) as count FROM gateways_aggregated WHERE gwaddr="'+gwaddr+'"')
     rowcount = cur_select.fetchone()["count"]
     end_time = time.time()
@@ -146,10 +141,6 @@ def main(argv):
       end_time = time.time()
       print("insert="+str(end_time - start_time), end="\t")
     
-    # if(last_heard < (datetime.now() - timedelta(days=5))):
-    #   print ("Offline")
-    #   clear_bbox(gwaddr)
-    # else:
     update_bbox(gwaddr)
 
     end_time = time.time()
@@ -159,6 +150,8 @@ def main(argv):
   cur_update.close()
   cur_select.close()
   db.close()
+
+
 
 if __name__ == "__main__":
 
