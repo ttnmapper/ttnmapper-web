@@ -2,11 +2,11 @@
 error_reporting(E_ALL);
 ini_set('display_errors', 1);
 
-include "payload_fields_parser.php";
-include "email_validator.php";
-include "data_validator.php";
-include "database.php";
-include "responses.php";
+include "../payload_fields_parser.php";
+include "../email_validator.php";
+include "../data_validator.php";
+include "../database.php";
+include "../responses.php";
 
 $values = array();
 $values["user_agent"] = "ttn_http_integration_v2";
@@ -16,57 +16,7 @@ $received = file_get_contents('php://input');
 
 file_put_contents($logfile, $received."\n\n" , FILE_APPEND | LOCK_EX);
 
-
-
-
-
-
-// Also forward to new backend
-/*$url = 'https://test-integrations.ttnmapper.org/ttn/v2';
-
-$opts = array('http' =>
-    array(
-        'method'  => 'POST',
-        'header' => array(
-            'Content-type: application/json',
-            'Authorization: '.$_SERVER['HTTP_AUTHORIZATION']
-        ),
-        'content' => $received,
-	'timeout' => 1  //1 Second
-    )
-);*/
-
-//$context  = stream_context_create($opts);
-
-//$result = @file_get_contents($url, false, $context);
-//print($result);
-
-//echo $result;
-
-//die();
-
-// Also forward to new backend
-// $url = 'http://dev.ttnmapper.org:8080/v1/ttn/v2';
-
-// $opts = array('http' =>
-//     array(
-//         'method'  => 'POST',
-//         'header' => array(
-//             'Content-type: application/json',
-//             'Authorization: '.$_SERVER['HTTP_AUTHORIZATION']
-//         ),
-//         'content' => $received,
-//         'timeout' => 1  //1 Second 
-//     )
-// );
-
-// $context  = stream_context_create($opts);
-
-// $result = @file_get_contents($url, false, $context);
-//print($result);
-
-
-
+die();
 
 
 
