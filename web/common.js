@@ -57,7 +57,7 @@ function addBackgroundLayers() {
 
   // https: also suppported.
   var Stamen_TonerLite = L.tileLayer('https://stamen-tiles-{s}.a.ssl.fastly.net/toner-lite/{z}/{x}/{y}.{ext}', {
-    attribution: 'Map tiles by <a href="http://stamen.com">Stamen Design</a>, <a href="http://creativecommons.org/licenses/by/3.0">CC BY 3.0</a> &mdash; Map data &copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>',
+    attribution: 'Map tiles by <a href="http://stamen.com">Stamen Design</a>, <a href="http://creativecommons.org/licenses/by/3.0">CC BY 3.0</a> | Map data &copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>',
     subdomains: 'abcd',
     minZoom: 0,
     maxZoom: 20,
@@ -66,9 +66,11 @@ function addBackgroundLayers() {
   });
 
 
-  var OpenStreetMap_Mapnik_Grayscale = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-    maxZoom: 19,
-    attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>',
+  //var OpenStreetMap_Mapnik_Grayscale = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    var OpenStreetMap_Mapnik_Grayscale = L.tileLayer('https://maps.iotdash.nl/osm/{z}/{x}/{y}.png', {
+    maxZoom: 20,
+    // attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>',
+    attribution: '<a href="https://www.skylab.nl" title="Powered by SkyLab B.V.">Powered by SkyLab B.V.</a> | <a href="https://www.openstreetmap.org" title="&copy; OpenStreetMap">&copy; OpenStreetMap</a>',
     fadeAnimation: false,
     className: 'toGrayscale'
   });
@@ -81,9 +83,11 @@ function addBackgroundLayers() {
   });
 
   // https: also suppported.
-  var OpenStreetMap_Mapnik = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-    maxZoom: 19,
-    attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>',
+  // var OpenStreetMap_Mapnik = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+  var OpenStreetMap_Mapnik = L.tileLayer('https://maps.iotdash.nl/osm/{z}/{x}/{y}.png', {
+    maxZoom: 20,
+    // attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>',
+    attribution: '<a href="https://www.skylab.nl" title="Powered by SkyLab B.V.">Powered by SkyLab B.V.</a> | <a href="https://www.openstreetmap.org" title="&copy; OpenStreetMap">&copy; OpenStreetMap</a>',
     fadeAnimation: false
   });
 
@@ -209,23 +213,28 @@ function addGateways(gateways)
     }
   }
 
-  $.ajax({
-    type: "POST",
-    url: "/webapi/gwdetailslist.php",
-    // The key needs to match your method's input parameter (case-sensitive).
-    data: JSON.stringify({ "gateways": gatewaysToAdd }),
-    contentType: "application/json; charset=utf-8",
-    dataType: "json",
-    success: function(data){
-      for(gateway in data) {
-        addGatewayMarker(gateway, data[gateway]);
+  if(gatewaysToAdd.length > 0) {
+    $.ajax({
+      type: "POST",
+      url: "/webapi/gwdetailslist.php",
+      // The key needs to match your method's input parameter (case-sensitive).
+      data: JSON.stringify({ "gateways": gatewaysToAdd }),
+      contentType: "application/json; charset=utf-8",
+      dataType: "json",
+      success: function(data){
+        for(gateway in data) {
+          addGatewayMarker(gateway, data[gateway]);
+        }
+        showOrHideLayers();
+      },
+      failure: function(errMsg) {
+        console.log(errMsg);
+        showOrHideLayers();
       }
-      showOrHideLayers();
-    },
-    failure: function(errMsg) {
-      console.log(errMsg);
-    }
-  });
+    });
+  } else {
+    showOrHideLayers();
+  }
 
 }
 
@@ -234,10 +243,18 @@ function addGatewayMarker(gateway, data)
   if(gateway in loadedGateways) {
     return;
   } else {
-    // console.log("Adding "+gateway);
+    console.log("Adding "+gateway);
 
     if(data['lat'] === null || data['lon'] === null) {
       console.log("Gateway "+gateway+" location is null");
+      return;
+    }
+    if(data['lat'] === undefined || data['lon'] === undefined) {
+      console.log("Gateway "+gateway+" location is undefined");
+      return;
+    }
+    if(Math.abs(data['lat']) < 1 && Math.abs(data['lon']) < 1) {
+      console.log("Gateway "+gateway+" location is on null island");
       return;
     }
 
@@ -312,6 +329,9 @@ function addGatewayMarker(gateway, data)
 
 function formatTime(timestamp)
 {
+  if(timestamp === undefined) {
+  	return "unknown";
+  }
   var date = new Date(timestamp*1000);
   return date.toISOString();
 }

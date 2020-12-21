@@ -32,24 +32,30 @@ try
     if ($locresult['description'] != null) {
       $details['description'] = $locresult['description'];
     }
-    $details['lat'] = $locresult['lat'];
-    $details['lon'] = $locresult['lon'];
-    $details['last_heard'] = $locresult['last_heard'];
-    $details['channels'] = $locresult['channels'];
+    if($locresult['lat'] != null) {
+        $details['lat'] = floatval($locresult['lat']);
+    }
+    if($locresult['lon'] != null) {
+        $details['lon'] = floatval($locresult['lon']);
+    }
+    if($locresult['last_heard'] != null) {
+        $details['last_heard'] = intval($locresult['last_heard']);
+    }
+    $details['channels'] = intval($locresult['channels']);
     //$details['gwaddr'] = $_REQUEST['gwaddr'];
 
-    if ($details['lat'] == null or $details['lon'] == null) {
-      $sqlloc = $conn->prepare("SELECT lat,lon,UNIX_TIMESTAMP(last_update) as last_update FROM gateway_updates WHERE gwaddr=:gwaddr ORDER BY datetime DESC LIMIT 1");
-      $sqlloc->bindParam(':gwaddr', $gwaddr);
-      $sqlloc->execute();
-      $sqlloc->setFetchMode(PDO::FETCH_ASSOC); 
-      $locresult = $sqlloc->fetch();
-      if($locresult) {
-        $details['lat'] = $locresult['lat'];
-        $details['lon'] = $locresult['lon'];
-        $details['last_heard'] = $locresult['last_update'];
-      }
-    }
+    // if ($details['lat'] == null or $details['lon'] == null) {
+    //   $sqlloc = $conn->prepare("SELECT lat,lon,UNIX_TIMESTAMP(last_update) as last_update FROM gateway_updates WHERE gwaddr=:gwaddr ORDER BY datetime DESC LIMIT 1");
+    //   $sqlloc->bindParam(':gwaddr', $gwaddr);
+    //   $sqlloc->execute();
+    //   $sqlloc->setFetchMode(PDO::FETCH_ASSOC); 
+    //   $locresult = $sqlloc->fetch();
+    //   if($locresult) {
+    //     $details['lat'] = $locresult['lat'];
+    //     $details['lon'] = $locresult['lon'];
+    //     $details['last_heard'] = $locresult['last_update'];
+    //   }
+    // }
 
     $gwdetails[$gwaddr] = $details;
   }

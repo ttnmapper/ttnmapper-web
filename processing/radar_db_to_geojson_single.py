@@ -33,6 +33,7 @@ outputfile = "radar-single"
 
 mergedBluePolygons = []
 
+
 def addTriangle(gwlat, gwlon, bearing, distance, features):
   if(distance<1):
     return
@@ -145,6 +146,9 @@ def main(argv):
 
         previous_distance = distance
 
+
+      # Build json and write to file
+      filename = output_folder+"/"+gwaddr+"/"+outputfile+".geojson"
       try:
 
         feature = {}
@@ -154,6 +158,9 @@ def main(argv):
         if(len(points)>3):
           points.append(points[0])
         else:
+          print("Less than three points, deleting old coverage")
+          if os.path.exists(filename):
+            os.remove(filename)
           continue
 
         feature["geometry"]["coordinates"] = [points]
@@ -164,7 +171,7 @@ def main(argv):
         previous_points=points
 
 
-        features.append(feature)
+        # features.append(feature)
         gwfeatures.append(feature)
       except Exception as e: 
         print (e)
@@ -175,7 +182,6 @@ def main(argv):
       gwgeojson["type"] = "FeatureCollection"
       gwgeojson["features"] = gwfeatures
 
-      filename = output_folder+"/"+gwaddr+"/"+outputfile+".geojson"
       if not os.path.exists(os.path.dirname(filename)):
         try:
             os.makedirs(os.path.dirname(filename))
@@ -184,26 +190,27 @@ def main(argv):
                 raise
 
       with open(filename, "w") as text_file:
+        print("Writing data")
         text_file.write(json.dumps(gwgeojson))
 
 
-    #global geojson file
-    geojson = {}
-    geojson["type"] = "FeatureCollection"
-    geojson["features"] = features
+    # #global geojson file
+    # geojson = {}
+    # geojson["type"] = "FeatureCollection"
+    # geojson["features"] = features
 
-    filename = output_folder+"/"+outputfile+".geojson"
-    if not os.path.exists(os.path.dirname(filename)):
-      try:
-          os.makedirs(os.path.dirname(filename))
-      except OSError as exc: # Guard against race condition
-          if exc.errno != errno.EEXIST:
-              raise
+    # filename = output_folder+"/"+outputfile+".geojson"
+    # if not os.path.exists(os.path.dirname(filename)):
+    #   try:
+    #       os.makedirs(os.path.dirname(filename))
+    #   except OSError as exc: # Guard against race condition
+    #       if exc.errno != errno.EEXIST:
+    #           raise
 
-    with open(filename, "w") as text_file:
-      text_file.write(json.dumps(geojson))
+    # with open(filename, "w") as text_file:
+    #   text_file.write(json.dumps(geojson))
 
-    with open(filename+"-exceptions", "w") as text_file:
+    with open(output_folder+"/"+outputfile+"-exceptions", "w") as text_file:
       text_file.write(json.dumps(exceptions))
 
     cur_gateways.close()

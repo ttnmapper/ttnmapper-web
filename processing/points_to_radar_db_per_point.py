@@ -33,6 +33,7 @@ levels = [-100, -105, -110, -115, -120, -200]
 memcache = {}
 
 FORCE_UPDATE = []
+FORCE_ALL = False
 
 
 def calculate_initial_compass_bearing(pointA, pointB):
@@ -101,6 +102,11 @@ def process_gateway(gwid):
 
     # get the start time from when the gateway was moved/installed
     cursor.execute('SELECT lat,lon,datetime FROM gateway_updates WHERE gwaddr="'+gwid+'" ORDER BY datetime DESC LIMIT 1')
+
+    if cursor.rowcount < 1:
+      print("No location history")
+      return
+
     location_row = cursor.fetchone()
 
     gwlat = location_row['lat']
@@ -109,7 +115,7 @@ def process_gateway(gwid):
 
     select_from_timestamp = moved
 
-    if gwid in FORCE_UPDATE:
+    if (gwid in FORCE_UPDATE) or FORCE_ALL:
       print("Force updating", gwid)
       add_zeros_to_memcache(gwid)
       cursor.execute('DELETE FROM `radar` WHERE gwaddr="'+gwid+'" ')
@@ -361,7 +367,10 @@ if __name__ == "__main__":
 
 
   if(len(sys.argv)>1):
-    FORCE_UPDATE = sys.argv[1:]
+    if sys.argv[1] == "all":
+      FORCE_ALL = True
+    else:
+      FORCE_UPDATE = sys.argv[1:]
 
   #call main function
   main()

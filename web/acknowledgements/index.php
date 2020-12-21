@@ -126,20 +126,35 @@
     </div>
 
     <div class="card mt-4">
-      <h5 class="card-header">Sponsorship</h5>
+      <h5 class="card-header">Shuttleworth Foundation</h5>
       <div class="card-body">
-        <dl>
-          <dt>Shuttleworth Foundation</dt>
-          <dd>For a <a href="https://www.shuttleworthfoundation.org/fellows/flash-grants/">flash grant during 2018</a> to support with opensourcing TTN Mapper, server hosting costs, and getting me to attend The Things Conference.
-          </dd>
+        For a <a href="https://www.shuttleworthfoundation.org/fellows/flash-grants/">flash grant during 2018</a> to support with opensourcing TTN Mapper, server hosting costs, and getting me to attend The Things Conference.
+      </div>
+    </div>
 
-          <dt>Patreon supporters</dt>
-          <dd>A number of patrons make a monthly contribution to cover the running cost of TTN Mapper. Some of their names are listed below.</dd>
-          <dd>6 anonymous patrons</dd>
-          <dd>Bruce Fitzsimons</dd>
-          <dd>Giovanni Bertozzi</dd>
-          <dd>@Ryanteck</dd>
-        </dl>
+    <div class="card mt-4">
+      <h5 class="card-header">Patreon supporters</h5>
+      <div class="card-body">
+        A number of patrons make a monthly contribution to cover the running cost of TTN Mapper. Some of their names are listed below.
+        <ul>
+          <li>22 anonymous patrons</li>
+          <li>Bruce Fitzsimons</li>
+          <li>Giovanni Bertozzi</li>
+          <li>@Ryanteck</li>
+          <li>Adam Roberts</li>
+          <li><a href="https://meshed.com.au/"><img src="Meshed-240x150-2.png" style="height: 40px;"/>&nbsp;Meshed</a></li>
+          <li>Keptenkurk</li>
+          <li>Howard Phillips</li>
+        </ul>
+      </div>
+    </div>
+
+   <div class="card mt-4">
+      <h5 class="card-header">Other donations received from</h5>
+      <div class="card-body">
+        <ul>
+          <li><a href="https://www.boatofficer.com/">BoatOfficer</a></li>
+        </ul>
       </div>
     </div>
 

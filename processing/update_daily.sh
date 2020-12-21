@@ -3,8 +3,9 @@
 $TTNMAPPER_HOME/processing/stats_per_device.py
 $TTNMAPPER_HOME/processing/stats_per_application.py
 #$TTNMAPPER_HOME/processing/aggregate_gateways_lastheard.py
-$TTNMAPPER_HOME/processing/aggregate_gateways_details.py
-$TTNMAPPER_HOME/processing/gateway_descriptions.py
+$TTNMAPPER_HOME/processing/gateways_update_bbox.py
+$TTNMAPPER_HOME/processing/gateways_update_channelcount.py
+#$TTNMAPPER_HOME/processing/gateway_descriptions.py
 #$TTNMAPPER_HOME/processing/points_to_radar_db.py
 $TTNMAPPER_HOME/processing/circles_all_geojson.py
 #$TTNMAPPER_HOME/processing/circles_single.py

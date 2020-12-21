@@ -141,9 +141,9 @@ var gatewayMarkers = L.markerClusterGroup({
 var showUnmappedGateways = "<?php echo $showUnmappedGateways; ?>";
 
 // When less than this number of gateways are in view we display the full resolution coverage
-var layerSwapGwCount = 300;
+var layerSwapGwCount = 600;
 // If les than this number is shown we display a lower resolution coverage, ie. circles
-var layerHideGwCount = 2000;
+var layerHideGwCount = 4000;
 // Above this number we only display the gateway markers.
 
 // The location to which the map will zoom to for a new user.

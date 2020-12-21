@@ -28,7 +28,7 @@ block_size = 0.005
 
 def clear_gateway(db, gweui):
   cursor = db.cursor()
-  cursor.execute('DELETE FROM `5mdeg` WHERE `gwaddr`="'+gweui+'"')
+  cursor.execute('DELETE FROM 5mdeg WHERE gwaddr=%s', [gweui])
   db.commit()
 
 def main(argv):
@@ -54,16 +54,16 @@ def main(argv):
   print ("Startup")
 
   #Remove non existent gateways from aggregate table
-  cur_gateways.execute("SELECT DISTINCT(`gwaddr`) FROM 5mdeg")
+  cur_gateways.execute("SELECT DISTINCT(gwaddr) FROM 5mdeg")
   for gwrow in cur_gateways.fetchall():
     gwid=str(gwrow[0])
 
-    cur_gatewayloc.execute('SELECT * FROM gateways_aggregated WHERE gwaddr=%s AND `last_heard` > (NOW() - INTERVAL 5 DAY)', [gwid])
+    cur_gatewayloc.execute('SELECT * FROM gateways_aggregated WHERE gwaddr=%s AND last_heard > (NOW() - INTERVAL 5 DAY)', [gwid])
     if(cur_gatewayloc.rowcount<1):
       cur_gatewayloc.execute('DELETE FROM 5mdeg WHERE gwaddr=%s', [gwid])
 
   #Iterate over all known gateways
-  cur_gateways.execute("SELECT DISTINCT(`gwaddr`) FROM gateways_aggregated WHERE `last_heard` > (NOW() - INTERVAL 5 DAY)")
+  cur_gateways.execute("SELECT DISTINCT(gwaddr) FROM gateways_aggregated WHERE last_heard > (NOW() - INTERVAL 5 DAY)")
   
   gateway_count = 0
   for gwrow in cur_gateways.fetchall():
@@ -98,7 +98,7 @@ def main(argv):
     temp_table_5mdeg 
     ( INDEX lat_lon_idx (lat, lon), INDEX lat_idx (lat), INDEX lon_idx (lon) )
     AS (
-      SELECT * FROM `packets`
+      SELECT * FROM packets
       WHERE gwaddr=%s 
       )'''
     values = [gwid]
@@ -112,7 +112,7 @@ def main(argv):
     startTime = time.time()
 
     sql = "DELETE FROM temp_table_5mdeg WHERE time<%s"
-    values = [moved.strftime('%Y-%m-%d %H:%M:%S')]
+    values = [moved]
     cur_limits.execute(sql, values)
 
     print("Old data filtered")
@@ -120,7 +120,7 @@ def main(argv):
     print(endTime - startTime)
     
     # sql = "SELECT max(lat),min(lat),max(lon),min(lon),max(time),count(*) FROM `packets` WHERE gwaddr=\""+gwid+"\" AND time>\""+moved.strftime('%Y-%m-%d %H:%M:%S')+"\""
-    sql = "SELECT max(lat),min(lat),max(lon),min(lon),max(time),count(*) FROM `temp_table_5mdeg`"
+    sql = "SELECT max(lat),min(lat),max(lon),min(lon),max(time),count(*) FROM temp_table_5mdeg"
     cur_limits.execute(sql)
 
     if cur_limits.rowcount==0:
@@ -149,7 +149,7 @@ def main(argv):
     #also handle when zero entries for gateway in 5mdeg
     startTime = time.time()
 
-    sql_last = "SELECT max(last_update),sum(samples) FROM `5mdeg` WHERE gwaddr=%s"
+    sql_last = "SELECT max(last_update),sum(samples) FROM 5mdeg WHERE gwaddr=%s"
     cur_lastagg.execute(sql_last, [gwid])
 
     print("Last update read from aggregates")
@@ -204,10 +204,10 @@ def main(argv):
 
         #new point, increment counter and print stats
         current_cell += 1
-        print("  "+`current_cell`+" of "+str(int(total_cells))+" - "+`round(float(current_cell)/float(total_cells)*100.0)`+"%                  ", end='\r')
+        print("  "+str(current_cell)+" of "+str(int(total_cells))+" - "+str(round(float(current_cell)/float(total_cells)*100.0))+"%                  ", end='\r')
         
         query = """
-        SELECT count(*) FROM `temp_table_5mdeg`
+        SELECT count(*) FROM temp_table_5mdeg
           WHERE lat>=%s
           AND lat<%s
           AND lon>=%s
@@ -223,20 +223,20 @@ def main(argv):
 
           query = """
           SELECT
-            AVG(plr.`rssi`),
-            MIN(plr.`rssi`),
-            MAX(plr.`rssi`),
-            AVG(plr.`snr`),
-            MIN(plr.`snr`),
-            MAX(plr.`snr`),
-            MAX(plr.`time`)
+            AVG(plr.rssi),
+            MIN(plr.rssi),
+            MAX(plr.rssi),
+            AVG(plr.snr),
+            MIN(plr.snr),
+            MAX(plr.snr),
+            MAX(plr.time)
             FROM (
               SELECT * FROM temp_table_5mdeg
               WHERE lat>=%s
                AND lat<%s
                AND lon>=%s
                AND lon<%s
-               ORDER BY `time` DESC
+               ORDER BY time DESC
                LIMIT 10
             ) AS plr
             """
@@ -253,7 +253,7 @@ def main(argv):
           snrmax = row[5]
           timemax = row[6]
 
-          sql_update = """SELECT * FROM `5mdeg`
+          sql_update = """SELECT * FROM 5mdeg
           WHERE gwaddr=%s
           AND lat = %s
           AND lon = %s"""
@@ -265,7 +265,7 @@ def main(argv):
             updates+=1
 
             sql_update = """
-            UPDATE `5mdeg`
+            UPDATE 5mdeg
             SET last_update=%s,
             samples=%s,
             rssimin=%s, rssimax=%s,rssiavg=%s,
@@ -286,7 +286,7 @@ def main(argv):
           
           else:
             inserts+=1
-            sql_insert = ('INSERT INTO `5mdeg` '+
+            sql_insert = ('INSERT INTO 5mdeg '+
             '(gwaddr, last_update, lat, lon, samples, '+
             'rssimin, rssimax, rssiavg,'+
             'snrmin, snrmax, snravg) '+
@@ -303,7 +303,7 @@ def main(argv):
         else:
           #delete aggregate from db in case gateway moved
           sql_delete = """
-          DELETE FROM `5mdeg`
+          DELETE FROM 5mdeg
           WHERE gwaddr=%s
           AND lat = %s
           AND lon = %s

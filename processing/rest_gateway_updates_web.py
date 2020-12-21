@@ -11,8 +11,7 @@ from geopy.distance import great_circle
 import requests
 import configparser
 import subprocess
-
-ignored_euis = ["0102030405060708", "0000000000001DEE", "000000000000000E", "000000000000FFFE", "3135323512003300", "323433362D005800"]
+import pytz
 
 retry_using_noc = [] # gateways that does not have a lastheard set on this api
 
@@ -50,48 +49,15 @@ db = MySQLdb.connect(host=  config['database_mysql']['host'],      # your host, 
                      user=  config['database_mysql']['username'],  # your username
                      passwd=config['database_mysql']['password'],  # your password
                      db=    config['database_mysql']['database'],  # name of the data base,
+                     charset='utf8',
                      autocommit=True
                     )
 
 cur = db.cursor()
+cur.execute('SET NAMES utf8mb4;')
+cur.execute('SET CHARACTER SET utf8mb4;')
+cur.execute('SET character_set_connection=utf8mb4;')
 
-import twitter
-api = twitter.Api(consumer_key=config['twitter']['consumer_key'],
-                  consumer_secret=config['twitter']['consumer_secret'],
-                  access_token_key=config['twitter']['access_token_key'],
-                  access_token_secret=config['twitter']['access_token_secret'])
-
-def postToTwitter(message):
-  try:
-    status = api.PostUpdate(message)
-  except UnicodeDecodeError:
-    print("Your message could not be encoded.  Perhaps it contains non-ASCII characters? ")
-    print("Try explicitly specifying the encoding with the --encoding flag")
-    return
-
-  print("{0} just posted: {1}".format(status.user.name, status.text))
-
-def postToSlack(message):
-  urlSlack = config['slack']['new_gateway_hook']
-  payload = {"text": message}
-
-  req = urllib2.Request(urlSlack)
-  req.add_header('Content-Type', 'application/json')
-  response = urllib2.urlopen(req, json.dumps(payload))
-
-def doReverseGeocoding(gwaddr, datetime, lat, lon):
-  url = "https://maps.googleapis.com/maps/api/geocode/json?language=en&latlng="+str(lat)+","+str(lon)+"&key="+config['google']['api_key']+"&result_type=locality|political|country"
-  response = urllib.urlopen(url)
-  location = json.loads(response.read())
-
-  if("status" in location and location["status"] == "ZERO_RESULTS"):
-    # use lat and lon
-    pretty = str(lat)+","+str(lon)
-  else:
-    pretty = location["results"][0]["formatted_address"]
-
-  postToTwitter("New gateway: "+gwaddr+"\nLocation: "+pretty+"\nhttps://www.google.com/maps/search/?api=1&query="+str(lat)+","+str(lon)+"")
-  postToSlack("A new gateway, *"+gwaddr+"*, was installed at <https://www.google.com/maps/search/?api=1&query="+str(lat)+","+str(lon)+"|"+pretty+">")
 
 def on_message(gwid, gwdata):
   """
@@ -124,6 +90,10 @@ def on_message(gwid, gwdata):
   exists = False
   gwlatdb=0
   gwlondb=0
+  
+  description = gwid
+  if "description" in gwdata:
+    description = gwdata['description']
 
   if not "last_seen" in gwdata:
     print("Last seen not set. Trying NOC")
@@ -148,7 +118,7 @@ def on_message(gwid, gwdata):
   except:
     gwaltjs=0
 
-  cur.execute("SELECT lat,lon FROM gateway_updates WHERE gwaddr=%s ORDER BY datetime DESC LIMIT 1", (gwaddr,))
+  cur.execute("SELECT lat,lon FROM gateways_aggregated WHERE gwaddr=%s", (gwaddr,))
   
   if(cur.rowcount <1):
     update = True
@@ -177,11 +147,6 @@ def on_message(gwid, gwdata):
   else:
     #print ("Location did not change: "+str(round(distance)), end=' ')
     pass
-
-  if(gwaddr in ignored_euis):
-    print ("Ignored EUI.", end=' ')
-    update = False
-    #return
     
   if(gwlatjs==52.0 and gwlonjs==6.0):
     print ("Default SCG location, ignoring.", end=' ')
@@ -222,41 +187,69 @@ def on_message(gwid, gwdata):
       (gwaddr, lastSeen, gwlatjs, gwlonjs, gwaltjs, lastSeen)
     )
     db.commit()
+    update_gateway(gwaddr, gwlatjs, gwlonjs, lastSeen, description)
 
   elif exists == True:
     print ("Updating last seen.", end=' ')
-
-    # To speed things up do not update last seen column in raw data table
-    # cur.execute(
-    #   'UPDATE `gateway_updates` SET `last_update`=%s '+
-    #   'WHERE gwaddr=%s AND (last_update<%s OR last_update IS NULL)',
-    #   (lastSeen, gwaddr, lastSeen)
-    # )
-
-    # If it exist it is likely also in the aggregate table, so try and update the last heard
-    try:
-      cur.execute(
-        'UPDATE `gateways_aggregated` SET last_heard=%s WHERE gwaddr=%s', 
-        (lastSeen, gwaddr)
-      )
-    except:
-      print("Doesn't exist in aggregate table.", end=' ')
-      pass
-
-    db.commit()
+    update_gateway(gwaddr, gwlatjs, gwlonjs, lastSeen, description)
     print ("Done.", end=' ')
   else:
     print("Not adding or updating.", end=' ')
 
   if update == True and exists == False:
     print("New gateway "+gwaddr)
-    try:
-      doReverseGeocoding(gwaddr, datetime, gwlatjs, gwlonjs)
-    except:
-      print("Error while posting to slack or twitter")
-      pass
+
+
+  # When we deleted days from the gateway_updates table, some gateways appeared in the aggregated table, but not in the history.
+  # This caused some gateway to never appear on the map. So add a history now if it does not have any.
+  fix_missing_history(gwaddr, gwlatjs, gwlonjs, gwaltjs, lastSeen)
 
   print()
+
+
+def update_gateway(gwaddr, latitude, longitude, last_seen, description):
+
+  cur.execute("SELECT last_heard FROM gateways_aggregated WHERE gwaddr=%s", (gwaddr,))
+  last_heard_db = None
+  for row in cur.fetchall():
+    last_heard_db = row[0]
+
+  if last_heard_db == None:
+    last_heard_db = datetime.datetime.fromtimestamp(0)
+  last_heard_db = last_heard_db.replace(tzinfo=pytz.UTC)
+
+  # Doesn't exist, so add a new one
+  if(cur.rowcount <1):
+    print ("No entry yet.", end=' ')
+    cur.execute(
+      'INSERT INTO gateways_aggregated (gwaddr, lat, lon, last_heard, description) VALUES (%s, %s, %s, %s, %s)',
+      (gwaddr, latitude, longitude, last_seen, description)
+    )
+
+  else:
+
+    # Update the last_seen time in the gateways_aggregated table only if our last_seen is newer than the existing last_seen
+    if last_heard_db < last_seen:
+      cur.execute(
+        'UPDATE gateways_aggregated SET lat=%s, lon=%s, last_heard=%s, description=%s WHERE gwaddr = %s',
+        (latitude, longitude, last_seen, description, gwaddr)
+      )
+    else:
+      print("Last heard stale", last_heard_db, ">", last_seen)
+
+  db.commit()
+
+
+def fix_missing_history(gwaddr, latitude, longitude, altitude, last_seen):
+  # No entry means it's a new gateway, so also add a location in history
+  cur.execute("SELECT * FROM gateway_updates WHERE gwaddr=%s", (gwaddr,))
+
+  if(cur.rowcount <1):
+    print("Missing history.", end=" ")
+    cur.execute(
+      'INSERT INTO gateway_updates (gwaddr, datetime, lat, lon, alt) VALUES (%s, %s, %s, %s, %s)',
+      (gwaddr, last_seen, latitude, longitude, altitude)
+    )
 
 
 def main(argv):
@@ -297,12 +290,7 @@ def main(argv):
 
     if(gateway_end - gateway_start > 0.5):
       slow_gateways.append(gwid)
-    #except:
-    #  print ("Gateway error: "+str(gateway))
-    # print gateway
 
-    # Give the database some time to rest and handle other calls
-    time.sleep(0.01) # 400s for 18452 gateways
 
   end_time = time.time()
 

@@ -98,7 +98,11 @@ try
   $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
   // Run data query
-  $stmt = $conn->prepare("SELECT * FROM packets WHERE gwaddr=:gateway AND `time` > :startdate AND `time` < :enddate ORDER BY `time` DESC LIMIT 10000");
+  if(isset($_REQUEST['all']) and $_REQUEST['all'] != "") {
+    $stmt = $conn->prepare("SELECT * FROM packets WHERE gwaddr=:gateway AND `time` > :startdate AND `time` < :enddate ORDER BY `time`");
+  } else {
+    $stmt = $conn->prepare("SELECT * FROM packets WHERE gwaddr=:gateway AND `time` > :startdate AND `time` < :enddate ORDER BY `time` DESC LIMIT 10000");
+  }
   $stmt->bindParam(':gateway', $gateway, PDO::PARAM_STR);
   $stmt->bindParam(':startdate', $startDateStr, PDO::PARAM_STR);
   $stmt->bindParam(':enddate', $endDateStr, PDO::PARAM_STR);

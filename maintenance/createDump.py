@@ -1,10 +1,10 @@
 #!/usr/bin/python
-import pymysql
+import MySQLdb
+import MySQLdb.cursors
 import csv
 import sys, os
 import time
 import configparser
-import MySQLdb, MySQLdb.cursors
 
 filename = os.environ['TTNMAPPER_HOME']+'/web/dumps/packets-'+time.strftime('%Y%m%d')+'.csv'
 
@@ -19,14 +19,19 @@ db = MySQLdb.connect(host=  config['database_mysql']['host'],      # your host, 
 
 cursor = db.cursor()
 
-dbFields = ['id', 'time', 'nodeaddr', 'appeui', 'gwaddr', 'modulation', 'datarate', 'snr', 'rssi', 'freq', 'lat', 'lon', 'alt', 'accuracy', 'hdop', 'sats', 'provider', 'user_agent']
+dbFields = ['id', 'time', 'nodeaddr', 'appeui', 'gwaddr', 'modulation', 'datarate', 'snr', 'rssi', 'freq', 'fcount', 'lat', 'lon', 'alt', 'accuracy', 'hdop', 'sats', 'provider', 'user_agent']
 
-dbQuery='SELECT '+','.join(dbFields)+' FROM packets WHERE lat>53.437823 AND lat<55.121245 AND lon>7.484045 AND lon<11.516027'
-#dbQuery='SELECT '+','.join(dbFields)+' FROM packets'
+latMin = 48.029733
+latMax = 48.353393
+lonMin = 16.041061
+lonMax = 16.732937
 
-cursor.execute(dbQuery)
+query = 'SELECT '+','.join(dbFields)+' FROM packets WHERE lat>%s AND lat<%s AND lon>%s AND lon<%s'
+values = (latMin, latMax, lonMin, lonMax)
 
-ofile = open(filename,'wb')
+cursor.execute(query, values)
+
+ofile = open(filename,'w')
 csv_writer = csv.writer(ofile, delimiter=',', quotechar='"', quoting=csv.QUOTE_MINIMAL)
 
 csv_writer.writerow(dbFields)

@@ -156,6 +156,8 @@ function main()
 
 function logTile($x, $y, $z)
 {
+  return; // do not log and waste resources
+  
   try {
     $settings = parse_ini_file(getenv("TTNMAPPER_HOME")."/settings.conf",true);
 

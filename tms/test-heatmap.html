@@ -116,8 +116,8 @@
       popupAnchor:  [23, 25] // point from which the popup should open relative to the iconAnchor
     });
     
-    var coveragetiles = L.tileLayer('http://dev.ttnmapper.org/tms/global_heatmap/{z}/{x}/{y}.png', {
-      maxNativeZoom: 18,
+    var coveragetiles = L.tileLayer('http://localhost:8000/{z}/{x}/{y}.png', {
+      maxNativeZoom: 19,
       maxZoom: 20,
       zIndex: 10,
       opacity: 0.5

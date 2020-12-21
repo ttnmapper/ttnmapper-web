@@ -82,7 +82,9 @@ def main(argv):
       
       print("Processing gateway "+gwaddr)
 
-      cur_moved.execute('SELECT lat,lon FROM gateway_updates WHERE gwaddr="'+gwaddr+'" ORDER BY datetime DESC LIMIT 1')
+      query = 'SELECT lat,lon FROM gateway_updates WHERE gwaddr=%s ORDER BY datetime DESC LIMIT 1'
+      values = [gwaddr]
+      cur_moved.execute(query, values)
       for sample in cur_moved.fetchall():
         gwlat = float(sample[0])
         gwlon = float(sample[1])
@@ -99,7 +101,9 @@ def main(argv):
         #add gateway as a point
         #points.append([gwlon,gwlat])
         
-        cur_location.execute('SELECT bearing,distance FROM radar WHERE `gwaddr`="'+gwaddr+'" AND level>='+`level`+' ORDER BY bearing ASC')
+        query = 'SELECT bearing,distance FROM radar WHERE gwaddr=%s AND level>=%s ORDER BY bearing ASC'
+        values = (gwaddr, level)
+        cur_location.execute(query, values)
         previous_distance = 11
         origin = geopy.Point(gwlat, gwlon)
           #add starting point
@@ -197,8 +201,7 @@ def main(argv):
           features.append(feature)
           gwfeatures.append(feature)
         except Exception as e: 
-          print str(e)
-          # print "Exception"
+          print(e)
           # exceptions.append(gwaddr)
 
       #create geojson file for this gateway only
@@ -215,50 +218,51 @@ def main(argv):
                 raise
 
       with open(filename, "w") as text_file:
+        print("Writing geojson to file")
         text_file.write(json.dumps(gwgeojson))
 
 
-    #global geojson file
-    geojson = {}
-    geojson["type"] = "FeatureCollection"
-    geojson["features"] = features
+    # #global geojson file
+    # geojson = {}
+    # geojson["type"] = "FeatureCollection"
+    # geojson["features"] = features
 
-    filename = output_folder+"/"+outputfile+".geojson"
-    if not os.path.exists(os.path.dirname(filename)):
-      try:
-          os.makedirs(os.path.dirname(filename))
-      except OSError as exc: # Guard against race condition
-          if exc.errno != errno.EEXIST:
-              raise
+    # filename = output_folder+"/"+outputfile+".geojson"
+    # if not os.path.exists(os.path.dirname(filename)):
+    #   try:
+    #       os.makedirs(os.path.dirname(filename))
+    #   except OSError as exc: # Guard against race condition
+    #       if exc.errno != errno.EEXIST:
+    #           raise
 
-    with open(filename, "w") as text_file:
-      text_file.write(json.dumps(geojson))
+    # with open(filename, "w") as text_file:
+    #   text_file.write(json.dumps(geojson))
 
-    geojson["features"] = bluefeatures
-    with open(output_folder+"/"+outputfile+"_blue.geojson", "w") as text_file:
-      text_file.write(json.dumps(geojson))
+    # geojson["features"] = bluefeatures
+    # with open(output_folder+"/"+outputfile+"_blue.geojson", "w") as text_file:
+    #   text_file.write(json.dumps(geojson))
 
-    geojson["features"] = cyanfeatures
-    with open(output_folder+"/"+outputfile+"_cyan.geojson", "w") as text_file:
-      text_file.write(json.dumps(geojson))
+    # geojson["features"] = cyanfeatures
+    # with open(output_folder+"/"+outputfile+"_cyan.geojson", "w") as text_file:
+    #   text_file.write(json.dumps(geojson))
 
-    geojson["features"] = greenfeatures
-    with open(output_folder+"/"+outputfile+"_green.geojson", "w") as text_file:
-      text_file.write(json.dumps(geojson))
+    # geojson["features"] = greenfeatures
+    # with open(output_folder+"/"+outputfile+"_green.geojson", "w") as text_file:
+    #   text_file.write(json.dumps(geojson))
 
-    geojson["features"] = yellowfeatures
-    with open(output_folder+"/"+outputfile+"_yellow.geojson", "w") as text_file:
-      text_file.write(json.dumps(geojson))
+    # geojson["features"] = yellowfeatures
+    # with open(output_folder+"/"+outputfile+"_yellow.geojson", "w") as text_file:
+    #   text_file.write(json.dumps(geojson))
 
-    geojson["features"] = orangefeatures
-    with open(output_folder+"/"+outputfile+"_orange.geojson", "w") as text_file:
-      text_file.write(json.dumps(geojson))
+    # geojson["features"] = orangefeatures
+    # with open(output_folder+"/"+outputfile+"_orange.geojson", "w") as text_file:
+    #   text_file.write(json.dumps(geojson))
 
-    geojson["features"] = redfeatures
-    with open(output_folder+"/"+outputfile+"_red.geojson", "w") as text_file:
-      text_file.write(json.dumps(geojson))
+    # geojson["features"] = redfeatures
+    # with open(output_folder+"/"+outputfile+"_red.geojson", "w") as text_file:
+    #   text_file.write(json.dumps(geojson))
 
-    with open(filename+"-exceptions", "w") as text_file:
+    with open(output_folder+"/"+outputfile+"-exceptions", "w") as text_file:
       text_file.write(json.dumps(exceptions))
 
     cur_gateways.close()

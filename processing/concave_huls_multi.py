@@ -120,14 +120,17 @@ def main(argv):
     exceptions = []
     features = []
     
-    cur_gateways.execute("SELECT DISTINCT(`gwaddr`) FROM packets")
+    cur_gateways.execute("SELECT DISTINCT(`gwaddr`) FROM gateways_aggregated")
     for gwrow in cur_gateways.fetchall():
       gwaddr = str(gwrow[0])
       points = []
 
       if(len(argv)>0):
         if(gwaddr != argv[0]):
+          print("Skipping", gwaddr)
           continue
+
+      print(gwaddr, end=" ")
 
       moved = None
       cur_moved.execute('SELECT datetime,lat,lon FROM gateway_updates WHERE gwaddr="'+gwaddr+'" ORDER BY datetime DESC LIMIT 1')
@@ -140,17 +143,15 @@ def main(argv):
       if(moved==None):
         #continue #don't plot gateway
         moved = datetime.datetime.fromtimestamp(0) #plot everything
-
-      print gwaddr,
     
       cur_location.execute('SELECT lat,lon FROM packets WHERE `gwaddr`="'+str(gwaddr)+'" AND time>"'+moved.strftime('%Y-%m-%d %H:%M:%S')+'"')
       for sample in cur_location.fetchall():
           points.append([float(sample[1])*1000, float(sample[0])*1000])
 
-      print "Points="+str(len(points))+"\t",
+      print("Points="+str(len(points))+"\t", end=" ")
 
       if len(points)<10:
-        print "Not enough."
+        print("Not enough.")
         continue
 
       i=0.5
@@ -161,7 +162,7 @@ def main(argv):
       try:
         concave_hull, edge_points = alpha_shape(points,i)
       except:
-        print "Error."
+        print("Error.")
         continue
 
       gwfeatures = []
@@ -177,7 +178,7 @@ def main(argv):
           feature["type"] = "Feature"
           feature["geometry"] = {}
           feature["geometry"]["type"] = "Polygon"
-          feature["geometry"]["coordinates"] = [zip(x,y)]
+          feature["geometry"]["coordinates"] = [list(zip(x,y))]
           feature["style"] = {}
           feature["style"]["color"] = "blue"
           feature["style"]["stroke-width"] = "2"
@@ -187,7 +188,7 @@ def main(argv):
           # features.append(feature)
           gwfeatures.append(feature)
         except Exception as e: 
-          print str(e)
+          print(str(e))
           # print "Exception"
           # exceptions.append(gwaddr)
 
@@ -204,8 +205,9 @@ def main(argv):
             if exc.errno != errno.EEXIST:
                 raise
 
-      print "done"
+      print("done")
 
+      # pprint(gwgeojson)
       with open(filename, "w") as text_file:
         text_file.write(json.dumps(gwgeojson))
       

@@ -291,9 +291,9 @@
 
     <ul>
       <li><a href="https://www.patreon.com/ttnmapper">Patreon</a></li>
-      <li>Any Patreon tier as a support contract with commercial invoice</li>
-      <li>Once off donation via PayPal</li>
-      <li>Once off donation into a European bank account (IBAN)</li>
+      <li>Any Patreon tier as a support contract with commercial invoice - contact us for details</li>
+      <li><a href="https://paypal.me/ttnmapper">Once off donation via PayPal</a></li>
+      <li>Once off donation into a European bank account (IBAN) - contact us for details</li>
     </ul>
 
     <p>For details contact us.</p>

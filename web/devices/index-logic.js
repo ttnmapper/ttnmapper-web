@@ -60,7 +60,7 @@ function getData()
 
       var gateways = [];
       for(point in data['points']) {
-        if( !(data['points'][point]['gwaddr'] in gateways) ) {
+        if( !gateways.includes(data['points'][point]['gwaddr']) ) {
           gateways.push(data['points'][point]['gwaddr']);
         }
       }
