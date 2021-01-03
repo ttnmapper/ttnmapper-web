@@ -200,8 +200,8 @@ catch(PDOException $e) {
 
 
   echo "
-    //var coveragetiles = L.tileLayer('/tms/index-dev.php?tile={z}/{x}/{y}', {
-    var coveragetiles = L.tileLayer('http://private.ttnmapper.org:8000/{z}/{x}/{y}', {
+    var coveragetiles = L.tileLayer('/tms/index.php?tile={z}/{x}/{y}', {
+    // var coveragetiles = L.tileLayer('http://private.ttnmapper.org:8000/{z}/{x}/{y}', {
       maxNativeZoom: 18,
       maxZoom: 20,
       zIndex: 10,

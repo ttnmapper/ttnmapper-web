@@ -9,7 +9,7 @@ if($settings['tms']['tile_cache_location'] === NULL or $settings['tms']['tile_ca
   $cache_location = $settings['tms']['tile_cache_location'];
 }
 
-$enable_caching = true;
+$enable_caching = false;
 $zoom_switchover = 18; // never switch over to raw packet mode as that creates too high db load
 
 main();
@@ -240,13 +240,13 @@ function createTileAggregatedSamples($x, $y, $z)
     // set the resulting array to associative
     $result = $stmt->setFetchMode(PDO::FETCH_ASSOC);
     foreach($stmt->fetchAll() as $k=>$v) {
-      $cx = ($v['lon']-$lon_min)/$lon_width * 256.0;
-      $cy = 256-($v['lat']-$lat_min)/$lat_height * 256.0;
+      $cx =         ( ($v['lon']-$lon_min) / $lon_width  ) * 256.0;
+      $cy = 256 - ( ( ($v['lat']-$lat_min) / $lat_height ) * 256.0);
 
-      $startx = $cx;
-      $starty = $cy - $sample_height;
-      $endx = $cx + $sample_width;
-      $endy = $cy;
+      $startx = $cx - ($sample_width/2);
+      $starty = $cy - ($sample_height/2);
+      $endx = $cx + ($sample_width/2);
+      $endy = $cy + ($sample_height/2);
 
       if($v['rssi'] < -120)
       {
