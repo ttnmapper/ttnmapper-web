@@ -6,6 +6,8 @@ var lineMarkers = L.featureGroup();
 var gatewayData;
 var pointData;
 
+var showOfflineGateways = "1";
+
 setUp();
 
 function setUp() {

@@ -40,6 +40,23 @@ try
   foreach($stmt->fetchAll() as $k=>$v) { 
     $gateways[] = $v['gweui'];
   }
+
+  // Also select all gateways without bounding boxes defined yet
+  $stmt = $conn->prepare("SELECT gwaddr FROM gateways_aggregated WHERE lat>:swlat AND lat<:nelat AND lon>:swlon AND lon<:nelon");
+  $stmt->bindParam(':swlat', $json_data['_southWest']['lat']);
+  $stmt->bindParam(':nelat', $json_data['_northEast']['lat']);
+  $stmt->bindParam(':swlon', $json_data['_southWest']['lng']);
+  $stmt->bindParam(':nelon', $json_data['_northEast']['lng']);
+  $stmt->execute();
+  $result = $stmt->setFetchMode(PDO::FETCH_ASSOC);
+
+  foreach($stmt->fetchAll() as $k=>$v) { 
+    $gwaddr = $v['gwaddr'];
+    if(!in_array($gwaddr, $gateways)) {
+      $gateways[] = $gwaddr;
+    }
+  }
+
   
   $json_response = array("gateways" => $gateways, "error" => false);
   echo json_encode($json_response);

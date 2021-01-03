@@ -241,6 +241,7 @@ function addGateways(gateways)
 function addGatewayMarker(gateway, data)
 {
   if(gateway in loadedGateways) {
+    console.log(gateway + " already added");
     return;
   } else {
     console.log("Adding "+gateway);
@@ -279,12 +280,18 @@ function addGatewayMarker(gateway, data)
 
     if(data['last_heard'] < (Date.now()/1000)-(60*60*24*5)) //5 days
     {
-      // do not show on map
-      index = gatewaysInView.indexOf(gateway);
-      if(index != -1) {
-        gatewaysInView.splice(index, 1);
+      console.log(gateway + " offline for >5 days");
+      if(typeof showOfflineGateways != "undefined") {
+        marker = L.marker([data['lat'], data['lon']], {icon: gatewayMarkerOffline});
+        marker.bindPopup(gwdescriptionHead+'<br /><br /><font color="red">Offline.</font> Will be removed from the map in 5 days.<br />'+gwdescription);        
+      } else {
+        // do not show on map
+        index = gatewaysInView.indexOf(gateway);
+        if(index != -1) {
+          gatewaysInView.splice(index, 1);
+        }
+        return;
       }
-      return;
     }
     else if(data['last_heard'] < (Date.now()/1000)-(60*60*1)) //1 hour
     {
