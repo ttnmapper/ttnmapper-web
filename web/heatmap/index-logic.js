@@ -18,22 +18,25 @@ function boundsChangedCallback() {
 }
 
 function addForegroundLayers() {
-  var tms_url = 'https://ttnmapperfsa4if0y-tilemapserver.functions.fnc.fr-par.scw.cloud/circles/{z}/{x}/{y}.png';
-  if(findGetParameter("type")!=null) {
-    var type = findGetParameter("type");
+  var tms_url = '/tms/index.php?tile={z}/{x}/{y}';
 
-    if(type==="blocks") {
-      tms_url = 'https://ttnmapperfsa4if0y-tilemapserver.functions.fnc.fr-par.scw.cloud/blocks/{z}/{x}/{y}.png';
-    }
-    if(type==="circles") {
-      tms_url = 'https://ttnmapperfsa4if0y-tilemapserver.functions.fnc.fr-par.scw.cloud/blocks/{z}/{x}/{y}.png';
-    }
-    if(type==="legacy") {
-      tms_url = '/tms/index.php?tile={z}/{x}/{y}';
+  if(isTtnMapperOrg) {
+    var tms_url = 'https://ttnmapperfsa4if0y-tilemapserver.functions.fnc.fr-par.scw.cloud/circles/{z}/{x}/{y}.png';
+    if(findGetParameter("type")!=null) {
+      var type = findGetParameter("type");
+
+      if(type==="blocks") {
+        tms_url = 'https://ttnmapperfsa4if0y-tilemapserver.functions.fnc.fr-par.scw.cloud/blocks/{z}/{x}/{y}.png';
+      }
+      if(type==="circles") {
+        tms_url = 'https://ttnmapperfsa4if0y-tilemapserver.functions.fnc.fr-par.scw.cloud/blocks/{z}/{x}/{y}.png';
+      }
+      if(type==="legacy") {
+        tms_url = '/tms/index.php?tile={z}/{x}/{y}';
+      }
     }
   }
-  //var coveragetiles = L.tileLayer('/tms/index.php?tile={z}/{x}/{y}', {
-  //var coveragetiles = L.tileLayer('https://tms.ttnmapper.org/circles/{z}/{x}/{y}.png', {
+  
   var coveragetiles = L.tileLayer(tms_url, {
     maxNativeZoom: 19,
     maxZoom: 20,
@@ -41,21 +44,7 @@ function addForegroundLayers() {
     zIndex: 10,
     opacity: 0.5
   });
-  coverageCircles.addTo(map);
-
-  fetch('Cycle Tour 20 Route.kml')
-    .then(res => res.text())
-    .then(kmltext => {
-        // Create new kml overlay
-        const parser = new DOMParser();
-        const kml = parser.parseFromString(kmltext, 'text/xml');
-        const track = new L.KML(kml);
-        map.addLayer(track);
-
-        // Adjust map to show the kml
-        // const bounds = track.getBounds();
-        // map.fitBounds(bounds);
-    });
+  coveragetiles.addTo(map);
 }
 
 function showOrHideLayers() {

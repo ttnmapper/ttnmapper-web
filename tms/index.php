@@ -9,7 +9,7 @@ if($settings['tms']['tile_cache_location'] === NULL or $settings['tms']['tile_ca
   $cache_location = $settings['tms']['tile_cache_location'];
 }
 
-$enable_caching = false;
+$enable_caching = true;
 $zoom_switchover = 18; // never switch over to raw packet mode as that creates too high db load
 
 main();

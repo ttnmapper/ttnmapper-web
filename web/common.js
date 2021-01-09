@@ -23,14 +23,14 @@ function initMap() {
     b = JSON.parse(localStorage.getItem('bounds'));
     if (b == null)
     {
-      map.setView([48.209661, 10.251494], 6);
+      map.setView(initialCoords, initialZoom);
     }
     else {
       try {
         map.fitBounds([[b._southWest.lat%90,b._southWest.lng%180],[b._northEast.lat%90,b._northEast.lng%180]]);
         default_zoom = false;
       } catch (err) {
-        map.setView([48.209661, 10.251494], 6);
+        map.setView(initialCoords, initialZoom);
       }
     }
   }
