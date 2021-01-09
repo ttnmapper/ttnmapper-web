@@ -22,7 +22,7 @@ db = MySQLdb.connect(host=  config['database_mysql']['host'],      # your host, 
                     )
 
 import geopy
-from geopy.distance import VincentyDistance
+import geopy.distance
 
 import shapely.geometry
 import shapely.ops
@@ -38,9 +38,9 @@ def addTriangle(gwlat, gwlon, bearing, distance, features):
   if(distance<1):
     return
   origin = geopy.Point(gwlat, gwlon)
-  destination = VincentyDistance(kilometers=distance/1000.0).destination(origin, ((360+bearing-(0.5/2.0))%360))
+  destination = geopy.distance.distance(kilometers=distance/1000.0).destination(origin, ((360+bearing-(0.5/2.0))%360))
   lat, lon = destination.latitude, destination.longitude
-  destination = VincentyDistance(kilometers=distance/1000.0).destination(origin, ((360+bearing+(0.5/2.0))%360))
+  destination = geopy.distance.distance(kilometers=distance/1000.0).destination(origin, ((360+bearing+(0.5/2.0))%360))
   lat2, lon2 = destination.latitude, destination.longitude
 
   feature = {}
@@ -101,7 +101,7 @@ def main(argv):
       previous_distance = 11
       origin = geopy.Point(gwlat, gwlon)
         #add starting point
-      destination = VincentyDistance(kilometers=10/1000.0).destination(origin, ((360-(jump_degrees/2.0))%360))
+      destination = geopy.distance.distance(kilometers=10/1000.0).destination(origin, ((360-(jump_degrees/2.0))%360))
       lat2, lon2 = destination.latitude, destination.longitude
       # points.append([lon2,lat2])
 
@@ -123,24 +123,24 @@ def main(argv):
         distance = memcache[bearing]
         if(distance>10):
           if(previous_distance<=10):
-            destination = VincentyDistance(kilometers=0).destination(origin, ((360+bearing-(jump_degrees/2.0))%360))
+            destination = geopy.distance.distance(kilometers=0).destination(origin, ((360+bearing-(jump_degrees/2.0))%360))
             lat2, lon2 = destination.latitude, destination.longitude
             points.append([round(lon2,6),round(lat2,6)])
           
           # for every direction two points
-          destination = VincentyDistance(kilometers=distance/1000.0).destination(origin, ((360+bearing-(jump_degrees/2.0))%360))
+          destination = geopy.distance.distance(kilometers=distance/1000.0).destination(origin, ((360+bearing-(jump_degrees/2.0))%360))
           lat2, lon2 = destination.latitude, destination.longitude
           points.append([round(lon2,6),round(lat2,6)])
-          destination = VincentyDistance(kilometers=distance/1000.0).destination(origin, ((360+bearing+(jump_degrees/2.0))%360))
+          destination = geopy.distance.distance(kilometers=distance/1000.0).destination(origin, ((360+bearing+(jump_degrees/2.0))%360))
           lat2, lon2 = destination.latitude, destination.longitude
           points.append([round(lon2,6),round(lat2,6)])
 
-          # destination = VincentyDistance(kilometers=distance/1000.0).destination(origin, ((360+bearing)%360))
+          # destination = geopy.distance.distance(kilometers=distance/1000.0).destination(origin, ((360+bearing)%360))
           # lat2, lon2 = destination.latitude, destination.longitude
           # points.append([round(lon2,6),round(lat2,6)])
 
         if(distance<=10 and previous_distance>10):
-          destination = VincentyDistance(kilometers=0).destination(origin, ((360+bearing-1+(jump_degrees/2.0))%360))
+          destination = geopy.distance.distance(kilometers=0).destination(origin, ((360+bearing-1+(jump_degrees/2.0))%360))
           lat2, lon2 = destination.latitude, destination.longitude
           points.append([round(lon2,6),round(lat2,6)])
 

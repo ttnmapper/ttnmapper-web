@@ -49,7 +49,7 @@ def main(argv):
     
     print("Processing gateway "+gwaddr+" "+str(count)+" of "+str(total))
 
-    cur_location.execute('SELECT lat,lon FROM gateways_aggregated WHERE gwaddr="'+gwaddr+'"')
+    cur_location.execute('SELECT lat,lon FROM gateways_aggregated WHERE gwaddr=%s', (gwaddr,))
     for sample in cur_location.fetchall():
       gwlat = float(sample[0])
       gwlon = float(sample[1])
@@ -57,7 +57,7 @@ def main(argv):
     levels = [-100, -105, -110, -115, -120, -200]
 
     for level in levels:
-      cur_location.execute('SELECT max(distance) FROM radar WHERE `gwaddr`="'+gwaddr+'" AND level='+`level`+'')
+      cur_location.execute('SELECT max(distance) FROM radar WHERE `gwaddr`=%s AND level=%s', (gwaddr, level))
       
       for sample in cur_location.fetchall():
         distance = sample[0]

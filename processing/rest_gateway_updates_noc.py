@@ -12,7 +12,6 @@ import requests
 from requests.auth import HTTPBasicAuth
 import configparser
 import base64
-import pytz
 
 try:  
    os.environ["TTNMAPPER_HOME"]
@@ -133,21 +132,14 @@ def on_message(gwid, gwdata):
     print ("Ukrainian hack.", end=' ')
     update = False
 
-  if(gwlatjs==0 and gwlonjs==0):
-    print ("Zero location, ignoring.", end=' ')
-    update = False
   if(abs(gwlatjs)<1 and abs(gwlonjs)<1):
     print ("Filtering NULL island.", end=' ')
     update = False
-    #return
-  #also check if the position was already updated in the past ~24h
 
   if(gwlatjs>90 or gwlatjs<-90 or gwlonjs>180 or gwlonjs<-180):
     print ("Invalid location, ignoring.", end=' ')
     update = False
       
-
-  # sanitise altitude
   if(gwaltjs>99999.9 or gwaltjs<-99999.9):
     print("Altitude out of range, clamping to 0.", end=' ')
     gwaltjs = 0
@@ -176,14 +168,16 @@ def on_message(gwid, gwdata):
 
 def update_gateway(gwaddr, latitude, longitude, last_seen):
 
+  lat_db = 0
+  lon_db = 0
+
   cur.execute("SELECT lat,lon,last_heard FROM gateways_aggregated WHERE gwaddr=%s", (gwaddr,))
   last_heard_db = None
   for row in cur.fetchall():
     lat_db = row[0]
     lon_db = row[1]
     last_heard_db = row[2]
-
-  last_heard_db = last_heard_db.replace(tzinfo=pytz.UTC)
+    last_heard_db = last_heard_db.replace(tzinfo=datetime.timezone.utc)
 
   # If new location is 0,0 but old location is valid, do not change location
   if latitude == 0 or longitude == 0:
