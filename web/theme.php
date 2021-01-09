@@ -2,6 +2,12 @@
 $settings = parse_ini_file(getenv("TTNMAPPER_HOME")."/settings.conf",true);
 
 
+if(isset($settings['theming']['ttnmapperorg'])) {
+  $isTtnMapperOrg = $settings['theming']['ttnmapperorg'];
+} else {
+  $isTtnMapperOrg = false;
+}
+
 if(isset($settings['theming']['gateway_online'])) {
   $gatewayMarkerOnline = $settings['theming']['gateway_online'];
 } else {
@@ -103,6 +109,7 @@ if(isset($settings['theming']['show_unmapped_gateways'])) {
 
 ?>
 
+var isTtnMapperOrg = "<?php echo $isTtnMapperOrg; ?>";
 
 var gatewayMarkerOnline = L.icon({
   iconUrl: "<?php echo $gatewayMarkerOnline; ?>",

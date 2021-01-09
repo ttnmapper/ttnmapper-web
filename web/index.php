@@ -78,9 +78,6 @@
         }
         ?>
 
-        <li class="nav-item">
-          <a class="nav-link" href="/track/?experiment=things-virtual-balloon&startdate=2020-04-16">Things Conf Balloon Track</a>
-        </li>
       </ul>
     </div>
 
