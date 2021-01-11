@@ -219,12 +219,6 @@ if( !isset($values["lat"]) || !isset($values["lon"]) )
 
 
 
-//override any auto detected providers
-if(isset($values["providerHeader"]))
-{
-  $values["provider"] = $values["providerHeader"];
-}
-
 $samples_total = 0;
 $samples_success = 0;
 
