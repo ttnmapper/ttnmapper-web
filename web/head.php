@@ -26,7 +26,7 @@ if(isset($settings['theming']['favicon_dir'])) {
 if(isset($settings['theming']['brand_icon'])) {
   $brandIcon = $settings['theming']['brand_icon'];
 } else {
-  $brandIcon = "/favicons/favicon-96x96.png";
+  $brandIcon = "/favicons/android-chrome-512x512.png";
 }
 
 if(isset($settings['theming']['brand_name'])) {

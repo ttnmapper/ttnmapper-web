@@ -141,9 +141,9 @@ $columns = [];
       $i = 0;
       foreach($columns as $col)
       {
-        if($v[$i]!="")
+        if($v[$col]!="")
         {
-          print $v[$i];
+          print $v[$col];
         }
         else
         {
