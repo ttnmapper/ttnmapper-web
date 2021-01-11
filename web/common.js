@@ -278,9 +278,9 @@ function addGatewayMarker(gateway, data)
       '<br />Lat, Lon: '+data['lat'] +','+ data['lon']+
       '<br />Show only this gateway\'s coverage as: '+
       '<ul>'+
-        '<li><a href=\"//ttnmapper.org/colour-radar/?gateway[]='+he.encode(gateway)+
+        '<li><a href=\"/colour-radar/?gateway[]='+he.encode(gateway)+
             '\">radar</a><br>'+
-        '<li><a href=\"//ttnmapper.org/alpha-shapes/?gateway[]='+he.encode(gateway)+
+        '<li><a href=\"/alpha-shapes/?gateway[]='+he.encode(gateway)+
             '\">alpha shape</a><br>'+
       '</ul>';
 
