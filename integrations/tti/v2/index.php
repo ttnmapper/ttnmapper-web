@@ -41,9 +41,6 @@ $context  = stream_context_create($opts);
 $result = @file_get_contents($url, false, $context);
 //print($result);
 
-echo $result;
-
-die();
 
 // Also forward to new backend
 // $url = 'http://dev.ttnmapper.org:8080/v1/ttn/v2';
@@ -108,29 +105,12 @@ if($json_data==FALSE or $json_data==NULL)
   return_error("Can't parse JSON");
 }
 
-// validate email address
+
 $headers = apache_request_headers();
 $text = var_export($headers, true)."\n\n";
 file_put_contents($logfile, $text , FILE_APPEND | LOCK_EX);
 
 
-
-if(isset($headers['Authorization'])){
-  if( validateEmail($headers['Authorization']) ) {
-    $values["user_id"] = $headers['Authorization'];
-  } else {
-    return_error("Authorization header doesn't contain a valid email address.");
-  }
-}
-else if (isset($_SERVER['HTTP_AUTHORIZATION'])) {
-  if( validateEmail($_SERVER['HTTP_AUTHORIZATION']) ) {
-    $values["user_id"] = $_SERVER['HTTP_AUTHORIZATION'];
-  } else {
-    return_error("Authorization header doesn't contain a valid email address.");
-  }
-} else {
-  return_error("Authorization header not set.");
-}
 
 
 
@@ -197,19 +177,24 @@ if($values["frequency"] > 1000000) {
   $values["frequency"] = $values["frequency"] / 1000000;
 }
 
-// if ( isset($json_data["metadata"]['latitude']) 
-//   && isset($json_data["metadata"]['longitude']) 
-//   && isset($json_data["metadata"]['altitude']) )
-// {
-//   // First using coordinates sent by TTN
 
-//   $values["provider"] = "registry";
-//   $values["latitude"] = $json_data["metadata"]["latitude"];
-//   $values["longitude"] = $json_data["metadata"]["longitude"];
-//   $values["altitude"] = $json_data["metadata"]["altitude"];
-// }
-// else
+// Use registry lcoation for device first
+if ( isset($json_data["metadata"]['latitude']) 
+  && isset($json_data["metadata"]['longitude']) 
+  && isset($json_data["metadata"]['altitude']) )
+{
+  if(isset($json_data["metadata"]["location_source"])) {
+    $values["provider"] = $json_data["metadata"]["location_source"];
+  } else {
+    $values["provider"] = "registry";
+  }
+  $values["lat"] = $json_data["metadata"]["latitude"];
+  $values["lon"] = $json_data["metadata"]["longitude"];
+  $values["alt"] = $json_data["metadata"]["altitude"];
+}
 
+
+// Then try payload fields
 if ( isset($json_data['payload_fields']) )
 {
   // Provider referes to where the location accuracy comes from
@@ -224,27 +209,15 @@ if ( isset($json_data['payload_fields']) )
   {
     $values = array_merge($values, $result);
   }
-  else
-  {
-    return_error("No location data in payload_fields");
-  }
 }
-else
+
+if( !isset($values["lat"]) || !isset($values["lon"]) )
 {
   // if that fails, try parsing the raw payload - not yet
   return_error("No location information");
 }
 
 
-// use collos for musti balloon
-if(isset($values["experiment"])) {
-  if ($values["experiment"] == "test-b3" or $values["experiment"] == "microclimate-flight") {
-    $values["provider"] = "collos";
-    $values["lat"] = $json_data["metadata"]["latitude"];
-    $values["lon"] = $json_data["metadata"]["longitude"];
-    $values["alt"] = $json_data["metadata"]["altitude"];
-  }
-}
 
 //override any auto detected providers
 if(isset($values["providerHeader"]))
