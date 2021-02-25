@@ -1,0 +1,34 @@
+{"end_device_ids":{"device_id":"thingsuno","application_ids":{"application_id":"test-app"},"dev_eui":"0004A30B001C684F","join_eui":"0000000000000000","dev_addr":"260807AF"},"correlation_ids":["as:up:01ET31YNT4EV8AQZJC72EBT9SM","gs:conn:01ET31XSW1BHMC8ETN89S32HFZ","gs:up:host:01ET31XSWFT2ZAR6K0E0FY36QV","gs:uplink:01ET31YNKDN8X0SG39JMH223DF","ns:uplink:01ET31YNKKWAE9VB76ZE8XKNND","rpc:/ttn.lorawan.v3.GsNs/HandleUplink:01ET31YNKFHC5FAMV3J8F2W93C"],"received_at":"2020-12-21T16:26:09.605704845Z","join_accept":{"session_key_id":"AXaGH1Z87jFvJV8aHvp1dg==","received_at":"2020-12-21T16:26:09.406846273Z"}}
+
+array (
+  'HOST' => 'ttnmapper.org',
+  'ACCEPT-ENCODING' => 'gzip',
+  'USER-AGENT' => 'ttn-lw-application-server/3.10.4',
+  'AUTHORIZATION' => '',
+)
+
+
+{
+   "end_device_ids":{
+      "device_id":"thingsuno",
+      "application_ids":{
+         "application_id":"test-app"
+      },
+      "dev_eui":"0004A30B001C684F",
+      "join_eui":"0000000000000000",
+      "dev_addr":"260807AF"
+   },
+   "correlation_ids":[
+      "as:up:01ET31YNT4EV8AQZJC72EBT9SM",
+      "gs:conn:01ET31XSW1BHMC8ETN89S32HFZ",
+      "gs:up:host:01ET31XSWFT2ZAR6K0E0FY36QV",
+      "gs:uplink:01ET31YNKDN8X0SG39JMH223DF",
+      "ns:uplink:01ET31YNKKWAE9VB76ZE8XKNND",
+      "rpc:/ttn.lorawan.v3.GsNs/HandleUplink:01ET31YNKFHC5FAMV3J8F2W93C"
+   ],
+   "received_at":"2020-12-21T16:26:09.605704845Z",
+   "join_accept":{
+      "session_key_id":"AXaGH1Z87jFvJV8aHvp1dg==",
+      "received_at":"2020-12-21T16:26:09.406846273Z"
+   }
+}
