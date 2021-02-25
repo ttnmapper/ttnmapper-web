@@ -4,6 +4,13 @@ username = dbuser
 password = dbpass
 database = dbname
 
+[database_postgresql]
+host = dbhost.ip
+port = 5432
+username = dbuser
+password = dbpass
+database = dbname
+
 [twitter]
 consumer_key = key
 consumer_secret = secret

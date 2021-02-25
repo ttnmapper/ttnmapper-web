@@ -33,6 +33,13 @@ if(isset($settings['theming']['gateway_single_channel'])) {
 }
 
 
+if(isset($settings['theming']['gateway_v3'])) {
+  $gatewayMarkerV3 = $settings['theming']['gateway_v3'];
+} else {
+  $gatewayMarkerV3 = "/resources/V3_blue.svg";
+}
+
+
 if(isset($settings['theming']['gateway_icon_size_x'])) {
   $gatewayIconSizeX = $settings['theming']['gateway_icon_size_x'];
 } else {
@@ -107,6 +114,12 @@ if(isset($settings['theming']['show_unmapped_gateways'])) {
   $showUnmappedGateways = false;
 }
 
+if(isset($settings['theming']['show_ttnv3_gateways'])) {
+  $showTtnV3Gateways = $settings['theming']['show_ttnv3_gateways'];
+} else {
+  $showTtnV3Gateways = false;
+}
+
 ?>
 
 var isTtnMapperOrg = "<?php echo $isTtnMapperOrg; ?>";
@@ -139,6 +152,13 @@ var gatewayMarkerSingleChannel = L.icon({
   popupAnchor:  [<?php echo $gatewayPopupAnchorX; ?>, <?php echo $gatewayPopupAnchorY; ?>]
 });
 
+var gatewayMarkerV3 = L.icon({
+  iconUrl: "<?php echo $gatewayMarkerV3; ?>",
+  iconSize:     [<?php echo $gatewayIconSizeX; ?>, <?php echo $gatewayIconSizeY; ?>],
+  iconAnchor:   [<?php echo $gatewayIconAnchorX; ?>, <?php echo $gatewayIconAnchorY; ?>],
+  popupAnchor:  [<?php echo $gatewayPopupAnchorX; ?>, <?php echo $gatewayPopupAnchorY; ?>]
+});
+
 // Gateway markers are clustered together
 var clusterGateways = "<?php echo $clusterGateways; ?>";
 var gatewayMarkers = L.markerClusterGroup({
@@ -146,6 +166,7 @@ var gatewayMarkers = L.markerClusterGroup({
 });
 
 var showUnmappedGateways = "<?php echo $showUnmappedGateways; ?>";
+var showTtnV3Gateways = "<?php echo $showTtnV3Gateways; ?>";
 
 // When less than this number of gateways are in view we display the full resolution coverage
 var layerSwapGwCount = 600;

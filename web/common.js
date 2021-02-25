@@ -203,6 +203,10 @@ function getGatewaysInView()
           console.log(gatewaysInView.length + " gateways in view");
         }
       });
+
+    if(showTtnV3Gateways === "1") {
+      loadTtnV3Gateways();
+    }
   }
 }
 
@@ -411,4 +415,44 @@ function getColour(data) {
   }
 
   return colour;
+}
+
+
+
+
+
+
+// TTN V3 temporary added
+function loadTtnV3Gateways() {
+  $.ajax
+  ({
+    type: "GET",
+    url: '/webapi/gwall_ttnv3.php',
+    dataType: 'json',
+    success: function (data) {
+      v3gateways = data["gateways"];
+      for(i in v3gateways) {
+        gateway = v3gateways[i];
+        console.log(gateway);
+
+        var gwdescription = "<b>TTN V3 Gateway</b><br />";
+        gwdescription += "TTN Mapper ID: "+gateway.id+"<br />";
+        gwdescription += "TTN V3 ID: "+gateway.gateway_id+"<br />";
+        gwdescription += "Gateway EUI: "+gateway.gateway_eui+"<br />";
+        gwdescription += "Description: "+gateway.description+"<br />";
+        gwdescription += "Last heard: "+gateway.last_heard+"<br />";
+        gwdescription += "TTN Mapper ID: "+gateway.id+"<br />";
+        gwdescription += "Coordinates: "+gateway.latitude+", "+gateway.longitude+"<br />";
+        gwdescription += "Altitude: "+gateway.altitude+"<br />";
+        gwdescription += "Location source: "+gateway.location_source+"<br />";
+        gwdescription += "Location accuracy: "+gateway.location_accuracy+"<br />";
+        gwdescription += "Network ID: "+gateway.network_id+"<br />";
+
+        marker = L.marker([gateway['latitude'], gateway['longitude']], 
+          {icon: gatewayMarkerV3});
+        marker.bindPopup(gwdescription);
+        marker.addTo(map);
+      }
+    }
+  });
 }

@@ -108,6 +108,13 @@
 
   </nav>
 
+  <div class="alert alert-warning alert-dismissible fade show" role="alert">
+    <strong>TTNv2 to TTNv3 migration</strong> please read <a href="https://www.thethingsnetwork.org/forum/t/ttn-v2-to-v3-migration-migrate-your-gateways-last/43445" target="_blank">here</a>.
+    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+      <span aria-hidden="true">&times;</span>
+    </button>
+  </div>
+
   <div id="map"></div>
   <div id="rightcontainer">
     <div id="legend" class="dropSheet"></div>
@@ -157,6 +164,7 @@
   <script src="/libs/leaflet/leaflet.js"></script>
   <script src="/libs/leaflet.measure/leaflet.measure.js"></script>
   <script src="/libs/Leaflet.markercluster/dist/leaflet.markercluster.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/leaflet.geodesic"></script>
 
   <!-- HTML entity escaping -->
   <script src="/libs/he/he.js"></script>
