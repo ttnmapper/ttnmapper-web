@@ -180,13 +180,7 @@ def on_message(gwid, gwdata):
     gwaltjs = 0
 
   if update == True:
-    print ("Adding new entry", end=' ')
-    cur.execute(
-      "INSERT INTO gateway_updates (gwaddr, datetime, lat, lon, alt, last_update) "+
-      "VALUES (%s,%s,%s,%s,%s, %s)",
-      (gwaddr, lastSeen, gwlatjs, gwlonjs, gwaltjs, lastSeen)
-    )
-    db.commit()
+    add_new_location(gwaddr, lastSeen, gwlatjs, gwlonjs, gwaltjs)
     update_gateway(gwaddr, gwlatjs, gwlonjs, lastSeen, description)
 
   elif exists == True:
@@ -205,6 +199,37 @@ def on_message(gwid, gwdata):
   fix_missing_history(gwaddr, gwlatjs, gwlonjs, gwaltjs, lastSeen)
 
   print()
+
+
+def add_new_location(gwaddr, lastSeen, gwlatjs, gwlonjs, gwaltjs):
+  cur.execute("SELECT lat, lon FROM gateway_updates WHERE gwaddr = %s ORDER BY datetime DESC LIMIT 1", (gwaddr,))
+  gwlatdb = 0
+  gwlondb = 0
+
+  for row in cur.fetchall():
+    gwlatdb = row[0]
+    gwlondb = row[1]
+
+  distance = great_circle((gwlatjs, gwlonjs),(gwlatdb, gwlondb)).meters
+  
+  if(distance>100):
+    print ("Adding new entry.", end=' ')
+    cur.execute(
+      "INSERT INTO gateway_updates (gwaddr, datetime, lat, lon, alt, last_update) "+
+      "VALUES (%s,%s,%s,%s,%s, %s)",
+      (gwaddr, lastSeen, gwlatjs, gwlonjs, gwaltjs, lastSeen)
+    )
+    db.commit()
+  else:
+    print ("Location didn't actually change.", end=' ')
+
+  # If we are here, the location from gateway-status 
+  # doesn't match the location in gateways_aggregated
+  print ("Updating location in aggregated.", end=' ')
+  cur.execute(
+    'UPDATE gateways_aggregated SET lat=%s, lon=%s WHERE gwaddr = %s',
+    (gwlatjs, gwlonjs, gwaddr)
+  )
 
 
 def update_gateway(gwaddr, latitude, longitude, last_seen, description):
@@ -309,10 +334,10 @@ def main(argv):
       print(str(gwaddr) + "\t" + str(count))
 
   # Retry some using NOC
-  print("Retrying using NOC")
-  print(retry_using_noc)
-  noc_process = subprocess.Popen([os.environ['TTNMAPPER_HOME']+"/processing/rest_gateway_updates_noc.py"] + retry_using_noc)
-  noc_process.wait()
+  # print("Retrying using NOC")
+  # print(retry_using_noc)
+  # noc_process = subprocess.Popen([os.environ['TTNMAPPER_HOME']+"/processing/rest_gateway_updates_noc.py"] + retry_using_noc)
+  # noc_process.wait()
 
 
 if __name__ == "__main__":
