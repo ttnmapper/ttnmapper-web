@@ -4,7 +4,7 @@ var pointMarkers = L.featureGroup();
 var lineMarkers = L.featureGroup();
 
 var gatewayData;
-var pointData;
+var pointData = {};
 
 var showOfflineGateways = "1";
 
@@ -50,7 +50,8 @@ function getData()
     $("div.spanner").addClass("show");
     $("div.overlay").addClass("show");
 
-    $.getJSON('json.php', 
+
+    $.getJSON('json-pg.php', 
     {
       device: findGetParameter("device"),
       startdate: findGetParameter("startdate"),
@@ -59,15 +60,47 @@ function getData()
     function(data) {
 
       pointData = data;
+      console.log(pointData);
 
       var gateways = [];
       for(point in data['points']) {
         if( !gateways.includes(data['points'][point]['gwaddr']) ) {
-          gateways.push(data['points'][point]['gwaddr']);
+          var gwaddr = data['points'][point]['gwaddr'];
+          if(gwaddr.startsWith("eui-")) {
+            gwaddr = gwaddr.substring(4);
+            gwaddr = gwaddr.toUpperCase();
+          }
+          data['points'][point]['gwaddr'] = gwaddr;
+          gateways.push(gwaddr);
         }
       }
 
-      addGateways(gateways);
+      // $.getJSON('json.php', 
+      // {
+      //   device: findGetParameter("device"),
+      //   startdate: findGetParameter("startdate"),
+      //   enddate: findGetParameter("enddate")
+      // }, 
+      // function(data) {
+
+      //   if(pointData.hasOwnProperty('points')) {
+      //     console.log("Concatenating points")
+      //     pointData.points = pointData.points.concat(data.points);
+      //   } else {
+      //     console.log("Setting points")
+      //     pointData.points = data.points;
+      //   }
+      //   console.log(pointData);
+
+      //   var gateways = [];
+      //   for(point in data['points']) {
+      //     if( !gateways.includes(data['points'][point]['gwaddr']) ) {
+      //       gateways.push(data['points'][point]['gwaddr']);
+      //     }
+      //   }
+
+        addGateways(gateways);
+      // });
     });
 }
 

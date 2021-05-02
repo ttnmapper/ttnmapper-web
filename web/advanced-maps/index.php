@@ -208,7 +208,7 @@
         </div>
 
         <div class="form-group">
-          <button type="submit" class="btn btn-secondary" formaction="/devices/csv.php">CSV data</button>
+          <button type="submit" class="btn btn-secondary" formaction="/devices/csv-pg.php">CSV data</button>
           <button type="submit" class="btn btn-primary" formaction="/devices/">View Map</button>
         </div>
       </form>
