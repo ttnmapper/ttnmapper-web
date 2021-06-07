@@ -6,7 +6,7 @@ import sys, os
 import time
 import configparser
 
-filename = os.environ['TTNMAPPER_HOME']+'/web/dumps/packets-'+time.strftime('%Y%m%d')+'.csv'
+filename = os.environ['TTNMAPPER_HOME']+'/web/dumps/packets-'+time.strftime('%Y%m%d')+'-Lindlar.csv'
 
 config = configparser.ConfigParser()
 config.read(os.environ.get('TTNMAPPER_HOME')+"/settings.conf")
@@ -21,14 +21,14 @@ cursor = db.cursor()
 
 dbFields = ['id', 'time', 'nodeaddr', 'appeui', 'gwaddr', 'modulation', 'datarate', 'snr', 'rssi', 'freq', 'fcount', 'lat', 'lon', 'alt', 'accuracy', 'hdop', 'sats', 'provider', 'user_agent']
 
-latMin = 48.029733
-latMax = 48.353393
-lonMin = 16.041061
-lonMax = 16.732937
+latMin = 50.945835 #50.873508
+latMax = 51.073839 #51.001711
+lonMin = 7.290469 #6.842058
+lonMax = 7.524741 #7.07633
 
 query = 'SELECT '+','.join(dbFields)+' FROM packets WHERE lat>%s AND lat<%s AND lon>%s AND lon<%s'
 values = (latMin, latMax, lonMin, lonMax)
-
+print(query)
 cursor.execute(query, values)
 
 ofile = open(filename,'w')

@@ -160,6 +160,11 @@ def on_message(gwid, gwdata):
     print ("Ukrainian hack.", end=' ')
     update = False
 
+  if(gwlatjs > 22.69 and gwlatjs < 22.71 and gwlonjs > 114.2300000 and gwlonjs < 114.25):
+    print ("Shenzhen factory.", end=' ')
+    update = False
+  
+
   if(gwlatjs==0 and gwlonjs==0):
     print ("Zero location, ignoring.", end=' ')
     update = False

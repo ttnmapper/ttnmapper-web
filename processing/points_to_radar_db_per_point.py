@@ -22,7 +22,7 @@ db = MySQLdb.connect(host=  config['database_mysql']['host'],      # your host, 
                      user=  config['database_mysql']['username'],  # your username
                      passwd=config['database_mysql']['password'],  # your password
                      db=    config['database_mysql']['database'],  # name of the data base
-                     cursorclass=MySQLdb.cursors.DictCursor)
+                     cursorclass=MySQLdb.cursors.SSDictCursor)
 
 #max length of radial in meters
 DISTANCE_CAP = 100000
@@ -85,9 +85,10 @@ def main():
       cursor.execute('DELETE FROM `radar` WHERE gwaddr="'+gwid+'" ')
       db.commit()
 
-
+  count = 0
   for gwid in gateways_active:
-    print("PROCESSING "+str(gwid))
+    count += 1
+    print("PROCESSING", gwid, count, "/", len(gateways_active))
     process_gateway(gwid)
     print("-", end="")
     add_memcache_to_db(gwid)
@@ -101,13 +102,12 @@ def process_gateway(gwid):
     cursor = db.cursor()
 
     # get the start time from when the gateway was moved/installed
-    cursor.execute('SELECT lat,lon,datetime FROM gateway_updates WHERE gwaddr="'+gwid+'" ORDER BY datetime DESC LIMIT 1')
-
-    if cursor.rowcount < 1:
-      print("No location history")
-      return
+    cursor.execute('SELECT lat,lon,datetime FROM gateway_updates WHERE gwaddr=%s ORDER BY datetime DESC LIMIT 1', (gwid,))
 
     location_row = cursor.fetchone()
+    if location_row == None:
+      print("No location history", 'SELECT lat,lon,datetime FROM gateway_updates WHERE gwaddr=%s ORDER BY datetime DESC LIMIT 1', gwid)
+      return
 
     gwlat = location_row['lat']
     gwlon = location_row['lon']
@@ -189,17 +189,29 @@ def process_gateway(gwid):
 
     # Select all new points and process
     print("SELECT all new packets")
-    cursor.execute('SELECT time, snr, rssi, lat, lon FROM packets WHERE gwaddr = %s AND time > %s', (gwid, select_from_timestamp))
-    total = cursor.rowcount
-    number = 0
-    for point in cursor.fetchall():
-      number+=1
-      bearing = get_bearing(gwlat, gwlon, point['lat'], point['lon'])
-      distance = get_distance(gwlat, gwlon, point['lat'], point['lon'])
-      level = get_level(point['rssi'], point['snr'])
-      print(number, "/", total, "                  ", end='\r')
 
-      add_point_to_memcache(gwid, bearing, distance, point['time'], level)
+    # Count how many points we will fetch
+    cursor.execute('SELECT count(*) as total FROM packets WHERE gwaddr = %s AND time > %s', (gwid, select_from_timestamp))
+    row = cursor.fetchone()
+    total = "unknown"
+    if row != None:
+      total = row['total']
+
+    # Fetch the rows using a server side cursor
+    cursor.execute('SELECT time, snr, rssi, lat, lon FROM packets WHERE gwaddr = %s AND time > %s', (gwid, select_from_timestamp))
+    number = 0
+    points = cursor.fetchmany(5000)
+    while len(points)>0:
+      for point in points:
+        number+=1
+        bearing = get_bearing(gwlat, gwlon, point['lat'], point['lon'])
+        distance = get_distance(gwlat, gwlon, point['lat'], point['lon'])
+        level = get_level(point['rssi'], point['snr'])
+        print(number, "/", total, "                  ", end='\r')
+
+        add_point_to_memcache(gwid, bearing, distance, point['time'], level)
+
+      points = cursor.fetchmany(5000)
 
     print("")
 
@@ -312,15 +324,15 @@ def add_memcache_to_db(gwid):
         samples = values['samples']
 
         cursor.execute("SELECT distance, distance_max, last_update, samples FROM radar WHERE bearing = %s AND gwaddr = %s AND level = %s", (bearing, gwid, level))
+        row = cursor.fetchone()
         # print("Previous radar select: ", time.time() - start)
-        if(cursor.rowcount<1):
+        if row == None:
           # First packet for this radial
           # print("Adding: ", gwid, bearing, level)
           cursor.execute('INSERT INTO `radar` (`gwaddr`, `bearing`, `distance`, `distance_max`, `level`, `last_update`, `samples`) VALUES (%s, %s, %s, %s, %s, %s, %s)', (gwid, bearing, distance, distance_max, level, point_time, samples))
           # db.commit()
 
         else:
-          row = cursor.fetchone()
           old_distance = float(row['distance'])
           old_distance_max = float(row['distance_max'])
           old_timestamp = row['last_update']

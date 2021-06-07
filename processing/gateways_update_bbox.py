@@ -64,13 +64,19 @@ def update_bbox(gwaddr):
   lon_min = gwlon
   
 
-  sql = "SELECT max(lat) as maxlat, min(lat) as minlat, max(lon) as maxlon, min(lon) as minlon, count(*) as count FROM `packets` WHERE gwaddr=%s AND time>%s"
+  sql = "SELECT max(lat) as maxlat, min(lat) as minlat FROM `packets` WHERE gwaddr=%s AND time>%s"
   cur_select.execute(sql, [gwaddr, moved])
 
   row = cur_select.fetchone()
-  if(row['maxlat']!=None and row['minlat']!=None and row['maxlon']!=None and row['minlon']!=None):
+  if(row['maxlat']!=None and row['minlat']!=None):
     lat_max = max( lat_max, float(row['maxlat']) )
     lat_min = min( lat_min, float(row['minlat']) )
+
+  sql = "SELECT max(lon) as maxlon, min(lon) as minlon FROM `packets` WHERE gwaddr=%s AND time>%s"
+  cur_select.execute(sql, [gwaddr, moved])
+
+  row = cur_select.fetchone()
+  if(row['maxlon']!=None and row['minlon']!=None):
     lon_max = max( lon_max, float(row['maxlon']) )
     lon_min = min( lon_min, float(row['minlon']) )
 

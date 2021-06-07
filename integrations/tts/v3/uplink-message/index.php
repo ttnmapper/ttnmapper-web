@@ -42,6 +42,33 @@ if( !function_exists('apache_request_headers') ) {
 ///
 }
 
+
+
+// // Also forward to new backend
+// $url = 'https://integrations.ttnmapper.org/tts/v3/uplink-message';
+
+// $headers = apache_request_headers();
+// $headers[] = 'Content-type: application/json';
+
+// $opts = array('http' =>
+//     array(
+//         'method'  => 'POST',
+//         'header' => $headers,
+//         'content' => $received
+//     )
+// );
+
+// $context  = stream_context_create($opts);
+
+// $result = @file_get_contents($url, false, $context);
+// file_put_contents($logfile, $result."\n\n" , FILE_APPEND | LOCK_EX);
+
+// return_success("Added to TTS Mapper.");
+// die();
+
+
+
+
 if($received=="")
 {
   header("Content-Type: text/plain");
