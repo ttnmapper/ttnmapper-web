@@ -72,7 +72,7 @@
         if(!isset($settings['menu']['menu_faq']) or $settings['menu']['menu_faq'] == true) {
         ?>
         <li class="nav-item">
-          <a class="nav-link" href="/faq/">FAQ</a>
+          <a class="nav-link" href="https://docs.ttnmapper.org">Docs</a>
         </li>
         <?php
         }
@@ -109,7 +109,7 @@
   </nav>
 
   <div class="alert alert-warning alert-dismissible fade show" role="alert">
-    <strong>TTNv2 to TTNv3 migration</strong> please read <a href="https://www.thethingsnetwork.org/forum/t/ttn-v2-to-v3-migration-migrate-your-gateways-last/43445" target="_blank">here</a>.
+    See <a href="https://docs.ttnmapper.org/project_status.html" target="_blank">Project Status</a> for <strong>The Things Stack (v3)</strong> and <strong>ChirpStack</strong> support.
     <button type="button" class="close" data-dismiss="alert" aria-label="Close">
       <span aria-hidden="true">&times;</span>
     </button>

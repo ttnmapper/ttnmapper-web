@@ -27,7 +27,7 @@ try
   // set the PDO error mode to exception
   $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
-  $sql = "SELECT * FROM \"gateways\"  WHERE (\"gateways\".\"network_id\" = 'NS_TTS_V3://ttn.eu1.cloud.thethings.network') AND latitude != 0 AND longitude != 0";
+  $sql = "SELECT * FROM \"gateways\"  WHERE (\"gateways\".\"network_id\" = 'NS_TTS_V3://ttn@000013') AND latitude != 0 AND longitude != 0";
   $stmt = $conn->prepare($sql);
   $stmt->execute();
   $result = $stmt->setFetchMode(PDO::FETCH_ASSOC); 

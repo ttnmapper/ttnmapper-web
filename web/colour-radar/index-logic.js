@@ -17,6 +17,9 @@ var canvasRendererRed;
 setUp();
 
 function setUp() {
+  $("#legend").load("/legend.html");
+  $("#legend").css({ visibility: "visible"});
+  
   initMap();
 
   // Canvas for circle layers

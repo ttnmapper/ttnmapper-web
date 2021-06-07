@@ -72,7 +72,7 @@
         if(!isset($settings['menu']['menu_faq']) or $settings['menu']['menu_faq'] == true) {
         ?>
         <li class="nav-item">
-          <a class="nav-link" href="/faq/">FAQ</a>
+          <a class="nav-link" href="https://docs.ttnmapper.org/FAQ.html">FAQ</a>
         </li>
         <?php
         }

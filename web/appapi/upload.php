@@ -15,7 +15,8 @@ file_put_contents($logfile, $received."\n\n" , FILE_APPEND | LOCK_EX);
 
 
 if (strpos($received, 'org.ttnmapper.ios.TTNMapper') !== false) {
-    $url = 'http://do.jpmeijers.com:8080/v1/ios/v2';
+    // $url = 'http://do.jpmeijers.com:8080/v1/ios/v2';
+  $url = 'https://integrations.ttnmapper.org/ios/v2';
 }
 else
 {
