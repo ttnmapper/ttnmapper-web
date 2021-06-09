@@ -204,7 +204,7 @@ function getGatewaysInView()
         }
       });
 
-    if(showTtnV3Gateways === "1") {
+    if (showTtnV3Gateways === "1") {
       loadTtnV3Gateways();
     }
 

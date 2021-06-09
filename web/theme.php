@@ -170,6 +170,14 @@ var gatewayMarkerV3 = L.icon({
   popupAnchor:  [<?php echo $gatewayPopupAnchorX; ?>, <?php echo $gatewayPopupAnchorY; ?>]
 });
 
+var gatewayMarkerChirpV3 = L.icon({
+  iconUrl: "<?php echo $gatewayMarkerChirpV3; ?>",
+  iconSize:     [<?php echo $gatewayIconSizeX; ?>, <?php echo $gatewayIconSizeY; ?>],
+  iconAnchor:   [<?php echo $gatewayIconAnchorX; ?>, <?php echo $gatewayIconAnchorY; ?>],
+  popupAnchor:  [<?php echo $gatewayPopupAnchorX; ?>, <?php echo $gatewayPopupAnchorY; ?>]
+});
+
+
 // Gateway markers are clustered together
 var clusterGateways = "<?php echo $clusterGateways; ?>";
 var gatewayMarkers = L.markerClusterGroup({
@@ -178,6 +186,7 @@ var gatewayMarkers = L.markerClusterGroup({
 
 var showUnmappedGateways = "<?php echo $showUnmappedGateways; ?>";
 var showTtnV3Gateways = "<?php echo $showTtnV3Gateways; ?>";
+var showChirpV3Gateways = "<?php echo $showChirpV3Gateways; ?>";
 
 // When less than this number of gateways are in view we display the full resolution coverage
 var layerSwapGwCount = 600;
