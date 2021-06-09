@@ -207,6 +207,10 @@ function getGatewaysInView()
     if(showTtnV3Gateways === "1") {
       loadTtnV3Gateways();
     }
+
+    if (showChirpV3Gateways === "1") {
+      loadChirpV3Gateways();
+    }
   }
 }
 
@@ -450,6 +454,40 @@ function loadTtnV3Gateways() {
 
         marker = L.marker([gateway['latitude'], gateway['longitude']], 
           {icon: gatewayMarkerV3});
+        marker.bindPopup(gwdescription);
+        marker.addTo(map);
+      }
+    }
+  });
+}
+
+
+// Chirpstack V3 temporary added
+function loadChirpV3Gateways() {
+  $.ajax
+  ({
+    type: "GET",
+    url: '/webapi/gwall_chirpv3.php',
+    dataType: 'json',
+    success: function (data) {
+      v3gateways = data["gateways"];
+      for(i in v3gateways) {
+        gateway = v3gateways[i];
+        console.log(gateway);
+
+        var gwdescription = "<b>Chirpstack V3 Gateway</b><br />";
+        gwdescription += "TTN Mapper ID: "+gateway.id+"<br />";
+        gwdescription += "Gateway EUI: "+gateway.gateway_eui+"<br />";
+        gwdescription += "Description: "+gateway.description+"<br />";
+        gwdescription += "Last heard: "+gateway.last_heard+"<br />";
+        gwdescription += "Coordinates: "+gateway.latitude+", "+gateway.longitude+"<br />";
+        gwdescription += "Altitude: "+gateway.altitude+"<br />";
+        gwdescription += "Location source: "+gateway.location_source+"<br />";
+        gwdescription += "Location accuracy: "+gateway.location_accuracy+"<br />";
+        gwdescription += "Network ID: "+gateway.network_id+"<br />";
+
+        marker = L.marker([gateway['latitude'], gateway['longitude']], 
+          {icon: gatewayMarkerChirpV3});
         marker.bindPopup(gwdescription);
         marker.addTo(map);
       }

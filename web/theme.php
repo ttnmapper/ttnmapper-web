@@ -39,6 +39,11 @@ if(isset($settings['theming']['gateway_v3'])) {
   $gatewayMarkerV3 = "/resources/V3_blue.svg";
 }
 
+if(isset($settings['theming']['gateway_chirpv3'])) {
+  $gatewayMarkerChirpV3 = $settings['theming']['gateway_chirpv3'];
+} else {
+  $gatewayMarkerChirpV3 = "/resources/Chirp_blue.svg";
+}
 
 if(isset($settings['theming']['gateway_icon_size_x'])) {
   $gatewayIconSizeX = $settings['theming']['gateway_icon_size_x'];
@@ -118,6 +123,12 @@ if(isset($settings['theming']['show_ttnv3_gateways'])) {
   $showTtnV3Gateways = $settings['theming']['show_ttnv3_gateways'];
 } else {
   $showTtnV3Gateways = false;
+}
+
+if(isset($settings['theming']['show_chirpv3_gateways'])) {
+  $showChirpV3Gateways = $settings['theming']['show_chirpv3_gateways'];
+} else {
+  $showChirpV3Gateways = false;
 }
 
 ?>
