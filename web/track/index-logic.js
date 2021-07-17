@@ -192,7 +192,7 @@ function getGatewayData(gateways)
 function subscribeToLiveData() {
   console.log("Subscribe to data stream");
 
-  url = "wss://integrations.ttnmapper.org:8081/ws?";
+  url = "wss://ws.ttnmapper.org/ws?";
 
   application = findGetParameter("application");
   device = findGetParameter("device");
