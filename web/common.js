@@ -255,21 +255,21 @@ function addGateways(gateways)
 function addGatewayMarker(gateway, data)
 {
   if(gateway in loadedGateways) {
-    console.log(gateway + " already added");
+    // console.log(gateway + " already added");
     return;
   } else {
-    console.log("Adding "+gateway);
+    //console.log("Adding "+gateway);
 
     if(data['lat'] === null || data['lon'] === null) {
-      console.log("Gateway "+gateway+" location is null");
+      // console.log("Gateway "+gateway+" location is null");
       return;
     }
     if(data['lat'] === undefined || data['lon'] === undefined) {
-      console.log("Gateway "+gateway+" location is undefined");
+      // console.log("Gateway "+gateway+" location is undefined");
       return;
     }
     if(Math.abs(data['lat']) < 1 && Math.abs(data['lon']) < 1) {
-      console.log("Gateway "+gateway+" location is on null island");
+      // console.log("Gateway "+gateway+" location is on null island");
       return;
     }
 
@@ -294,8 +294,8 @@ function addGatewayMarker(gateway, data)
 
     if(data['last_heard'] < (Date.now()/1000)-(60*60*24*5)) //5 days
     {
-      console.log(gateway + " offline for >5 days");
-      if(typeof showOfflineGateways != "undefined") {
+      // console.log(gateway + " offline for >5 days");
+      if(showOfflineGateways === "1") {
         marker = L.marker([data['lat'], data['lon']], {icon: gatewayMarkerOffline});
         marker.bindPopup(gwdescriptionHead+'<br /><br /><font color="red">Offline.</font> Will be removed from the map in 5 days.<br />'+gwdescription);        
       } else {
@@ -435,9 +435,11 @@ function loadTtnV3Gateways() {
     dataType: 'json',
     success: function (data) {
       v3gateways = data["gateways"];
+      
+      var v3markers = L.markerClusterGroup();
+
       for(i in v3gateways) {
         gateway = v3gateways[i];
-        console.log(gateway);
 
         var gwdescription = "<b>TTN V3 Gateway</b><br />";
         gwdescription += "TTN Mapper ID: "+gateway.id+"<br />";
@@ -452,11 +454,14 @@ function loadTtnV3Gateways() {
         gwdescription += "Location accuracy: "+gateway.location_accuracy+"<br />";
         gwdescription += "Network ID: "+gateway.network_id+"<br />";
 
-        marker = L.marker([gateway['latitude'], gateway['longitude']], 
+        const marker = L.marker([gateway['latitude'], gateway['longitude']], 
           {icon: gatewayMarkerV3});
         marker.bindPopup(gwdescription);
-        marker.addTo(map);
+        //marker.addTo(map);
+        v3markers.addLayer(marker);
       }
+
+      map.addLayer(v3markers);
     }
   });
 }
@@ -471,9 +476,11 @@ function loadChirpV3Gateways() {
     dataType: 'json',
     success: function (data) {
       v3gateways = data["gateways"];
+      
+      var chirpmarkers = L.markerClusterGroup();
+
       for(i in v3gateways) {
         gateway = v3gateways[i];
-        console.log(gateway);
 
         var gwdescription = "<b>Chirpstack V3 Gateway</b><br />";
         gwdescription += "TTN Mapper ID: "+gateway.id+"<br />";
@@ -486,11 +493,12 @@ function loadChirpV3Gateways() {
         gwdescription += "Location accuracy: "+gateway.location_accuracy+"<br />";
         gwdescription += "Network ID: "+gateway.network_id+"<br />";
 
-        marker = L.marker([gateway['latitude'], gateway['longitude']], 
+        const marker = L.marker([gateway['latitude'], gateway['longitude']], 
           {icon: gatewayMarkerChirpV3});
         marker.bindPopup(gwdescription);
-        marker.addTo(map);
+        chirpmarkers.addLayer(marker);
       }
+      map.addLayer(chirpmarkers);
     }
   });
 }

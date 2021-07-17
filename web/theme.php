@@ -42,7 +42,7 @@ if(isset($settings['theming']['gateway_v3'])) {
 if(isset($settings['theming']['gateway_chirpv3'])) {
   $gatewayMarkerChirpV3 = $settings['theming']['gateway_chirpv3'];
 } else {
-  $gatewayMarkerChirpV3 = "/resources/Chirp_blue.svg";
+  $gatewayMarkerChirpV3 = "/resources/chirpstack-gateway.svg";
 }
 
 if(isset($settings['theming']['gateway_icon_size_x'])) {
@@ -111,6 +111,12 @@ if(isset($settings['theming']['marker_cluster_radius'])) {
   $markerClusterRadius = $settings['theming']['marker_cluster_radius'];
 } else {
   $markerClusterRadius = "40";
+}
+
+if(isset($settings['theming']['show_offline_gateways'])) {
+  $showOfflineGateways = $settings['theming']['show_offline_gateways'];
+} else {
+  $showOfflineGateways = false;
 }
 
 if(isset($settings['theming']['show_unmapped_gateways'])) {
@@ -184,6 +190,7 @@ var gatewayMarkers = L.markerClusterGroup({
   maxClusterRadius: <?php echo $markerClusterRadius; ?>
 });
 
+var showOfflineGateways = "<?php echo $showOfflineGateways; ?>";
 var showUnmappedGateways = "<?php echo $showUnmappedGateways; ?>";
 var showTtnV3Gateways = "<?php echo $showTtnV3Gateways; ?>";
 var showChirpV3Gateways = "<?php echo $showChirpV3Gateways; ?>";

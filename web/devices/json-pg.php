@@ -130,9 +130,7 @@ SQL;
     $point = array();
 
     foreach ($row as $key => $value) {
-      if(!in_array($key, $columns_blacklist)) {
-        $point[$key] = $value;
-      }
+      $point[$key] = $value;
     }
 
     $points[] = $point;
