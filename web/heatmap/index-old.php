@@ -1,63 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
 <?php require getenv("TTNMAPPER_HOME").'/web/head.php'; ?>
-<style type="text/css">
-  
-.toGrayscale img {
-  filter: grayscale(1);
-}
-
-.icon-NS_TTN_V2 {
-  /* background-size: 100%; */
-  display: block;
-  /* background-color: blue; */
-  max-height: 25px !important;
-  max-width: 25px !important;
-  width: auto;
-  height: auto;
-  content: url('gateway_dot.png');
-}
-.icon-thethingsnetworkorg {
-  /* background-size: 100%; */
-  display: block;
-  /* background-color: blue; */
-  max-height: 25px !important;
-  max-width: 25px !important;
-  width: auto;
-  height: auto;
-  content: url('gateway_dot.png');
-}
-.icon-NS_TTS_V3 {
-  /* background-size: 100%; */
-  display: block;
-  /* background-color: blue; */
-  max-height: 25px !important;
-  max-width: 25px !important;
-  width: auto;
-  height: auto;
-  content: url('NS_TTS_V3.svg');
-}
-.icon-NS_CHIRP {
-  /* background-size: 100%; */
-  display: block;
-  /* background-color: blue; */
-  max-height: 25px !important;
-  max-width: 25px !important;
-  width: auto;
-  height: auto;
-  content: url('NS_CHIRP.svg');
-}
-.icon-NS_HELIUM {
-  /* background-size: 100%; */
-  display: block;
-  /* background-color: blue; */
-  max-height: 25px !important;
-  max-width: 25px !important;
-  width: auto;
-  height: auto;
-  content: url('NS_HELIUM.svg');
-}
-</style>
 <body>
 
 
@@ -207,8 +150,6 @@
   <script src="/libs/leaflet/leaflet.js"></script>
   <script src="/libs/leaflet.measure/leaflet.measure.js"></script>
   <script src="/libs/Leaflet.markercluster/dist/leaflet.markercluster.js"></script>
-  <link rel="stylesheet" href="leaflet-panel-layers.min.css">
-  <script type="text/javascript" src="leaflet-panel-layers.min.js"></script>
   <script src="leaflet-kml-master/L.KML.js"></script>
 
   <!-- HTML entity escaping -->
@@ -223,9 +164,8 @@
   <!-- The map style -->
   <script type="text/javascript" src="/theme.php"></script>
   <script type="text/javascript" src="/common.js"></script>
-  <script src="mapper.js"></script>
   <!-- The actual main logic for this page -->
-  <script src="index-logic-test.js"></script>
+  <script src="index-logic.js"></script>
 
 </body>
 </html>
