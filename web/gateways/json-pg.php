@@ -9,13 +9,13 @@ $servername = $settings['database_postgresql']['host'];
 $serverport = $settings['database_postgresql']['port'];
 
 
-if(!isset($_REQUEST["device"])) {
-  echo "No device ID specified.";
+if(!isset($_REQUEST["gateway"])) {
+  echo "No gateway ID specified.";
   die();
 }
 
-$application = urldecode($_REQUEST["application"]);
-$device = urldecode($_REQUEST["device"]);
+
+$gateway = urldecode($_REQUEST["gateway"]);
 $startdate = 0;
 $enddate = time();
 
@@ -109,14 +109,7 @@ JOIN antennas a on packets.antenna_id = a.id
 JOIN devices d on packets.device_id = d.id
 JOIN data_rates dr on packets.data_rate_id = dr.id
 -- WHERE (a.network_id = 'NS_TTS_V3://eu1.cloud.thethings.network' OR a.network_id = 'NS_TTS_V3://ttn.eu1.cloud.thethings.network')
-WHERE d.dev_id = :device\n
-SQL;
-
-  if($application != "") {
-    $query .= "AND d.app_id = :application\n";
-  }
-
-  $query .= <<<SQL
+WHERE a.gateway_id = :gateway
 AND latitude != 0.0 AND longitude != 0.0
 AND time > :startdate
 AND time < :enddate
@@ -125,12 +118,8 @@ AND packets.experiment_id IS NULL
 LIMIT 50000
 SQL;
 
-  // "SELECT * FROM packets WHERE nodeaddr=:device AND `time` > :startdate AND `time` < :enddate ORDER BY `time` DESC LIMIT 10000"
   $stmt = $conn->prepare($query);
-  $stmt->bindParam(':device', $device, PDO::PARAM_STR);
-  if($application != "") {
-    $stmt->bindParam(':application', $application, PDO::PARAM_STR);
-  }
+  $stmt->bindParam(':gateway', $gateway, PDO::PARAM_STR);
   $stmt->bindParam(':startdate', $startDateStr, PDO::PARAM_STR);
   $stmt->bindParam(':enddate', $endDateStr, PDO::PARAM_STR);
   $stmt->execute();

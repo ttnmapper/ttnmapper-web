@@ -53,6 +53,7 @@ function getData()
 
     $.getJSON('json-pg.php', 
     {
+      application: findGetParameter("application"),
       device: findGetParameter("device"),
       startdate: findGetParameter("startdate"),
       enddate: findGetParameter("enddate")
@@ -66,12 +67,15 @@ function getData()
       for(point in data['points']) {
         if( !gateways.includes(data['points'][point]['gwaddr']) ) {
           var gwaddr = data['points'][point]['gwaddr'];
-          if(gwaddr.startsWith("eui-")) {
-            gwaddr = gwaddr.substring(4);
-            gwaddr = gwaddr.toUpperCase();
+          // if(gwaddr.startsWith("eui-")) {
+          //   gwaddr = gwaddr.substring(4);
+          //   gwaddr = gwaddr.toUpperCase();
+          // }
+          console.log(gwaddr);
+          if(gwaddr !== "packetbroker") {
+            data['points'][point]['gwaddr'] = gwaddr;
+            gateways.push(gwaddr);
           }
-          data['points'][point]['gwaddr'] = gwaddr;
-          gateways.push(gwaddr);
         }
       }
 
@@ -140,7 +144,8 @@ function addPointsAndLines()
           marker = L.polyline([ [data['lat'], data['lon']], [gwLat, gwLon] ], lineOptions);
           marker.bindPopup(
             data['time']+
-            '<br /><b>Node:</b> '+data['nodeaddr']+
+            '<br /><b>AppID:</b> '+data['app_id']+
+            '<br /><b>DevID:</b> '+data['dev_id']+
             '<br /><b>Received by gateway:</b> <br />'+data['gwaddr']+
             '<br /><b>Location accuracy:</b> '+data['accuracy']+
             '<br /><b>Packet id:</b> '+data['id']+
@@ -165,7 +170,8 @@ function addPointsAndLines()
       marker = L.circleMarker([data['lat'], data['lon']], markerOptions);
       marker.bindPopup(
         data['time']+
-        '<br /><b>Node:</b> '+data['nodeaddr']+
+        '<br /><b>AppID:</b> '+data['app_id']+
+        '<br /><b>DevID:</b> '+data['dev_id']+
         '<br /><b>Received by gateway:</b> <br />'+data['gwaddr']+
         '<br /><b>Location accuracy:</b> '+data['accuracy']+
         '<br /><b>Packet id:</b> '+data['id']+

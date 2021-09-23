@@ -54,14 +54,14 @@ function getData()
     $("div.overlay").addClass("show");
 
     let gateway = findGetParameter("gateway");
-    if(gateway.startsWith("eui-")) {
-      gateway = gateway.substring(4);
-      gateway = gateway.toUpperCase();
-    }
+    // if(gateway.startsWith("eui-")) {
+    //   gateway = gateway.substring(4);
+    //   gateway = gateway.toUpperCase();
+    // }
 
     const gateways = [gateway];
 
-    $.getJSON('json.php', 
+    $.getJSON('json-pg.php', 
     {
       gateway: gateway,
       startdate: findGetParameter("startdate"),
@@ -113,7 +113,8 @@ function addPointsAndLines()
             marker = L.polyline([ [data['lat'], data['lon']], [gwLat, gwLon] ], lineOptions);
             marker.bindPopup(
               data['time']+
-              '<br /><b>Node:</b> '+data['nodeaddr']+
+              '<br /><b>AppID:</b> '+data['app_id']+
+              '<br /><b>DevID:</b> '+data['dev_id']+
               '<br /><b>Received by gateway:</b> <br />'+data['gwaddr']+
               '<br /><b>Location accuracy:</b> '+data['accuracy']+
               '<br /><b>Packet id:</b> '+data['id']+
@@ -138,7 +139,8 @@ function addPointsAndLines()
         marker = L.circleMarker([data['lat'], data['lon']], markerOptions);
         marker.bindPopup(
           data['time']+
-          '<br /><b>Node:</b> '+data['nodeaddr']+
+          '<br /><b>AppID:</b> '+data['app_id']+
+          '<br /><b>DevID:</b> '+data['dev_id']+
           '<br /><b>Received by gateway:</b> <br />'+data['gwaddr']+
           '<br /><b>Location accuracy:</b> '+data['accuracy']+
           '<br /><b>Packet id:</b> '+data['id']+
