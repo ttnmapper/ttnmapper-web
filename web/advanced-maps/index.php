@@ -130,8 +130,7 @@
                   autocomplete="on"
                   autocorrect="off"
                   autocapitalize="off"
-                  spellcheck="false"
-                  style="text-transform: lowercase;">
+                  spellcheck="false">
             <div class="invalid-feedback">
               Device ID can't be empty.
             </div>
@@ -316,7 +315,7 @@
         </div>
 
         <div class="form-group">
-          <button type="submit" class="btn btn-secondary" formaction="/gateways/csv.php">CSV data</button>
+          <button type="submit" class="btn btn-secondary" formaction="/gateways/csv-pg.php">CSV data</button>
           <button type="submit" class="btn btn-primary" formaction="/gateways/">View Map</button>
         </div>
       </form>

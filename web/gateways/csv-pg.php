@@ -16,13 +16,13 @@ $servername = $settings['database_postgresql']['host'];
 $serverport = $settings['database_postgresql']['port'];
 
 
-if(!isset($_REQUEST["device"])) {
-  echo "No device ID specified.";
+if(!isset($_REQUEST["gateway"])) {
+  echo "No gateway ID specified.";
   die();
 }
 
 
-$device = urldecode($_REQUEST["device"]);
+$gateway = urldecode($_REQUEST["gateway"]);
 $startdate = 0;
 $enddate = time();
 
@@ -124,7 +124,7 @@ JOIN accuracy_sources accs on packets.accuracy_source_id = accs.id
 JOIN user_agents ua on packets.user_agent_id = ua.id
 LEFT JOIN experiments e on packets.experiment_id = e.id
 -- WHERE (a.network_id = 'NS_TTS_V3://eu1.cloud.thethings.network' OR a.network_id = 'NS_TTS_V3://ttn.eu1.cloud.thethings.network')
-WHERE d.dev_id = :device
+WHERE a.gateway_id = :gateway
 -- AND latitude != 0.0 AND longitude != 0.0
 AND time > :startdate
 AND time < :enddate
@@ -133,7 +133,7 @@ ORDER BY time DESC LIMIT 10000
 SQL;
 
   $stmt = $conn->prepare($query);
-  $stmt->bindParam(':device', $device, PDO::PARAM_STR);
+  $stmt->bindParam(':gateway', $gateway, PDO::PARAM_STR);
   $stmt->bindParam(':startdate', $startDateStr, PDO::PARAM_STR);
   $stmt->bindParam(':enddate', $endDateStr, PDO::PARAM_STR);
   $stmt->execute();
