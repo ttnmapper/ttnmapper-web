@@ -36,13 +36,19 @@ if(isset($settings['theming']['gateway_single_channel'])) {
 if(isset($settings['theming']['gateway_v3'])) {
   $gatewayMarkerV3 = $settings['theming']['gateway_v3'];
 } else {
-  $gatewayMarkerV3 = "/resources/V3_blue.svg";
+  $gatewayMarkerV3 = "/resources/TTS_V3_GW_flags.svg";
 }
 
 if(isset($settings['theming']['gateway_chirpv3'])) {
   $gatewayMarkerChirpV3 = $settings['theming']['gateway_chirpv3'];
 } else {
   $gatewayMarkerChirpV3 = "/resources/chirpstack-gateway.svg";
+}
+
+if(isset($settings['theming']['gateway_helium'])) {
+  $gatewayMarkerHelium = $settings['theming']['gateway_helium'];
+} else {
+  $gatewayMarkerHelium = "/resources/helium-gateway-white-center.svg";
 }
 
 if(isset($settings['theming']['gateway_icon_size_x'])) {
@@ -183,6 +189,12 @@ var gatewayMarkerChirpV3 = L.icon({
   popupAnchor:  [<?php echo $gatewayPopupAnchorX; ?>, <?php echo $gatewayPopupAnchorY; ?>]
 });
 
+var gatewayMarkerHelium = L.icon({
+  iconUrl: "<?php echo $gatewayMarkerHelium; ?>",
+  iconSize:     [<?php echo $gatewayIconSizeX; ?>, <?php echo $gatewayIconSizeY; ?>],
+  iconAnchor:   [<?php echo $gatewayIconAnchorX; ?>, <?php echo $gatewayIconAnchorY; ?>],
+  popupAnchor:  [<?php echo $gatewayPopupAnchorX; ?>, <?php echo $gatewayPopupAnchorY; ?>]
+});
 
 // Gateway markers are clustered together
 var clusterGateways = "<?php echo $clusterGateways; ?>";

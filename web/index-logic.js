@@ -19,7 +19,15 @@ function setUp() {
 
   addBackgroundLayers();
 
-  getGatewaysInView();
+  getGatewaysInViewV2();
+
+  if (showTtnV3Gateways === "1") {
+    loadTtnV3Gateways();
+  }
+
+  if (showChirpV3Gateways === "1") {
+    loadChirpV3Gateways();
+  }
 
   gatewayMarkers.addTo(map);
   gatewayMarkersNoCluster.addTo(map);
@@ -28,7 +36,7 @@ function setUp() {
 // Callback to refresh layers when the maps was panned or zoomed
 function boundsChangedCallback() {
   // Refresh the visible gateways, which will also trigger a layer refresh
-  getGatewaysInView();
+  getGatewaysInViewV2();
 }
 
 function hideAllLayers() {

@@ -29,16 +29,9 @@ try
   // set the PDO error mode to exception
   $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
-  $sql = "";
-
-  if ($network_id == "thethingsnetwork.org") {
-    $sql = "SELECT * FROM gateways  WHERE (gateways.network_id LIKE 'NS_TTS_V2://%' OR gateways.network_id LIKE 'thethingsnetwork.org') AND latitude != 0 AND longitude != 0";
-    $stmt = $conn->prepare($sql);
-  } else {
-    $sql = "SELECT * FROM gateways  WHERE gateways.network_id = :network_id AND latitude != 0 AND longitude != 0";
-    $stmt = $conn->prepare($sql);
-    $stmt->bindParam(':network_id', $network_id);
-  }
+  $sql = "SELECT * FROM gateways  WHERE gateways.network_id = :network_id AND latitude != 0 AND longitude != 0";
+  $stmt = $conn->prepare($sql);
+  $stmt->bindParam(':network_id', $network_id);
 
   $stmt->execute();
   $result = $stmt->setFetchMode(PDO::FETCH_ASSOC); 

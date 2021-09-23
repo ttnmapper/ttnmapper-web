@@ -175,6 +175,48 @@ function getJsonFromUrl(url) {
 }
 
 
+function getGatewaysInViewV2()
+{
+  if("gateway" in getParameters) {
+    
+    if(Array.isArray(getParameters['gateway'])) {
+      gatewaysInView = getParameters['gateway'];
+    } else {
+      gatewaysInView = [getParameters['gateway']];
+    }
+
+    console.log("Is array of gateways");
+    addGateways(gatewaysInView);
+
+  } else {
+    var bounds = map.getBounds();
+
+    $.ajax
+      ({
+        type: "POST",
+        url: '/webapi/gwbbox.php',
+        dataType: 'json',
+        data: JSON.stringify(bounds),
+        success: function (data) {
+          gatewaysInView = data["gateways"];
+
+          // V2 re-add eui- in front to be able to find in new backend
+          // for (i in gatewaysInView) {
+          //   if(gatewaysInView[i].startsWith('eui-')) {
+          //     console.log(gatewaysInView[i], "==>");
+          //     gatewaysInView[i] = 'eui-'+gatewaysInView[i].toUpperCase();
+          //     console.log("==>", gatewaysInView[i]);
+          //   }
+          // }
+
+          addGatewaysV2(gatewaysInView);
+          console.log(gatewaysInView.length + " gateways in view");
+        }
+      });
+
+  }
+}
+
 function getGatewaysInView()
 {
   if("gateway" in getParameters) {
@@ -199,22 +241,25 @@ function getGatewaysInView()
         data: JSON.stringify(bounds),
         success: function (data) {
           gatewaysInView = data["gateways"];
+
+          // V2 re-add eui- in front to be able to find in new backend
+          // for (i in gatewaysInView) {
+          //   if(gatewaysInView[i].startsWith('eui-')) {
+          //     console.log(gatewaysInView[i], "==>");
+          //     gatewaysInView[i] = 'eui-'+gatewaysInView[i].toUpperCase();
+          //     console.log("==>", gatewaysInView[i]);
+          //   }
+          // }
+
           addGateways(gatewaysInView);
           console.log(gatewaysInView.length + " gateways in view");
         }
       });
 
-    if (showTtnV3Gateways === "1") {
-      loadTtnV3Gateways();
-    }
-
-    if (showChirpV3Gateways === "1") {
-      loadChirpV3Gateways();
-    }
   }
 }
 
-function addGateways(gateways)
+function addGatewaysV2(gateways)
 {
   // First add the gateway markers, then do the layers. 
   // Because we only download layers for gateways in our bounding box = gatewaysInView
@@ -252,13 +297,52 @@ function addGateways(gateways)
 
 }
 
+function addGateways(gateways)
+{
+  // First add the gateway markers, then do the layers. 
+  // Because we only download layers for gateways in our bounding box = gatewaysInView
+
+  var gatewaysToAdd = [];
+  for (i in gateways) {
+    if(!(gateways[i] in loadedGateways)) {
+      // console.log(gateways[i]+" not loaded yet");
+      gatewaysToAdd.push(gateways[i]);
+    }
+  }
+
+  if(gatewaysToAdd.length > 0) {
+    $.ajax({
+      type: "POST",
+      url: "/webapi/gwdetailslist-pg.php",
+      // The key needs to match your method's input parameter (case-sensitive).
+      data: JSON.stringify({ "gateways": gatewaysToAdd }),
+      contentType: "application/json; charset=utf-8",
+      dataType: "json",
+      success: function(data){
+        for(gateway in data) {
+          addGatewayMarker(gateway, data[gateway]);
+        }
+        showOrHideLayers();
+      },
+      failure: function(errMsg) {
+        console.log(errMsg);
+        showOrHideLayers();
+      }
+    });
+  } else {
+    showOrHideLayers();
+  }
+
+}
+
 function addGatewayMarker(gateway, data)
 {
   if(gateway in loadedGateways) {
     // console.log(gateway + " already added");
     return;
   } else {
-    //console.log("Adding "+gateway);
+    console.log("Adding "+gateway);
+    console.log(data);
 
     if(data['lat'] === null || data['lon'] === null) {
       // console.log("Gateway "+gateway+" location is null");
@@ -272,6 +356,9 @@ function addGatewayMarker(gateway, data)
       // console.log("Gateway "+gateway+" location is on null island");
       return;
     }
+
+
+
 
     var gwdescriptionHead = "";
     if (data['description'] != null) {
@@ -292,48 +379,70 @@ function addGatewayMarker(gateway, data)
             '\">alpha shape</a><br>'+
       '</ul>';
 
-    if(data['last_heard'] < (Date.now()/1000)-(60*60*24*5)) //5 days
-    {
-      // console.log(gateway + " offline for >5 days");
-      if(showOfflineGateways === "1") {
-        marker = L.marker([data['lat'], data['lon']], {icon: gatewayMarkerOffline});
-        marker.bindPopup(gwdescriptionHead+'<br /><br /><font color="red">Offline.</font> Will be removed from the map in 5 days.<br />'+gwdescription);        
-      } else {
-        // do not show on map
-        index = gatewaysInView.indexOf(gateway);
-        if(index != -1) {
-          gatewaysInView.splice(index, 1);
-        }
-        return;
-      }
+
+    var marker = null;
+
+    if (data['network_id'] == null) {
+      data['network_id'] = "";
     }
-    else if(data['last_heard'] < (Date.now()/1000)-(60*60*1)) //1 hour
-    {
-      marker = L.marker([data['lat'], data['lon']], {icon: gatewayMarkerOffline});
-      marker.bindPopup(gwdescriptionHead+'<br /><br /><font color="red">Offline.</font> Will be removed from the map in 5 days.<br />'+gwdescription);
-    }
-    else if(data['channels'] == 0)
-    {
-      // Online but not mapped
-      if(showUnmappedGateways === "1") {
-        marker = L.marker([data['lat'], data['lon']], {icon: gatewayMarkerOnlineNotMapped});
-        marker.bindPopup(gwdescriptionHead+'<br /><br /><font color="green">Online but no coverage mapped yet.</font><br />'+gwdescription);
-      }
-      else {
-        return;
-      }
-    }
-    else if(data['channels']<3)
-    {
-      //Single channel gateway
-      marker = L.marker([data['lat'], data['lon']], {icon: gatewayMarkerSingleChannel});
-      marker.bindPopup(gwdescriptionHead+'<br /><br />Likely a <font color="orange">Single Channel Gateway.</font><br />'+gwdescription);
-    }
-    else
-    {
-      //LoRaWAN gateway
-      marker = L.marker([data['lat'], data['lon']], {icon: gatewayMarkerOnline});
+
+    if(data['network_id'].startsWith('NS_HELIUM://')) {
+      marker = L.marker([data['lat'], data['lon']], {icon: gatewayMarkerHelium});
       marker.bindPopup(gwdescriptionHead+'<br />'+gwdescription);
+    }
+    else if(data['network_id'].startsWith('NS_CHIRP://')) {
+      marker = L.marker([data['lat'], data['lon']], {icon: gatewayMarkerChirpV3});
+      marker.bindPopup(gwdescriptionHead+'<br />'+gwdescription);
+    }
+    else if(data['network_id'].startsWith('NS_TTS_V3://')) {
+      marker = L.marker([data['lat'], data['lon']], {icon: gatewayMarkerV3});
+      marker.bindPopup(gwdescriptionHead+'<br />'+gwdescription);
+    }
+    else {
+
+      if(data['last_heard'] < (Date.now()/1000)-(60*60*24*5)) //5 days
+      {
+        // console.log(gateway + " offline for >5 days");
+        if(showOfflineGateways === "1") {
+          marker = L.marker([data['lat'], data['lon']], {icon: gatewayMarkerOffline});
+          marker.bindPopup(gwdescriptionHead+'<br /><br /><font color="red">Offline.</font> Will be removed from the map in 5 days.<br />'+gwdescription);        
+        } else {
+          // do not show on map
+          index = gatewaysInView.indexOf(gateway);
+          if(index != -1) {
+            gatewaysInView.splice(index, 1);
+          }
+          return;
+        }
+      }
+      else if(data['last_heard'] < (Date.now()/1000)-(60*60*1)) //1 hour
+      {
+        marker = L.marker([data['lat'], data['lon']], {icon: gatewayMarkerOffline});
+        marker.bindPopup(gwdescriptionHead+'<br /><br /><font color="red">Offline.</font> Will be removed from the map in 5 days.<br />'+gwdescription);
+      }
+      else if(data['channels'] == 0)
+      {
+        // Online but not mapped
+        if(showUnmappedGateways === "1") {
+          marker = L.marker([data['lat'], data['lon']], {icon: gatewayMarkerOnlineNotMapped});
+          marker.bindPopup(gwdescriptionHead+'<br /><br /><font color="green">Online but no coverage mapped yet.</font><br />'+gwdescription);
+        }
+        else {
+          return;
+        }
+      }
+      else if(data['channels']<3)
+      {
+        //Single channel gateway
+        marker = L.marker([data['lat'], data['lon']], {icon: gatewayMarkerSingleChannel});
+        marker.bindPopup(gwdescriptionHead+'<br /><br />Likely a <font color="orange">Single Channel Gateway.</font><br />'+gwdescription);
+      }
+      else
+      {
+        //LoRaWAN gateway
+        marker = L.marker([data['lat'], data['lon']], {icon: gatewayMarkerOnline});
+        marker.bindPopup(gwdescriptionHead+'<br />'+gwdescription);
+      }
     }
 
     if(clusterGateways === "1") {
@@ -441,18 +550,17 @@ function loadTtnV3Gateways() {
       for(i in v3gateways) {
         gateway = v3gateways[i];
 
-        var gwdescription = "<b>TTN V3 Gateway</b><br />";
-        gwdescription += "TTN Mapper ID: "+gateway.id+"<br />";
-        gwdescription += "TTN V3 ID: "+gateway.gateway_id+"<br />";
+        var gwdescription = "<b>The Things Stack Gateway</b><br />";
+        gwdescription += "Network ID: "+gateway.network_id+"<br />";
+        gwdescription += "Gateway ID: "+gateway.gateway_id+"<br />";
         gwdescription += "Gateway EUI: "+gateway.gateway_eui+"<br />";
+        gwdescription += "TTN Mapper ID: "+gateway.id+"<br />";
         gwdescription += "Description: "+gateway.description+"<br />";
         gwdescription += "Last heard: "+gateway.last_heard+"<br />";
-        gwdescription += "TTN Mapper ID: "+gateway.id+"<br />";
         gwdescription += "Coordinates: "+gateway.latitude+", "+gateway.longitude+"<br />";
         gwdescription += "Altitude: "+gateway.altitude+"<br />";
         gwdescription += "Location source: "+gateway.location_source+"<br />";
         gwdescription += "Location accuracy: "+gateway.location_accuracy+"<br />";
-        gwdescription += "Network ID: "+gateway.network_id+"<br />";
 
         const marker = L.marker([gateway['latitude'], gateway['longitude']], 
           {icon: gatewayMarkerV3});
@@ -482,16 +590,16 @@ function loadChirpV3Gateways() {
       for(i in v3gateways) {
         gateway = v3gateways[i];
 
-        var gwdescription = "<b>Chirpstack V3 Gateway</b><br />";
-        gwdescription += "TTN Mapper ID: "+gateway.id+"<br />";
+        var gwdescription = "<b>Chirpstack Gateway</b><br />";
+        gwdescription += "Network ID: "+gateway.network_id+"<br />";
         gwdescription += "Gateway EUI: "+gateway.gateway_eui+"<br />";
+        gwdescription += "TTN Mapper ID: "+gateway.id+"<br />";
         gwdescription += "Description: "+gateway.description+"<br />";
         gwdescription += "Last heard: "+gateway.last_heard+"<br />";
         gwdescription += "Coordinates: "+gateway.latitude+", "+gateway.longitude+"<br />";
         gwdescription += "Altitude: "+gateway.altitude+"<br />";
         gwdescription += "Location source: "+gateway.location_source+"<br />";
         gwdescription += "Location accuracy: "+gateway.location_accuracy+"<br />";
-        gwdescription += "Network ID: "+gateway.network_id+"<br />";
 
         const marker = L.marker([gateway['latitude'], gateway['longitude']], 
           {icon: gatewayMarkerChirpV3});
