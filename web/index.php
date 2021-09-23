@@ -78,6 +78,10 @@
         }
         ?>
 
+        <li class="nav-item">
+          <a class="nav-link" href="https://docs.ttnmapper.org/project_status.html">Project Status</a>
+        </li>
+        
       </ul>
     </div>
 
@@ -108,12 +112,12 @@
 
   </nav>
 
-  <div class="alert alert-warning alert-dismissible fade show" role="alert">
+<!--   <div class="alert alert-warning alert-dismissible fade show" role="alert">
     See <a href="https://docs.ttnmapper.org/project_status.html" target="_blank">Project Status</a> for <strong>The Things Stack (v3)</strong> and <strong>ChirpStack</strong> support.
     <button type="button" class="close" data-dismiss="alert" aria-label="Close">
       <span aria-hidden="true">&times;</span>
     </button>
-  </div>
+  </div> -->
 
   <div id="map"></div>
   <div id="rightcontainer">
