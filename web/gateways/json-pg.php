@@ -110,7 +110,7 @@ JOIN devices d on packets.device_id = d.id
 JOIN data_rates dr on packets.data_rate_id = dr.id
 -- WHERE (a.network_id = 'NS_TTS_V3://eu1.cloud.thethings.network' OR a.network_id = 'NS_TTS_V3://ttn.eu1.cloud.thethings.network')
 WHERE a.gateway_id = :gateway
-AND latitude != 0.0 AND longitude != 0.0
+-- AND NOT (latitude = 0.0 AND longitude = 0.0)
 AND time > :startdate
 AND time < :enddate
 AND packets.experiment_id IS NULL
