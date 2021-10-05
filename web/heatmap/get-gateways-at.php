@@ -13,7 +13,10 @@ $zoom = 19;
 
 $xtile = floor((($lon + 180) / 360) * pow(2, $zoom));
 $ytile = floor((1 - log(tan(deg2rad($lat)) + 1 / cos(deg2rad($lat))) / pi()) /2 * pow(2, $zoom));
-// var_dump($xtile, $ytile);
+
+if($xtile > (pow(2, $zoom)-1)) {
+  $xtile = $xtile - pow(2, $zoom);
+}
 
 
 // var_dump($north, $south, $west, $east);

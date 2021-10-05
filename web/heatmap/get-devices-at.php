@@ -15,6 +15,10 @@ $xtile = floor((($lon + 180) / 360) * pow(2, $zoom));
 $ytile = floor((1 - log(tan(deg2rad($lat)) + 1 / cos(deg2rad($lat))) / pi()) /2 * pow(2, $zoom));
 // var_dump($xtile, $ytile);
 
+if($xtile > (pow(2, $zoom)-1)) {
+  $xtile = $xtile - pow(2, $zoom);
+}
+
 $n = pow(2, $zoom);
 $west = $xtile / $n * 360.0 - 180.0;
 $north = rad2deg(atan(sinh(pi() * (1 - 2 * $ytile / $n))));
