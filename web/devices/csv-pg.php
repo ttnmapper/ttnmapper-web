@@ -95,7 +95,7 @@ header("Content-Type: text/plain");
 // header("Content-Type:application/csv"); 
 // header("Content-Disposition:attachment;filename=packets.csv");
 
-fputcsv($output, array('id', 'time', 'device_id', 'application_id', 'gateway_id', 'modulation', 'spreading factor', 'bandwidth', 'snr', 'rssi', 'frequency', 'f_cnt', 'latitude', 'longitude', 'altitude', 'accuracy meters', 'hdop', 'satellites', 'location provider', 'user agent', 'experiment name'));
+fputcsv($output, array('id', 'time', 'device_id', 'application_id', 'gateway_id', 'modulation', 'spreading factor', 'bandwidth', 'snr', 'rssi', 'frequency', 'f_port', 'f_cnt', 'latitude', 'longitude', 'altitude', 'accuracy meters', 'hdop', 'satellites', 'location provider', 'user agent', 'experiment name'));
 
 try {
   $conStr = sprintf("pgsql:host=%s;port=%d;dbname=%s;user=%s;password=%s", 
@@ -113,7 +113,7 @@ try {
   $query = <<<SQL
 SELECT packets.id, time, dev_id, app_id, gateway_id, modulation,
 dr.spreading_factor, dr.bandwidth,
-snr, rssi, herz, f_cnt,
+snr, rssi, herz, f_port, f_cnt,
 latitude, longitude, altitude, accuracy_meters, hdop, satellites, accs.name as "accsrc", ua.name as "useragent", e.name as "experiment"
 FROM packets
 JOIN antennas a on packets.antenna_id = a.id
@@ -129,7 +129,8 @@ WHERE d.dev_id = :device
 AND time > :startdate
 AND time < :enddate
 -- AND packets.experiment_id IS NULL
-ORDER BY time DESC LIMIT 10000
+ORDER BY time ASC
+LIMIT 50000
 SQL;
 
   $stmt = $conn->prepare($query);

@@ -117,12 +117,12 @@ SQL;
   }
 
   $query .= <<<SQL
-AND latitude != 0.0 AND longitude != 0.0
+-- AND NOT (latitude = 0.0 AND longitude = 0.0)
 AND time > :startdate
 AND time < :enddate
 AND packets.experiment_id IS NULL
 -- ORDER BY time DESC 
-LIMIT 50000
+LIMIT 10000
 SQL;
 
   // "SELECT * FROM packets WHERE nodeaddr=:device AND `time` > :startdate AND `time` < :enddate ORDER BY `time` DESC LIMIT 10000"
