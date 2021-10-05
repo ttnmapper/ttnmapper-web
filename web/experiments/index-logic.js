@@ -49,7 +49,7 @@ function getData()
     $("div.spanner").addClass("show");
     $("div.overlay").addClass("show");
 
-    $.getJSON('json.php', 
+    $.getJSON('json-pg.php', 
     {
       experiment: findGetParameter("experiment"),
       startdate: findGetParameter("startdate"),
