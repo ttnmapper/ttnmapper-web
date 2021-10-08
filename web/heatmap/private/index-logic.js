@@ -18,45 +18,33 @@ function boundsChangedCallback() {
 }
 
 function addForegroundLayers() {
-  var tms_url = 'https://tms.ttnmapper.org/circles/network/{networkid}/{z}/{x}/{y}.png';
+  var tms_url = '/tms/index.php?tile={z}/{x}/{y}';
+  var network = findGetParameter("network");
+  var gateway = findGetParameter("gateway");
 
-  let networks = [
-    {
-      network_id: 'thethingsnetwork.org',
-      network_name: 'The Things Network (v2)',
-      default_shown: false
-
-    },
-    {
-      network_id: 'NS_TTS_V3://ttn@000013',
-      network_name: 'The Things Stack CE (v3)',
-      default_shown: true
-
-    },
-    {
-      network_id: 'NS_HELIUM://000024',
-      network_name: 'Helium - The People\'s Network',
-      default_shown: false
-
-    },
-  ];
-  
-  for (const network of networks) {
-    var coveragetiles = L.tileLayer(tms_url, {
-      networkid: encodeURIComponent(network.network_id),
-      maxNativeZoom: 19,
-      maxZoom: 20,
-      maxNativeZoom: 20,
-      zIndex: 10,
-      opacity: 0.5
-    });
-    layerControl.addOverlay(coveragetiles, "Heatmap: "+network.network_name);
-    if(network.default_shown) {
-      coveragetiles.addTo(map);
-    }
-
-    AddGateways(network);
+  if(network === "thethingsnetwork.org" || network === "NS_TTS_V3://ttn@000013" || network === "NS_HELIUM://000024") {
+    $("#private-network-warning").remove();
   }
+
+  var tms_url = 'https://tms.ttnmapper.org/circles/network/{networkid}/{z}/{x}/{y}.png';
+  if(gateway !== null) {
+    tms_url = 'https://tms.ttnmapper.org/circles/gateway/{networkid}/{gatewayid}/{z}/{x}/{y}.png';
+  }
+
+  
+  
+  var coveragetiles = L.tileLayer(tms_url, {
+    networkid: encodeURIComponent(network),
+    gatewayid: encodeURIComponent(gateway),
+    maxNativeZoom: 19,
+    maxZoom: 20,
+    maxNativeZoom: 20,
+    zIndex: 10,
+    opacity: 0.5
+  });
+  coveragetiles.addTo(map);
+
+  AddGateways(network, gateway);
 }
 
 function showOrHideLayers() {
@@ -64,10 +52,11 @@ function showOrHideLayers() {
   // Download the neccesary layers, hide them, or display them.
 }
 
-function AddGateways(network) {
-  const res = fetch("https://ttnmapper.org/webapi/gwall_network.php?network_id="+encodeURIComponent(network.network_id))
+function AddGateways(network, gatewayFilter) {
+  const res = fetch("https://ttnmapper.org/webapi/gwall_network.php?network_id="+encodeURIComponent(network))
   .then(response => response.json())
   .then(data => {
+    // console.log(data);
     var markers = L.markerClusterGroup({
       spiderfyOnMaxZoom: true,
       // showCoverageOnHover: false,
@@ -76,6 +65,15 @@ function AddGateways(network) {
     });
 
     for(gateway of data['gateways']) {
+      if(gatewayFilter != null) {
+        if(gatewayFilter !== gateway.gateway_id) {
+          continue;
+        } else {
+          // single gateway: enter map at gateway
+          map.panTo(new L.LatLng(gateway.latitude, gateway.longitude));
+        }
+      }
+
       let marker = L.marker(
       [ gateway.latitude, gateway.longitude ], 
       {
@@ -87,10 +85,7 @@ function AddGateways(network) {
       markers.addLayer(marker);
     }
 
-    layerControl.addOverlay(markers, "Gateways: "+network.network_name);
-    if(network.default_shown) {
-      markers.addTo(map);
-    }
+    markers.addTo(map);
 
   });
 }

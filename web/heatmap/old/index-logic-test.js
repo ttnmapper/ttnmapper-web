@@ -93,7 +93,7 @@ function setUp() {
 
   let panelOverlays = [];
 
-  let networkIds = ['thethingsnetwork.org', 'NS_TTS_V3://ttn@000013', 'NS_CHIRP://wolfsburg.digital', 'NS_HELIUM://000024'];
+  let networkIds = ['thethingsnetwork.org', 'NS_TTS_V3://ttn@000013', 'NS_HELIUM://000024'];
   for (const networkId of networkIds) {
     let group = {
       group: NetworkIdToName(networkId),

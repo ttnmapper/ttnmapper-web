@@ -1,6 +1,63 @@
 <!DOCTYPE html>
 <html lang="en">
 <?php require getenv("TTNMAPPER_HOME").'/web/head.php'; ?>
+<style type="text/css">
+  
+.toGrayscale img {
+  filter: grayscale(1);
+}
+
+.icon-NS_TTN_V2 {
+  /* background-size: 100%; */
+  display: block;
+  /* background-color: blue; */
+  max-height: 25px !important;
+  max-width: 25px !important;
+  width: auto;
+  height: auto;
+  content: url('gateway_dot.png');
+}
+.icon-thethingsnetworkorg {
+  /* background-size: 100%; */
+  display: block;
+  /* background-color: blue; */
+  max-height: 25px !important;
+  max-width: 25px !important;
+  width: auto;
+  height: auto;
+  content: url('gateway_dot.png');
+}
+.icon-NS_TTS_V3 {
+  /* background-size: 100%; */
+  display: block;
+  /* background-color: blue; */
+  max-height: 25px !important;
+  max-width: 25px !important;
+  width: auto;
+  height: auto;
+  content: url('NS_TTS_V3.svg');
+}
+.icon-NS_CHIRP {
+  /* background-size: 100%; */
+  display: block;
+  /* background-color: blue; */
+  max-height: 25px !important;
+  max-width: 25px !important;
+  width: auto;
+  height: auto;
+  content: url('NS_CHIRP.svg');
+}
+.icon-NS_HELIUM {
+  /* background-size: 100%; */
+  display: block;
+  /* background-color: blue; */
+  max-height: 25px !important;
+  max-width: 25px !important;
+  width: auto;
+  height: auto;
+  content: url('NS_HELIUM.svg');
+}
+</style>
 <body>
 
 
@@ -107,13 +164,6 @@
 
   </nav>
 
-  <!-- <div class="alert alert-warning alert-dismissible fade show" role="alert" id="private-network-warning">
-    Warning: You are viewing the coverage for a private network. This will require a subscription in the future.
-    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-      <span aria-hidden="true">&times;</span>
-    </button>
-  </div> -->
-
   <div id="map"></div>
   <div id="rightcontainer">
     <div id="legend" class="dropSheet"></div>
@@ -157,6 +207,9 @@
   <script src="/libs/leaflet/leaflet.js"></script>
   <script src="/libs/leaflet.measure/leaflet.measure.js"></script>
   <script src="/libs/Leaflet.markercluster/dist/leaflet.markercluster.js"></script>
+  <link rel="stylesheet" href="leaflet-panel-layers.min.css">
+  <script type="text/javascript" src="leaflet-panel-layers.min.js"></script>
+  <script src="leaflet-kml-master/L.KML.js"></script>
 
   <!-- HTML entity escaping -->
   <script src="/libs/he/he.js"></script>
@@ -170,8 +223,9 @@
   <!-- The map style -->
   <script type="text/javascript" src="/theme.php"></script>
   <script type="text/javascript" src="/common.js"></script>
+  <script src="mapper.js"></script>
   <!-- The actual main logic for this page -->
-  <script src="index-logic.js"></script>
+  <script src="index-logic-test.js"></script>
 
 </body>
 </html>

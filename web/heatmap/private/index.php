@@ -107,12 +107,12 @@
 
   </nav>
 
-  <!-- <div class="alert alert-warning alert-dismissible fade show" role="alert" id="private-network-warning">
+  <div class="alert alert-warning alert-dismissible fade show" role="alert" id="private-network-warning">
     Warning: You are viewing the coverage for a private network. This will require a subscription in the future.
     <button type="button" class="close" data-dismiss="alert" aria-label="Close">
       <span aria-hidden="true">&times;</span>
     </button>
-  </div> -->
+  </div>
 
   <div id="map"></div>
   <div id="rightcontainer">

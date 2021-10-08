@@ -8,6 +8,8 @@ var zoom_override = false;
 
 var gatewayMarkersNoCluster = L.featureGroup();
 
+var layerControl = null;
+
 var map;
 
 function initMap() {
@@ -43,7 +45,7 @@ function initMap() {
 
   L.control.measure({
     position: 'topleft'
-  }).addTo(map)
+  }).addTo(map);
 
   map.attributionControl.setPrefix("Data layers &copy; TTN Mapper");
 }
@@ -115,14 +117,27 @@ function addBackgroundLayers() {
       Stamen_TonerLite.addTo(map);
   }
 
-  L.control.layers({
-    "Stamen TonerLite": Stamen_TonerLite,
-    "OSM Mapnik Grayscale": OpenStreetMap_Mapnik_Grayscale,
-    "Terrain": Esri_WorldShadedRelief, 
-    "OSM Mapnik": OpenStreetMap_Mapnik,
-    "Satellite": Esri_WorldImagery
-  })
-  .addTo(map);
+  var layerControlOptions = {};
+  if (L.Browser.android || L.Browser.mobile /*|| L.Browser.touch*/ || L.Browser.retina) {
+    console.log("Mobile Browser");
+    console.log(L.Browser.android, L.Browser.mobile, L.Browser.touch, L.Browser.retina);
+    layerControlOptions.collapsed = true;
+  } else {
+    layerControlOptions.collapsed = false;
+  }
+
+  layerControl = L.control.layers(
+    {
+      "Stamen TonerLite": Stamen_TonerLite,
+      "OSM Mapnik Grayscale": OpenStreetMap_Mapnik_Grayscale,
+      "Terrain": Esri_WorldShadedRelief, 
+      "OSM Mapnik": OpenStreetMap_Mapnik,
+      "Satellite": Esri_WorldImagery
+    },
+    {},
+    layerControlOptions
+    );
+  layerControl.addTo(map);
 }
 
 //Create a map that remembers where it was zoomed to
