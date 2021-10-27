@@ -24,12 +24,12 @@
 
         if(!isset($settings['menu']['menu_heatmap']) or $settings['menu']['menu_heatmap'] == true) {
         ?>
-        <li class="nav-item active">
+        <li class="nav-item">
           <a class="nav-link" href="/heatmap/">Heatmap (beta)</a>
         </li>
         <?php
         }
-
+        
         if(!isset($settings['menu']['menu_advanced']) or $settings['menu']['menu_advanced'] == true) {
         ?>
         <li class="nav-item">
@@ -40,11 +40,11 @@
         
         
         ?>
-        <li class="nav-item">
+        <li class="nav-item active">
           <a class="nav-link" href="/v2globalradar/">TTN V2 Radar</a>
         </li>
         <?php
-        
+
 
         if(!isset($settings['menu']['menu_colour_radar']) or $settings['menu']['menu_colour_radar'] == true) {
         ?>
@@ -86,6 +86,7 @@
         <?php
         }
         ?>
+        
       </ul>
     </div>
 
@@ -116,8 +117,8 @@
 
   </nav>
 
-  <!-- <div class="alert alert-warning alert-dismissible fade show" role="alert" id="private-network-warning">
-    Warning: You are viewing the coverage for a private network. This will require a subscription in the future.
+<!--   <div class="alert alert-warning alert-dismissible fade show" role="alert">
+    See <a href="https://docs.ttnmapper.org/project_status.html" target="_blank">Project Status</a> for <strong>The Things Stack (v3)</strong> and <strong>ChirpStack</strong> support.
     <button type="button" class="close" data-dismiss="alert" aria-label="Close">
       <span aria-hidden="true">&times;</span>
     </button>
@@ -126,6 +127,12 @@
   <div id="map"></div>
   <div id="rightcontainer">
     <div id="legend" class="dropSheet"></div>
+  </div>
+
+  <div class="overlay"></div>
+  <div class="spanner">
+    <div class="loader"></div>
+    <p>Fetching data, please be patient.</p>
   </div>
 </div>
 
@@ -166,15 +173,10 @@
   <script src="/libs/leaflet/leaflet.js"></script>
   <script src="/libs/leaflet.measure/leaflet.measure.js"></script>
   <script src="/libs/Leaflet.markercluster/dist/leaflet.markercluster.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/leaflet.geodesic"></script>
 
   <!-- HTML entity escaping -->
   <script src="/libs/he/he.js"></script>
-
-  <script> 
-    $(function(){
-      $("#legend").load("/legend.html"); 
-    });
-  </script>
 
   <!-- The map style -->
   <script type="text/javascript" src="/theme.php"></script>

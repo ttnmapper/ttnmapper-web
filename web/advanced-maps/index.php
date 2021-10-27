@@ -20,6 +20,15 @@
   <div class="navbar-collapse collapse w-100 order-1 order-md-0 dual-collapse2">
     <ul class="navbar-nav mr-auto">
       <?php
+
+        if(!isset($settings['menu']['menu_heatmap']) or $settings['menu']['menu_heatmap'] == true) {
+        ?>
+        <li class="nav-item">
+          <a class="nav-link" href="/heatmap/">Heatmap (beta)</a>
+        </li>
+        <?php
+        }
+
       if(!isset($settings['menu']['menu_advanced']) or $settings['menu']['menu_advanced'] == true) {
       ?>
       <li class="nav-item active">
@@ -27,14 +36,13 @@
       </li>
       <?php
       }
-
-      if(!isset($settings['menu']['menu_heatmap']) or $settings['menu']['menu_heatmap'] == true) {
-      ?>
-      <li class="nav-item">
-        <a class="nav-link" href="/heatmap/">Heatmap (beta)</a>
-      </li>
-      <?php
-      }
+        
+        
+        ?>
+        <li class="nav-item">
+          <a class="nav-link" href="/v2globalradar/">TTN V2 Radar</a>
+        </li>
+        <?php
 
       if(!isset($settings['menu']['menu_colour_radar']) or $settings['menu']['menu_colour_radar'] == true) {
       ?>
@@ -68,13 +76,13 @@
       <?php
       }
 
-      if(!isset($settings['menu']['menu_faq']) or $settings['menu']['menu_faq'] == true) {
-      ?>
-      <li class="nav-item">
-          <a class="nav-link" href="https://docs.ttnmapper.org/FAQ.html">FAQ</a>
-      </li>
-      <?php
-      }
+        if(!isset($settings['menu']['menu_faq']) or $settings['menu']['menu_faq'] == true) {
+        ?>
+        <li class="nav-item">
+          <a class="nav-link" href="https://docs.ttnmapper.org">Docs</a>
+        </li>
+        <?php
+        }
       ?>
     </ul>
   </div>
