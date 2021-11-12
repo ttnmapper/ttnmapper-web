@@ -33,10 +33,15 @@ if(isset($settings['theming']['gateway_single_channel'])) {
 }
 
 
-if(isset($settings['theming']['gateway_v3'])) {
-  $gatewayMarkerV3 = $settings['theming']['gateway_v3'];
+if(isset($settings['theming']['gateway_v3_online'])) {
+  $gatewayMarkerV3online = $settings['theming']['gateway_v3_online'];
 } else {
-  $gatewayMarkerV3 = "/resources/TTS_V3_GW_flags.svg";
+  $gatewayMarkerV3Online = "/resources/TTS_V3_GW_flags.svg";
+}
+if(isset($settings['theming']['gateway_v3_offline'])) {
+  $gatewayMarkerV3Offline = $settings['theming']['gateway_v3_offline'];
+} else {
+  $gatewayMarkerV3Offline = "/resources/TTS_V3_GW_flags_red.svg";
 }
 
 if(isset($settings['theming']['gateway_chirpv3'])) {
@@ -175,8 +180,15 @@ var gatewayMarkerSingleChannel = L.icon({
   popupAnchor:  [<?php echo $gatewayPopupAnchorX; ?>, <?php echo $gatewayPopupAnchorY; ?>]
 });
 
-var gatewayMarkerV3 = L.icon({
-  iconUrl: "<?php echo $gatewayMarkerV3; ?>",
+var gatewayMarkerV3Online = L.icon({
+  iconUrl: "<?php echo $gatewayMarkerV3Online; ?>",
+  iconSize:     [<?php echo $gatewayIconSizeX; ?>, <?php echo $gatewayIconSizeY; ?>],
+  iconAnchor:   [<?php echo $gatewayIconAnchorX; ?>, <?php echo $gatewayIconAnchorY; ?>],
+  popupAnchor:  [<?php echo $gatewayPopupAnchorX; ?>, <?php echo $gatewayPopupAnchorY; ?>]
+});
+
+var gatewayMarkerV3Offline = L.icon({
+  iconUrl: "<?php echo $gatewayMarkerV3Offline; ?>",
   iconSize:     [<?php echo $gatewayIconSizeX; ?>, <?php echo $gatewayIconSizeY; ?>],
   iconAnchor:   [<?php echo $gatewayIconAnchorX; ?>, <?php echo $gatewayIconAnchorY; ?>],
   popupAnchor:  [<?php echo $gatewayPopupAnchorX; ?>, <?php echo $gatewayPopupAnchorY; ?>]

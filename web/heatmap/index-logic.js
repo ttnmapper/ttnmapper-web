@@ -76,15 +76,20 @@ function AddGateways(network) {
     });
 
     for(gateway of data['gateways']) {
-      let marker = L.marker(
-      [ gateway.latitude, gateway.longitude ], 
-      {
-        icon: iconByNetworkId(gateway.network_id)
-      });
-      const gwDescriptionHead = popUpHeader(gateway);
-      const gwDescription = popUpDescription(gateway);
-      marker.bindPopup(`${gwDescriptionHead}<br>${gwDescription}`);
-      markers.addLayer(marker);
+      let lastHeardDate = Date.parse(gateway.last_heard);
+
+      // Only add gateways last heard in past 5 days
+      if(lastHeardDate > (Date.now() - (5*24*60*60*1000)) ) {
+        let marker = L.marker(
+        [ gateway.latitude, gateway.longitude ], 
+        {
+          icon: iconByNetworkId(gateway.network_id, lastHeardDate)
+        });
+        const gwDescriptionHead = popUpHeader(gateway);
+        const gwDescription = popUpDescription(gateway);
+        marker.bindPopup(`${gwDescriptionHead}<br>${gwDescription}`);
+        markers.addLayer(marker);
+      }
     }
 
     layerControl.addOverlay(markers, "Gateways: "+network.network_name);
@@ -97,12 +102,18 @@ function AddGateways(network) {
 
 
 
-function iconByNetworkId(networkId) {
+function iconByNetworkId(networkId, lastHeardDate) {
   if(networkId === "thethingsnetwork.org") {
+    if(lastHeardDate < (Date.now() - (1*60*60*1000)) ) {
+      return gatewayMarkerOffline;
+    }
     return gatewayMarkerOnline;
   }
   if(networkId.startsWith("NS_TTS_V3://")) {
-    return gatewayMarkerV3;
+    if(lastHeardDate < (Date.now() - (1*60*60*1000)) ) {
+      return gatewayMarkerV3Offline;
+    }
+    return gatewayMarkerV3Online;
   }
   if(networkId.startsWith("NS_CHIRP://")) {
     return gatewayMarkerChirpV3;
