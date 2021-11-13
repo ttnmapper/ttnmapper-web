@@ -410,8 +410,29 @@ function addGatewayMarker(gateway, data)
       marker.bindPopup(gwdescriptionHead+'<br />'+gwdescription);
     }
     else if(data['network_id'].startsWith('NS_TTS_V3://')) {
-      marker = L.marker([data['lat'], data['lon']], {icon: gatewayMarkerV3});
-      marker.bindPopup(gwdescriptionHead+'<br />'+gwdescription);
+      if(data['last_heard'] < (Date.now()/1000)-(60*60*24*5)) //5 days
+      {
+        // console.log(gateway + " offline for >5 days");
+        if(showOfflineGateways === "1") {
+          marker = L.marker([data['lat'], data['lon']], {icon: gatewayMarkerV3Offline});
+          marker.bindPopup(gwdescriptionHead+'<br /><br /><font color="red">Offline.</font>'+gwdescription);
+        } else {
+          // do not show on map
+          index = gatewaysInView.indexOf(gateway);
+          if(index != -1) {
+            gatewaysInView.splice(index, 1);
+          }
+          return;
+        }
+      }
+      else if(data['last_heard'] < (Date.now()/1000)-(60*60*1)) //1 hour
+      {
+        marker = L.marker([data['lat'], data['lon']], {icon: gatewayMarkerV3Offline});
+        marker.bindPopup(gwdescriptionHead+'<br /><br /><font color="red">Offline.</font> Will be removed from the map in 5 days.<br />'+gwdescription);
+      } else {
+        marker = L.marker([data['lat'], data['lon']], {icon: gatewayMarkerV3Online});
+        marker.bindPopup(gwdescriptionHead+'<br />'+gwdescription);
+      }
     }
     else {
 
