@@ -50,10 +50,15 @@ if(isset($settings['theming']['gateway_chirpv3'])) {
   $gatewayMarkerChirpV3 = "/resources/chirpstack-gateway.svg";
 }
 
-if(isset($settings['theming']['gateway_helium'])) {
-  $gatewayMarkerHelium = $settings['theming']['gateway_helium'];
+if(isset($settings['theming']['gateway_helium_online'])) {
+  $gatewayMarkerHeliumOnline = $settings['theming']['gateway_helium_online'];
 } else {
-  $gatewayMarkerHelium = "/resources/helium-gateway-white-center.svg";
+  $gatewayMarkerHeliumOnline = "/resources/helium-gateway-white-center.svg";
+}
+if(isset($settings['theming']['gateway_helium_offline'])) {
+  $gatewayMarkerHeliumOffline = $settings['theming']['gateway_helium_offline'];
+} else {
+  $gatewayMarkerHeliumOffline = "/resources/helium-gateway-white-center-orange.svg";
 }
 
 if(isset($settings['theming']['gateway_icon_size_x'])) {
@@ -201,8 +206,15 @@ var gatewayMarkerChirpV3 = L.icon({
   popupAnchor:  [<?php echo $gatewayPopupAnchorX; ?>, <?php echo $gatewayPopupAnchorY; ?>]
 });
 
-var gatewayMarkerHelium = L.icon({
-  iconUrl: "<?php echo $gatewayMarkerHelium; ?>",
+var gatewayMarkerHeliumOnline = L.icon({
+  iconUrl: "<?php echo $gatewayMarkerHeliumOnline; ?>",
+  iconSize:     [<?php echo $gatewayIconSizeX; ?>, <?php echo $gatewayIconSizeY; ?>],
+  iconAnchor:   [<?php echo $gatewayIconAnchorX; ?>, <?php echo $gatewayIconAnchorY; ?>],
+  popupAnchor:  [<?php echo $gatewayPopupAnchorX; ?>, <?php echo $gatewayPopupAnchorY; ?>]
+});
+
+var gatewayMarkerHeliumOffline = L.icon({
+  iconUrl: "<?php echo $gatewayMarkerHeliumOffline; ?>",
   iconSize:     [<?php echo $gatewayIconSizeX; ?>, <?php echo $gatewayIconSizeY; ?>],
   iconAnchor:   [<?php echo $gatewayIconAnchorX; ?>, <?php echo $gatewayIconAnchorY; ?>],
   popupAnchor:  [<?php echo $gatewayPopupAnchorX; ?>, <?php echo $gatewayPopupAnchorY; ?>]

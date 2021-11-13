@@ -402,8 +402,23 @@ function addGatewayMarker(gateway, data)
     }
 
     if(data['network_id'].startsWith('NS_HELIUM://')) {
-      marker = L.marker([data['lat'], data['lon']], {icon: gatewayMarkerHelium});
-      marker.bindPopup(gwdescriptionHead+'<br />'+gwdescription);
+      if(data['last_heard'] < (Date.now()/1000)-(60*60*24*5)) //5 days
+      {
+        if(showOfflineGateways === "1") {
+          marker = L.marker([data['lat'], data['lon']], {icon: gatewayMarkerHeliumOffline});
+          marker.bindPopup(gwdescriptionHead+'<br /><br /><font color="red">Offline.</font>'+gwdescription);
+        } else {
+          // do not show on map
+          index = gatewaysInView.indexOf(gateway);
+          if(index != -1) {
+            gatewaysInView.splice(index, 1);
+          }
+          return;
+        }
+      } else {
+        marker = L.marker([data['lat'], data['lon']], {icon: gatewayMarkerHeliumOnline});
+        marker.bindPopup(gwdescriptionHead+'<br />'+gwdescription);
+      }
     }
     else if(data['network_id'].startsWith('NS_CHIRP://')) {
       marker = L.marker([data['lat'], data['lon']], {icon: gatewayMarkerChirpV3});

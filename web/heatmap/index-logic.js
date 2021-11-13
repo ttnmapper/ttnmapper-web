@@ -119,7 +119,10 @@ function iconByNetworkId(networkId, lastHeardDate) {
     return gatewayMarkerChirpV3;
   }
   if(networkId.startsWith("NS_HELIUM://")) {
-    return gatewayMarkerHelium;
+    if(lastHeardDate < (Date.now() - (1*24*60*60*1000)) ) {
+      return gatewayMarkerHeliumOffline;
+    }
+    return gatewayMarkerHeliumOnline;
   }
   return gatewayMarkerOnlineNotMapped;
 }
