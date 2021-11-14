@@ -122,8 +122,10 @@ function addBackgroundLayers() {
     console.log("Mobile Browser");
     console.log(L.Browser.android, L.Browser.mobile, L.Browser.touch, L.Browser.retina);
     layerControlOptions.collapsed = true;
+    $("#legend").css({ visibility: "hidden"});
   } else {
     layerControlOptions.collapsed = false;
+    $("#legend").css({ visibility: "visible"});
   }
 
   layerControl = L.control.layers(
