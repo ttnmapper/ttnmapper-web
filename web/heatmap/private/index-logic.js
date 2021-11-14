@@ -1,6 +1,9 @@
 setUp();
 
 function setUp() {
+  $("#legend").load("/legend.html");
+  $("#legend").css({ visibility: "visible"});
+
   initMap();
 
   addBackgroundLayers();
@@ -74,15 +77,20 @@ function AddGateways(network, gatewayFilter) {
         }
       }
 
-      let marker = L.marker(
-      [ gateway.latitude, gateway.longitude ], 
-      {
-        icon: iconByNetworkId(gateway.network_id)
-      });
-      const gwDescriptionHead = popUpHeader(gateway);
-      const gwDescription = popUpDescription(gateway);
-      marker.bindPopup(`${gwDescriptionHead}<br>${gwDescription}`);
-      markers.addLayer(marker);
+      let lastHeardDate = Date.parse(gateway.last_heard);
+
+      // Only add gateways last heard in past 5 days
+      if(lastHeardDate > (Date.now() - (5*24*60*60*1000)) || gatewayFilter != null) {
+        let marker = L.marker(
+        [ gateway.latitude, gateway.longitude ], 
+        {
+            icon: iconByNetworkId(gateway.network_id, lastHeardDate)
+        });
+        const gwDescriptionHead = popUpHeader(gateway);
+        const gwDescription = popUpDescription(gateway);
+        marker.bindPopup(`${gwDescriptionHead}<br>${gwDescription}`);
+        markers.addLayer(marker);
+      }
     }
 
     markers.addTo(map);
@@ -92,18 +100,29 @@ function AddGateways(network, gatewayFilter) {
 
 
 
-function iconByNetworkId(networkId) {
+function iconByNetworkId(networkId, lastHeardDate) {
   if(networkId === "thethingsnetwork.org") {
+    if(lastHeardDate < (Date.now() - (1*60*60*1000)) ) {
+      return gatewayMarkerOffline;
+    }
     return gatewayMarkerOnline;
   }
   if(networkId.startsWith("NS_TTS_V3://")) {
-    return gatewayMarkerV3;
+    console.log("Last heard", lastHeardDate);
+    console.log("Before", (Date.now() - (1*60*60*1000)));
+    if(lastHeardDate < (Date.now() - (1*60*60*1000)) ) {
+      return gatewayMarkerV3Offline;
+    }
+    return gatewayMarkerV3Online;
   }
   if(networkId.startsWith("NS_CHIRP://")) {
     return gatewayMarkerChirpV3;
   }
   if(networkId.startsWith("NS_HELIUM://")) {
-    return gatewayMarkerHelium;
+    if(lastHeardDate < (Date.now() - (1*24*60*60*1000)) ) {
+      return gatewayMarkerHeliumOffline;
+    }
+    return gatewayMarkerHeliumOnline;
   }
   return gatewayMarkerOnlineNotMapped;
 }
