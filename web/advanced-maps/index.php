@@ -215,8 +215,8 @@
         </div>
 
         <div class="form-group">
-          <button type="submit" class="btn btn-secondary" formaction="/devices/csv-pg.php">CSV data</button>
           <button type="submit" class="btn btn-primary" formaction="/devices/">View Map</button>
+          <button type="submit" class="btn btn-secondary" formaction="/devices/csv-pg.php">CSV data</button>
         </div>
       </form>
 
@@ -323,8 +323,8 @@
         </div>
 
         <div class="form-group">
-          <button type="submit" class="btn btn-secondary" formaction="/gateways/csv-pg.php">CSV data</button>
           <button type="submit" class="btn btn-primary" formaction="/gateways/">View Map</button>
+          <button type="submit" class="btn btn-secondary" formaction="/gateways/csv-pg.php">CSV data</button>
         </div>
       </form>
 
@@ -429,8 +429,8 @@
         </div>
         
         <div class="form-group">
-          <button type="submit" class="btn btn-secondary" formaction="/experiments/csv.php">CSV data</button>
           <button type="submit" class="btn btn-primary" formaction="/experiments/">View Map</button>
+          <button type="submit" class="btn btn-secondary" formaction="/experiments/csv-pg.php">CSV data</button>
         </div>
 
       </form>
