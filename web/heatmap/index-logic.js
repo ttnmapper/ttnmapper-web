@@ -68,7 +68,7 @@ function showOrHideLayers() {
 }
 
 function AddGateways(network) {
-  const res = fetch("https://ttnmapper.org/webapi/gwall_network.php?network_id="+encodeURIComponent(network.network_id))
+  const res = fetch("https://api.ttnmapper.org/network/gateways/"+encodeURIComponent(network.network_id))
   .then(response => response.json())
   .then(data => {
     var markers = L.markerClusterGroup({
@@ -78,7 +78,7 @@ function AddGateways(network) {
       maxClusterRadius: 50,
     });
 
-    for(gateway of data['gateways']) {
+    for(gateway of data) {
       let lastHeardDate = Date.parse(gateway.last_heard);
 
       // Only add gateways last heard in past 5 days
@@ -131,20 +131,22 @@ function iconByNetworkId(networkId, lastHeardDate) {
 }
 
 function popUpHeader(gateway) {
-  // First line always the ID
   let header = `<b>${he.encode(gateway.gateway_id)}</b>`
 
+  if(gateway.description !== "") {
+    header = `<b>${he.encode(gateway.description)}</b>`
+    header = `${header}<br>${gateway.gateway_id}`
+  }
+
   // Add the EUI if it is set
-  if (gateway.gateway_eui != null) {
-    header = `${header}<br>${gateway.gateway_eui}`
+  if (gateway.gateway_eui !== "") {
+    header = `${header}<br>EUI: ${gateway.gateway_eui}`
   }
 
   // Add the network ID if it is set
-  if (gateway.network_id != null) {
-    header = `${header}<br>${gateway.network_id}`
+  if (gateway.network_id !== "") {
+    header = `${header}<br>Network: ${gateway.network_id}`
   }
-
-  // TODO: If a gateway has a description, add it. V3 and Chirp does not have descriptions yet.
 
   return header
 }

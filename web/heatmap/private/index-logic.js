@@ -56,7 +56,7 @@ function showOrHideLayers() {
 }
 
 function AddGateways(network, gatewayFilter) {
-  const res = fetch("https://ttnmapper.org/webapi/gwall_network.php?network_id="+encodeURIComponent(network))
+  const res = fetch("https://api.ttnmapper.org/network/gateways/"+encodeURIComponent(network))
   .then(response => response.json())
   .then(data => {
     // console.log(data);
@@ -67,7 +67,7 @@ function AddGateways(network, gatewayFilter) {
       maxClusterRadius: 50,
     });
 
-    for(gateway of data['gateways']) {
+    for(gateway of data) {
       if(gatewayFilter != null) {
         if(gatewayFilter !== gateway.gateway_id) {
           continue;

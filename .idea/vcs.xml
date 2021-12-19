@@ -2,5 +2,9 @@
 <project version="4">
   <component name="VcsDirectoryMappings">
     <mapping directory="$PROJECT_DIR$" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/web/libs/Leaflet.loading" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/web/libs/he" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/web/libs/leaflet.measure" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/web/libs/open-iconic" vcs="Git" />
   </component>
 </project>
