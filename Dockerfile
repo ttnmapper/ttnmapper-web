@@ -2,7 +2,7 @@ FROM php:apache
 
 # Enable "mod_headers" – http://httpd.apache.org/docs/current/mod/mod_headers.html
 RUN a2enmod headers
-RUN a2enmod rewrite
+#RUN a2enmod rewrite
 
 ENV TTNMAPPER_HOME=/opt/ttnmapper
 ENV APACHE_DOCUMENT_ROOT=/opt/ttnmapper/web

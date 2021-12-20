@@ -6,6 +6,3 @@ Header set Access-Control-Allow-Headers "Content-Type, Authorization"
 Order Allow,Deny
 Deny from all
 </FilesMatch>
-
-RewriteEngine On
-RewriteRule ^(index\.html)?$ /heatmap/ [L]
