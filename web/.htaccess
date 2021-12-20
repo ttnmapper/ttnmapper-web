@@ -8,4 +8,4 @@ Deny from all
 </FilesMatch>
 
 RewriteEngine On
-RewriteRule ^/$ /heatmap/
+RewriteRule ^(index\.html)?$ /heatmap/ [L]
