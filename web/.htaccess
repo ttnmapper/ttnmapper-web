@@ -6,3 +6,5 @@ Header set Access-Control-Allow-Headers "Content-Type, Authorization"
 Order Allow,Deny
 Deny from all
 </FilesMatch>
+
+Redirect 302 "/" "/heatmap/"
