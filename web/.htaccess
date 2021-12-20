@@ -7,4 +7,5 @@ Order Allow,Deny
 Deny from all
 </FilesMatch>
 
-Redirect 302 "/" "/heatmap/"
+RewriteEngine On
+RewriteRule ^$ /store [L]
