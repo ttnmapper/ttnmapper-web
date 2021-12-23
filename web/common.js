@@ -384,6 +384,10 @@ function addGatewayMarker(gateway, data)
       gwdescriptionHead = "<b>"+he.encode(gateway)+"</b>";
     }
 
+    if (data['network_id'] != null) {
+      gwdescriptionHead = gwdescriptionHead + "<br>Network: "+he.encode(data['network_id']);
+    }
+
     gwdescription = 
       '<br />Last heard at '+formatTime(data['last_heard'])+
       '<br />Channels heard on: '+data['channels']+
