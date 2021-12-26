@@ -41,7 +41,6 @@ function addForegroundLayers() {
     gatewayid: encodeURIComponent(gateway),
     maxNativeZoom: 19,
     maxZoom: 20,
-    maxNativeZoom: 20,
     zIndex: 10,
     opacity: 0.5
   });
