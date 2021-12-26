@@ -76,6 +76,9 @@ function AddGateways(network) {
       // showCoverageOnHover: false,
       // zoomToBoundsOnClick: false,
       maxClusterRadius: 50,
+      chunkedLoading: true,
+      chunkInterval: 100, // default=200
+      chunkDelay: 100, //default=50
     });
 
     for(gateway of data) {
