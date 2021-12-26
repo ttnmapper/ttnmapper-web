@@ -716,6 +716,7 @@ function popUpDescription(gateway) {
   var description = `
 <br>Last heard at ${gateway.last_heard}
 <br>Lat, Lon: ${gateway.latitude}, ${gateway.longitude}
+<br>Altitude: ${gateway.altitude}m
 <br>Show only this gateway's coverage as: 
 <ul>
   <li>
