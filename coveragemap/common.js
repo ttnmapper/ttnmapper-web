@@ -663,3 +663,66 @@ function loadChirpV3Gateways() {
     }
   });
 }
+
+
+
+function iconByNetworkId(networkId, lastHeardDate) {
+  if(networkId === "thethingsnetwork.org") {
+    if(lastHeardDate < (Date.now() - (1*60*60*1000)) ) {
+      return gatewayMarkerOffline;
+    }
+    return gatewayMarkerOnline;
+  }
+  if(networkId.startsWith("NS_TTS_V3://")) {
+    if(lastHeardDate < (Date.now() - (1*60*60*1000)) ) {
+      return gatewayMarkerV3Offline;
+    }
+    return gatewayMarkerV3Online;
+  }
+  if(networkId.startsWith("NS_CHIRP://")) {
+    return gatewayMarkerChirpV3;
+  }
+  if(networkId.startsWith("NS_HELIUM://")) {
+    if(lastHeardDate < (Date.now() - (1*24*60*60*1000)) ) {
+      return gatewayMarkerHeliumOffline;
+    }
+    return gatewayMarkerHeliumOnline;
+  }
+  return gatewayMarkerOnlineNotMapped;
+}
+
+function popUpHeader(gateway) {
+  let header = `<b>${he.encode(gateway.gateway_id)}</b>`
+
+  if(gateway.description !== "") {
+    header = `<b>${he.encode(gateway.description)}</b>`
+    header = `${header}<br>${gateway.gateway_id}`
+  }
+
+  // Add the EUI if it is set
+  if (gateway.gateway_eui !== "") {
+    header = `${header}<br>EUI: ${gateway.gateway_eui}`
+  }
+
+  // Add the network ID if it is set
+  if (gateway.network_id !== "") {
+    header = `${header}<br>Network: ${gateway.network_id}`
+  }
+
+  return header
+}
+
+function popUpDescription(gateway) {
+  var description = `
+<br>Last heard at ${gateway.last_heard}
+<br>Lat, Lon: ${gateway.latitude}, ${gateway.longitude}
+<br>Show only this gateway's coverage as: 
+<ul>
+  <li>
+    <a target="_blank" href="/heatmap/private/?gateway=${he.encode(gateway.gateway_id)}&network=${he.encode(gateway.network_id)}">heatmap</a>
+  </li>
+</ul>
+`
+
+  return description;
+}
