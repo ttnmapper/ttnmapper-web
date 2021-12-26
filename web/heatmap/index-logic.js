@@ -36,12 +36,12 @@ function addForegroundLayers() {
       default_shown: true
 
     },
-    {
-      network_id: 'NS_HELIUM://000024',
-      network_name: 'Helium - The People\'s Network',
-      default_shown: false
-
-    },
+    // {
+    //   network_id: 'NS_HELIUM://000024',
+    //   network_name: 'Helium - The People\'s Network',
+    //   default_shown: false
+    //
+    // },
   ];
   
   for (const network of networks) {
@@ -76,9 +76,6 @@ function AddGateways(network) {
       // showCoverageOnHover: false,
       // zoomToBoundsOnClick: false,
       maxClusterRadius: 50,
-      chunkedLoading: true,
-      chunkInterval: 100, // default=200
-      chunkDelay: 100, //default=50
     });
 
     for(gateway of data) {
