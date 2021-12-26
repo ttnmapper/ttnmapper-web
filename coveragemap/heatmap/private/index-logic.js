@@ -56,7 +56,7 @@ function showOrHideLayers() {
 }
 
 function AddGateways(network, gatewayFilter) {
-  const res = fetch("https://api.ttnmapper.org/network/gateways/"+encodeURIComponent(network))
+  const res = fetch("https://api.ttnmapper.org/network/"+encodeURIComponent(network)+"/gateways")
   .then(response => response.json())
   .then(data => {
     // console.log(data);

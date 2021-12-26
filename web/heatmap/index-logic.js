@@ -68,7 +68,7 @@ function showOrHideLayers() {
 }
 
 function AddGateways(network) {
-  const res = fetch("https://api.ttnmapper.org/network/gateways/"+encodeURIComponent(network.network_id))
+  const res = fetch("https://api.ttnmapper.org/network/"+encodeURIComponent(network.network_id))+"/gateways"
   .then(response => response.json())
   .then(data => {
     var markers = L.markerClusterGroup({

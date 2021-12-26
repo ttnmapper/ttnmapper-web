@@ -99,8 +99,8 @@ function updateProgressBar(processed, total, elapsed, layersArray) {
 }
 
 function gatewaysFetchPage(markers, network, offset) {
-  const res = fetch("http://localhost:8080/network/"+encodeURIComponent(network.network_id)+"/gateways/"+offset)
-  // const res = fetch("https://api.ttnmapper.org/network/gateways/"+encodeURIComponent(network.network_id))
+  // const res = fetch("http://localhost:8080/network/"+encodeURIComponent(network.network_id)+"/gateways/"+offset)
+  const res = fetch("https://api.ttnmapper.org/network/"+encodeURIComponent(network.network_id) + "/gateways/" + offset)
       .then(response => response.json())
       .then(data => {
         for(gateway of data) {
