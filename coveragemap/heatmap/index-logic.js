@@ -18,6 +18,13 @@ function setUp() {
 function boundsChangedCallback() {
   // Refresh the visible gateways, which will also trigger a layer refresh
   // getGatewaysInView();
+  if(map.getZoom() >= 7) {
+    // loadGatewaysBetweenLongitudes();
+    // loadGatewaysInView();
+    loadNewZ5Tiles();
+  } else {
+    // markers.clearLayers();
+  }
 }
 
 function addForegroundLayers() {
@@ -59,20 +66,161 @@ function showOrHideLayers() {
   // Download the necessary layers, hide them, or display them.
 }
 
+// var longitudeColumnWidth = 1;
+// var loadedLongitudes = new Array(360/longitudeColumnWidth).fill(false);
+//
+// function loadGatewaysBetweenLongitudes() {
+//   var west = Math.floor(map.getBounds().getWest() / longitudeColumnWidth) + (180/longitudeColumnWidth);
+//   var east = Math.ceil(map.getBounds().getEast() / longitudeColumnWidth) + (180/longitudeColumnWidth);
+//   console.log("west, east", map.getBounds().getWest(), map.getBounds().getEast(), west, east);
+//
+//   for(var i = west; i<east; i++) {
+//     if(loadedLongitudes[i] === false) {
+//       console.log(i, "not loaded");
+//       loadedLongitudes[i] = true;
+//       getGatewaysBetweenLongitudes((i*longitudeColumnWidth)-180, (i*longitudeColumnWidth)-180+longitudeColumnWidth);
+//     }
+//   }
+// }
+//
+// function getGatewaysBetweenLongitudes(west, east) {
+//   console.log("Loading hotspots between", west, east)
+//   var network_id = 'NS_HELIUM://000024';
+//   const res = fetch("http://192.168.86.33:8080/network/"+encodeURIComponent(network_id) + "/gateways/longitudes/" + west + "/" + east)
+//       .then(response => response.json())
+//       .then(data => {
+//         for(gateway of data) {
+//           let lastHeardDate = Date.parse(gateway.last_heard);
+//
+//           // Only add gateways last heard in past 5 days
+//           if(lastHeardDate > (Date.now() - (5*24*60*60*1000)) ) {
+//             let marker = L.marker(
+//                 [ gateway.latitude, gateway.longitude ],
+//                 {
+//                   icon: iconByNetworkId(network_id, lastHeardDate)
+//                 });
+//             const gwDescriptionHead = popUpHeader(gateway);
+//             const gwDescription = popUpDescription(gateway);
+//             marker.bindPopup(`${gwDescriptionHead}<br>${gwDescription}`);
+//             markers.addLayer(marker);
+//           }
+//         }
+//       });
+// }
+
+// function loadGatewaysInView() {
+//   var network_id = 'NS_HELIUM://000024';
+//
+//   var west = map.getBounds().getWest();
+//   var east = map.getBounds().getEast();
+//   var north = map.getBounds().getNorth();
+//   var south = map.getBounds().getSouth();
+//
+//   const res = fetch("http://192.168.86.33:8080/network/"+encodeURIComponent(network_id) + "/gateways/bbox?west=" + west + "&east=" + east + "&north=" + north + "&south=" + south)
+//       .then(response => response.json())
+//       .then(data => {
+//         markers.clearLayers();
+//
+//         for(gateway of data) {
+//           let lastHeardDate = Date.parse(gateway.last_heard);
+//
+//           // Only add gateways last heard in past 5 days
+//           if(lastHeardDate > (Date.now() - (5*24*60*60*1000)) ) {
+//             let marker = L.marker(
+//                 [ gateway.latitude, gateway.longitude ],
+//                 {
+//                   icon: iconByNetworkId(network_id, lastHeardDate)
+//                 });
+//             const gwDescriptionHead = popUpHeader(gateway);
+//             const gwDescription = popUpDescription(gateway);
+//             marker.bindPopup(`${gwDescriptionHead}<br>${gwDescription}`);
+//             markers.addLayer(marker);
+//           }
+//         }
+//       });
+//
+// }
+
+var z5cache = new Array(32);
+
+for (var i = 0; i < z5cache.length; i++) {
+  z5cache[i] = new Array(32);
+}
+
+function lon2tile(lon,zoom) { return (Math.floor((lon+180)/360*Math.pow(2,zoom))); } // x
+function lat2tile(lat,zoom)  { return (Math.floor((1-Math.log(Math.tan(lat*Math.PI/180) + 1/Math.cos(lat*Math.PI/180))/Math.PI)/2 *Math.pow(2,zoom))); } // y
+function tile2lon(x,z) {
+  return (x/Math.pow(2,z)*360-180);
+}
+function tile2lat(y,z) {
+  var n=Math.PI-2*Math.PI*y/Math.pow(2,z);
+  return (180/Math.PI*Math.atan(0.5*(Math.exp(n)-Math.exp(-n))));
+}
+
+function loadNewZ5Tiles() {
+  var network_id = 'NS_HELIUM://000024';
+
+  var west = map.getBounds().getWest();
+  var east = map.getBounds().getEast();
+  var north = map.getBounds().getNorth();
+  var south = map.getBounds().getSouth();
+
+  var minX = lon2tile(west,5);
+  var maxX = lon2tile(east,5);
+  var minY = lat2tile(north,5);
+  var maxY = lat2tile(south,5);
+
+  for (var x = minX; x <= maxX; x++) {
+    for (var y = minY; y <= maxY; y++) {
+      if (z5cache[x][y] === undefined) {
+        console.log("Getting gateways in", x, y);
+        z5cache[x][y] = true;
+        const res = fetch("http://192.168.86.33:8080/network/" + encodeURIComponent(network_id) + "/gateways/z5tile/" + x + "/" + y)
+        .then(response => response.json())
+        .then(data => {
+
+          for(gateway of data) {
+            let lastHeardDate = Date.parse(gateway.last_heard);
+
+            // Only add gateways last heard in past 5 days
+            if(lastHeardDate > (Date.now() - (5*24*60*60*1000)) ) {
+              let marker = L.marker(
+                  [ gateway.latitude, gateway.longitude ],
+                  {
+                    icon: iconByNetworkId(network_id, lastHeardDate)
+                  });
+              const gwDescriptionHead = popUpHeader(gateway);
+              const gwDescription = popUpDescription(gateway);
+              marker.bindPopup(`${gwDescriptionHead}<br>${gwDescription}`);
+              markers.addLayer(marker);
+            }
+          }
+        });
+      }
+    }
+  }
+}
+
+
+var markers = L.markerClusterGroup({
+  spiderfyOnMaxZoom: true,
+  // showCoverageOnHover: false,
+  // zoomToBoundsOnClick: false,
+  maxClusterRadius: 50,
+  chunkedLoading: true,
+  chunkInterval: 100, // default=200
+  chunkDelay: 100, //default=50
+  chunkProgress: updateProgressBar,
+});
 function AddGateways(network) {
 
-  var markers = L.markerClusterGroup({
-    spiderfyOnMaxZoom: true,
-    // showCoverageOnHover: false,
-    // zoomToBoundsOnClick: false,
-    maxClusterRadius: 50,
-    chunkedLoading: true,
-    chunkInterval: 100, // default=200
-    chunkDelay: 100, //default=50
-    chunkProgress: updateProgressBar,
-  });
+  // gatewaysFetchPage(markers, network, 0);
 
-  gatewaysFetchPage(markers, network, 0);
+  layerControl.addOverlay(markers, "Helium Hotspots");
+  markers.addTo(map);
+  // loadGatewaysBetweenLongitudes();
+  // loadGatewaysInView();
+  boundsChangedCallback();
 }
 
 var progress = document.getElementById('progress');
@@ -156,66 +304,4 @@ function gatewaysFetchPage(markers, network, offset) {
   //       }
   //
   //     });
-}
-
-
-function iconByNetworkId(networkId, lastHeardDate) {
-  if(networkId === "thethingsnetwork.org") {
-    if(lastHeardDate < (Date.now() - (1*60*60*1000)) ) {
-      return gatewayMarkerOffline;
-    }
-    return gatewayMarkerOnline;
-  }
-  if(networkId.startsWith("NS_TTS_V3://")) {
-    if(lastHeardDate < (Date.now() - (1*60*60*1000)) ) {
-      return gatewayMarkerV3Offline;
-    }
-    return gatewayMarkerV3Online;
-  }
-  if(networkId.startsWith("NS_CHIRP://")) {
-    return gatewayMarkerChirpV3;
-  }
-  if(networkId.startsWith("NS_HELIUM://")) {
-    if(lastHeardDate < (Date.now() - (1*24*60*60*1000)) ) {
-      return gatewayMarkerHeliumOffline;
-    }
-    return gatewayMarkerHeliumOnline;
-  }
-  return gatewayMarkerOnlineNotMapped;
-}
-
-function popUpHeader(gateway) {
-  let header = `<b>${he.encode(gateway.gateway_id)}</b>`
-
-  if(gateway.description !== "") {
-    header = `<b>${he.encode(gateway.description)}</b>`
-    header = `${header}<br>${gateway.gateway_id}`
-  }
-
-  // Add the EUI if it is set
-  if (gateway.gateway_eui !== "") {
-    header = `${header}<br>EUI: ${gateway.gateway_eui}`
-  }
-
-  // Add the network ID if it is set
-  if (gateway.network_id !== "") {
-    header = `${header}<br>Network: ${gateway.network_id}`
-  }
-
-  return header
-}
-
-function popUpDescription(gateway) {
-  var description = `
-<br>Last heard at ${gateway.last_heard}
-<br>Lat, Lon: ${gateway.latitude}, ${gateway.longitude}
-<br>Show only this gateway's coverage as: 
-<ul>
-  <li>
-    <a target="_blank" href="/heatmap/private/?gateway=${he.encode(gateway.gateway_id)}&network=${he.encode(gateway.network_id)}">heatmap</a>
-  </li>
-</ul>
-`
-
-  return description;
 }
