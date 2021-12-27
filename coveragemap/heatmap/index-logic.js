@@ -227,6 +227,7 @@ function AddGateways(network) {
 var progress = document.getElementById('progress');
 var progressBar = document.getElementById('progress-bar');
 function updateProgressBar(processed, total, elapsed, layersArray) {
+  /*
   if (elapsed > 1000) {
     // if it takes more than a second to load, display the progress bar:
     progress.style.display = 'block';
@@ -242,6 +243,7 @@ function updateProgressBar(processed, total, elapsed, layersArray) {
     progress.style.width = '150px';
     // progress.style.display = 'inline-block';
   }
+   */
 
   // console.log("Loading markers", processed, total, Math.round(processed/total*100) + '%');
 }
