@@ -175,7 +175,8 @@ function loadNewZ5Tiles() {
       if (z5cache[x][y] === undefined) {
         console.log("Getting gateways in", x, y);
         z5cache[x][y] = true;
-        const res = fetch("http://192.168.86.33:8080/network/" + encodeURIComponent(network_id) + "/gateways/z5tile/" + x + "/" + y)
+        const res = fetch("https://api.ttnmapper.org/network/" + encodeURIComponent(network_id) + "/gateways/z5tile/" + x + "/" + y)
+        // const res = fetch("http://192.168.86.33:8080/network/" + encodeURIComponent(network_id) + "/gateways/z5tile/" + x + "/" + y)
         .then(response => response.json())
         .then(data => {
 
