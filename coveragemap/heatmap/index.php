@@ -49,12 +49,12 @@
     </button>
   </div> -->
 
-    <div id="progress">Loading Hotspots
-        <div class="spinner-border float-right" role="status" style="height: 20px; width: 20px;">
-            <span class="sr-only">Loading...</span>
-        </div>
-        <div id="progress-bar"></div>
-    </div>
+<!--    <div id="progress">Loading Hotspots-->
+<!--        <div class="spinner-border float-right" role="status" style="height: 20px; width: 20px;">-->
+<!--            <span class="sr-only">Loading...</span>-->
+<!--        </div>-->
+<!--        <div id="progress-bar"></div>-->
+<!--    </div>-->
   <div id="map"></div>
   <div id="rightcontainer">
     <div id="legend" class="dropSheet"></div>
