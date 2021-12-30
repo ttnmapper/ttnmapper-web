@@ -14,7 +14,7 @@ if(isset($settings['theming']['site_name'])) {
 if(isset($settings['theming']['site_description'])) {
   $siteDescription = $settings['theming']['site_description'];
 } else {
-  $siteDescription = "Map the coverage for gateways of Helium.";
+  $siteDescription = "Map the coverage of Helium Hotspots.";
 }
 
 if(isset($settings['theming']['favicon_dir'])) {

@@ -44,7 +44,7 @@ else {
   }
 
   // When only a date is given the time part will be set to all 0's in the parsed timestamp.
-  // Increment by one day to include the speicified day's data.
+  // Increment by one day to include the specified day's data.
   $date = new DateTime();
   $date->setTimestamp($enddate);
 

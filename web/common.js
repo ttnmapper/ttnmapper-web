@@ -698,7 +698,7 @@ function iconByNetworkId(networkId, lastHeardDate) {
 function popUpHeader(gateway) {
   let header = `<b>${he.encode(gateway.gateway_id)}</b>`
 
-  if(gateway.description !== "") {
+  if(gateway.network_id !== "NS_HELIUM://000024" && gateway.description !== "") {
     header = `<b>${he.encode(gateway.description)}</b>`
     header = `${header}<br>${gateway.gateway_id}`
   }
@@ -717,7 +717,18 @@ function popUpHeader(gateway) {
 }
 
 function popUpDescription(gateway) {
-  var description = `
+  var description = "";
+
+  if(gateway.network_id === "NS_HELIUM://000024") {
+    var details = JSON.parse(gateway.description);
+
+    description += `
+<br>Mode: ${details.mode}
+<br>Added: ${new Date(details.timestamp_added/1000000).toISOString()}
+`;
+  }
+
+  description += `
 <br>Last heard at ${gateway.last_heard}
 <br>Lat, Lon: ${gateway.latitude}, ${gateway.longitude}
 <br>Altitude: ${gateway.altitude}m

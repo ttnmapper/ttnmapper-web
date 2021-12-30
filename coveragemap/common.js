@@ -694,10 +694,10 @@ function iconByNetworkId(networkId, lastHeardDate) {
 function popUpHeader(gateway) {
   let header = `<b>${he.encode(gateway.gateway_id)}</b>`
 
-  // if(gateway.description !== "") {
-  //   header = `<b>${he.encode(gateway.description)}</b>`
-  //   header = `${header}<br>${gateway.gateway_id}`
-  // }
+  if(gateway.network_id !== "NS_HELIUM://000024" && gateway.description !== "") {
+    header = `<b>${he.encode(gateway.description)}</b>`
+    header = `${header}<br>${gateway.gateway_id}`
+  }
 
   // Add the EUI if it is set
   if (gateway.gateway_eui !== "") {
@@ -713,15 +713,22 @@ function popUpHeader(gateway) {
 }
 
 function popUpDescription(gateway) {
-  var details = JSON.parse(gateway.description);
+  var description = "";
 
-  var description = `
+  if(gateway.network_id === "NS_HELIUM://000024") {
+    var details = JSON.parse(gateway.description);
+
+    description += `
 <br>Mode: ${details.mode}
 <br>Added: ${new Date(details.timestamp_added/1000000).toISOString()}
-<br>Last heard: ${gateway.last_heard}
-<br>Coordinates: ${gateway.latitude}, ${gateway.longitude}
+`;
+  }
+
+  description += `
+<br>Last heard at ${gateway.last_heard}
+<br>Lat, Lon: ${gateway.latitude}, ${gateway.longitude}
 <br>Altitude: ${gateway.altitude}m
-<br>Show coverage as: 
+<br>Show only this gateway's coverage as: 
 <ul>
   <li>
     <a target="_blank" href="/heatmap/private/?gateway=${he.encode(gateway.gateway_id)}&network=${he.encode(gateway.network_id)}">heatmap</a>
