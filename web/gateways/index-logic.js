@@ -66,7 +66,7 @@ function getData()
         endTime.add(1, 'days');
     }
 
-    var url = new URL('http://localhost:8080/gateway/data')
+    var url = new URL('https://api.ttnmapper.org/gateway/data')
     var params = {
         gateway_id: findGetParameter("gateway"),
         start_time: startTime.toISOString(),

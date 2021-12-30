@@ -56,7 +56,7 @@ function getData() {
         endTime.add(1, 'days');
     }
 
-    var url = new URL('http://localhost:8080/device/data')
+    var url = new URL('https://api.ttnmapper.org/device/data')
     var params = {
         dev_id: findGetParameter("device"),
         start_time: startTime.toISOString(),
