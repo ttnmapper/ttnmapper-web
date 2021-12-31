@@ -395,18 +395,28 @@
 
 
     <div class="card mt-4">
-        <h5 class="card-header">List All Experiments</h5>
+        <h5 class="card-header">Find Experiment</h5>
         <div class="card-body">
 
-            <p>List all experiments and search through them.</p>
+            <p>Search for an experiment based on a part of its name.</p>
 
-            <form method="get" class="needs-validation" novalidate target="_blank">
+            <form method="get" class="needs-validation form-inline" novalidate target="_blank">
                 <div class="form-group">
-                    <a href="/experiments/list.php">
-                        <button type="submit" class="btn btn-primary" formaction="/experiments/list.php">List All
-                        </button>
-                    </a>
+                    <input class="form-control"
+                           type="text"
+                           id="experiment-name"
+                           name="experiment"
+                           placeholder="My Experiment Name 2019-09-09"
+                           required
+                           autocomplete="on"
+                           autocorrect="off"
+                           autocapitalize="off"
+                           spellcheck="false">
+                    <div class="invalid-feedback">
+                        Experiment name can't be empty.
+                    </div>
                 </div>
+                <button type="submit" class="btn btn-primary" formaction="/experiments/list.php">Search</button>
 
             </form>
         </div>

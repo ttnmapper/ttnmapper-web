@@ -38,30 +38,13 @@
       </ul>
     </div>
 
-    <div class="navbar-collapse collapse w-100 order-3 dual-collapse2">
-      <ul class="navbar-nav ml-auto">
-        <?php
-        if(!isset($settings['menu']['teespring']) or $settings['menu']['teespring'] == true) {
-        ?>
-        <li class="nav-item mr-2">
-          <a class="nav-link" href="https://teespring.com/ttnmapper">
-            <img src="/resources/teespring.svg" height="25" class="d-inline-block align-middle" alt="" title="Teespring">
-            Get the T-Shirt
-          </a>
-        </li>
-        <?php
-        }
-
-        if(!isset($settings['menu']['patreon']) or $settings['menu']['patreon'] == true) {
-        ?>
-        <li class="nav-item">
-          <a href="https://www.patreon.com/ttnmapper" data-patreon-widget-type="become-patron-button"><img src="/resources/become_a_patron_button@2x.png" class="d-inline-block align-middle" alt="" height="36" title="Patreon"></a>
-        </li>
-        <?php
-        }
-        ?>
-      </ul>
-    </div>
+      <div class="navbar-collapse collapse w-100 order-3 dual-collapse2">
+          <ul class="navbar-nav ml-auto">
+              <li class="nav-item">
+                  <a href="https://www.patreon.com/ttnmapper" data-patreon-widget-type="become-patron-button"><img src="/resources/become_a_patron_button@2x.png" class="d-inline-block align-middle" alt="" height="36" title="Patreon"></a>
+              </li>
+          </ul>
+      </div>
 
   </nav>
 
