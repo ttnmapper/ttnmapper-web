@@ -11,99 +11,37 @@
     
     <a class="navbar-brand" href="/">
       <img src="<?php echo $brandIcon; ?>" width="auto" height="32" class="d-inline-block align-top" alt="">
-      <?php echo $brandName; ?>
+        Coverage Map
     </a>
     
     <button class="navbar-toggler" type="button" data-toggle="collapse" data-target=".dual-collapse2" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
       <span class="navbar-toggler-icon"></span>
     </button>
 
-    <div class="navbar-collapse collapse w-100 order-1 order-md-0 dual-collapse2">
-      <ul class="navbar-nav mr-auto">
-        <?php
-        if(!isset($settings['menu']['menu_advanced']) or $settings['menu']['menu_advanced'] == true) {
-        ?>
-        <li class="nav-item">
-          <a class="nav-link" href="/advanced-maps/">Advanced maps</a>
-        </li>
-        <?php
-        }
+      <div class="navbar-collapse collapse w-100 order-1 order-md-0 dual-collapse2">
+          <ul class="navbar-nav mr-auto">
+              <li class="nav-item">
+                  <a class="nav-link" href="/heatmap/">Helium Heatmap</a>
+              </li>
+              <li class="nav-item active">
+                  <a class="nav-link" href="/advanced-maps/">Advanced maps</a>
+              </li>
+              <li class="nav-item">
+                  <a class="nav-link" href="https://ttnmapper.org">The Things Network</a>
+              </li>
+              <li class="nav-item">
+                  <a class="nav-link" href="https://docs.ttnmapper.org">Docs</a>
+              </li>
+          </ul>
+      </div>
 
-        if(!isset($settings['menu']['menu_heatmap']) or $settings['menu']['menu_heatmap'] == true) {
-        ?>
-        <li class="nav-item">
-          <a class="nav-link" href="/heatmap/">Heatmap (beta)</a>
-        </li>
-        <?php
-        }
-
-        if(!isset($settings['menu']['menu_colour_radar']) or $settings['menu']['menu_colour_radar'] == true) {
-        ?>
-        <li class="nav-item">
-          <a class="nav-link" href="/colour-radar/">Colour Radar</a>
-        </li>
-        <?php
-        }
-
-        if(!isset($settings['menu']['menu_area_plot']) or $settings['menu']['menu_area_plot'] == true) {
-        ?>
-        <li class="nav-item">
-          <a class="nav-link" href="/alpha-shapes/">Area Plot</a>
-        </li>
-        <?php
-        }
-
-        if(!isset($settings['menu']['menu_leaderboard']) or $settings['menu']['menu_leaderboard'] == true) {
-        ?>
-        <li class="nav-item">
-          <a class="nav-link" href="/leaderboard/">Leader board</a>
-        </li>
-        <?php
-        }
-
-        if(!isset($settings['menu']['menu_acknowledgements']) or $settings['menu']['menu_acknowledgements'] == true) {
-        ?>
-        <li class="nav-item">
-          <a class="nav-link" href="/acknowledgements/">Acknowledgements</a>
-        </li>
-        <?php
-        }
-
-        if(!isset($settings['menu']['menu_faq']) or $settings['menu']['menu_faq'] == true) {
-        ?>
-        <li class="nav-item">
-          <a class="nav-link" href="https://docs.ttnmapper.org/FAQ.html">FAQ</a>
-        </li>
-        <?php
-        }
-        ?>
-      </ul>
-    </div>
-
-    <div class="navbar-collapse collapse w-100 order-3 dual-collapse2">
-      <ul class="navbar-nav ml-auto">
-        <?php
-        if(!isset($settings['menu']['teespring']) or $settings['menu']['teespring'] == true) {
-        ?>
-        <li class="nav-item mr-2">
-          <a class="nav-link" href="https://teespring.com/ttnmapper">
-            <img src="/resources/teespring.svg" height="25" class="d-inline-block align-middle" alt="" title="Teespring">
-            Get the T-Shirt
-          </a>
-        </li>
-        <?php
-        }
-
-        if(!isset($settings['menu']['patreon']) or $settings['menu']['patreon'] == true) {
-        ?>
-        <li class="nav-item">
-          <a href="https://www.patreon.com/ttnmapper" data-patreon-widget-type="become-patron-button"><img src="/resources/become_a_patron_button@2x.png" class="d-inline-block align-middle" alt="" height="36" title="Patreon"></a>
-        </li>
-        <?php
-        }
-        ?>
-      </ul>
-    </div>
+      <div class="navbar-collapse collapse w-100 order-3 dual-collapse2">
+          <ul class="navbar-nav ml-auto">
+              <!--            <li class="nav-item">-->
+              <!--                <a href="https://www.patreon.com/ttnmapper" data-patreon-widget-type="become-patron-button"><img src="/resources/become_a_patron_button@2x.png" class="d-inline-block align-middle" alt="" height="36" title="Patreon"></a>-->
+              <!--            </li>-->
+          </ul>
+      </div>
 
   </nav>
 
@@ -160,7 +98,10 @@
   <!-- HTML entity escaping -->
   <script src="/libs/he/he.js"></script>
 
-  <!-- The map style -->
+<!-- Moment for datetime manipulation -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.1/moment.min.js" integrity="sha512-qTXRIMyZIFb8iQcfjXWCO8+M5Tbc38Qi5WzdPOYZHIlZpzBHG3L3by84BBBOiRGiEb7KKtAOAs5qYdUiZiQNNQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
+<!-- The map style -->
   <script type="text/javascript" src="/theme.php"></script>
   <script type="text/javascript" src="/common.js"></script>
   <!-- The actual main logic for this page -->

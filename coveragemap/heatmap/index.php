@@ -23,6 +23,9 @@
         <li class="nav-item active">
           <a class="nav-link" href="/heatmap/">Helium Heatmap</a>
         </li>
+          <li class="nav-item">
+              <a class="nav-link" href="/advanced-maps/">Advanced maps</a>
+          </li>
         <li class="nav-item">
           <a class="nav-link" href="https://ttnmapper.org">The Things Network</a>
         </li>
@@ -34,9 +37,9 @@
 
     <div class="navbar-collapse collapse w-100 order-3 dual-collapse2">
       <ul class="navbar-nav ml-auto">
-        <li class="nav-item">
-          <a href="https://www.patreon.com/ttnmapper" data-patreon-widget-type="become-patron-button"><img src="/resources/become_a_patron_button@2x.png" class="d-inline-block align-middle" alt="" height="36" title="Patreon"></a>
-        </li>
+<!--        <li class="nav-item">-->
+<!--          <a href="https://www.patreon.com/ttnmapper" data-patreon-widget-type="become-patron-button"><img src="/resources/become_a_patron_button@2x.png" class="d-inline-block align-middle" alt="" height="36" title="Patreon"></a>-->
+<!--        </li>-->
       </ul>
     </div>
 
