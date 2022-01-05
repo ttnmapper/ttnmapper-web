@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
-<?php require getenv("TTNMAPPER_HOME").'/web/head.php'; ?>
+<?php require getenv("TTNMAPPER_HOME").'/coveragemap/head.php'; ?>
 <body>
 
 
@@ -46,68 +46,43 @@
 
 
 <div class="container ">
-  <h1 class="mt-4">Experiments</h1>
+    <h1 class="mt-4">Experiments</h1>
 
-  <table id="dataTable" class="table table-striped table-bordered" style="width:100%">
-    <thead>
-      <tr>
-        <th>Name</th>
-        <th></th>
-        <th></th>
-      </tr>
-    </thead>
-    <tbody>
+    <form class="needs-validation form-inline" novalidate>
+        <div class="form-group">
+            <input class="form-control"
+                   type="text"
+                   id="experiment-name"
+                   name="experiment"
+                   placeholder=""
+                   required
+                   autocomplete="on"
+                   autocorrect="off"
+                   autocapitalize="off"
+                   spellcheck="false">
+            <div class="invalid-feedback">
+                Experiment name can't be empty.
+            </div>
+        </div>
+        <button type="submit" class="btn btn-primary" id="search">Search</button>
+        <div id="experiments-loading" class="spinner-border" role="status">
+            <span class="sr-only">Loading...</span>
+        </div>
+    </form>
 
-<?php
+    <table id="dataTable" class="table table-striped table-bordered" style="width:100%">
+        <thead>
+        <tr>
+            <th>Name</th>
+            <th></th>
+            <th></th>
+        </tr>
+        </thead>
+        <tbody>
 
-try {
-  $settings = parse_ini_file(getenv("TTNMAPPER_HOME")."/settings.conf",true);
-
-  $username = $settings['database_mysql']['username'];
-  $password = $settings['database_mysql']['password'];
-  $dbname = $settings['database_mysql']['database'];
-  $servername = $settings['database_mysql']['host'];
-
-  $conn = new PDO("mysql:host=$servername;dbname=$dbname;charset=utf8mb4", $username, $password);
-  $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-  $stmt = $conn->prepare("SELECT DISTINCT(name) AS name FROM experiments ORDER BY name");
-  $stmt->execute();
-  
-  foreach($stmt->fetchAll() as $k=>$v) 
-  {
-    $exp_name = htmlentities($v[0]);
-
-    echo '
-            <tr>
-                <td>'.$exp_name.'</td>
-                <td>
-                  <form target="_blank">
-                    <input type="hidden" name="experiment" value="'.$exp_name.'">
-                    <a href="/experiments/csv.php?experiment='.$exp_name.'">
-                      <button type="submit" class="btn btn-secondary" formaction="/experiments/csv.php">CSV data</button>
-                    </a>
-                  </form>
-                </td>
-                <td>
-                  <form target="_blank">
-                    <input type="hidden" name="experiment" value="'.$exp_name.'">
-                    <a href="/experiments/?experiment='.$exp_name.'">
-                      <button type="submit" class="btn btn-primary" formaction="/experiments/">View Map</button>
-                    </a>
-                  </form>
-                </td>
-            </tr>
-    ';
-  }
-}
-catch(PDOException $e) {
-  echo "Error: " . $e->getMessage();
-}
-?>
-
-    </tbody>
-  </table>
-  <p>&nbsp;</p>
+        </tbody>
+    </table>
+    <p>&nbsp;</p>
 </div>
   
   <!-- Google analytics-->
@@ -142,12 +117,6 @@ catch(PDOException $e) {
   <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
   <script src="//cdn.datatables.net/1.10.19/js/jquery.dataTables.min.js" crossorigin="anonymous"></script>
 
-  <script type="text/javascript">
-    $(document).ready( function () {
-        $('#dataTable').DataTable();
-    } );
-  </script>
-
   <!-- Leaflet -->
   <script src="/libs/leaflet/leaflet.js"></script>
   <script src="/libs/leaflet.measure/leaflet.measure.js"></script>
@@ -160,6 +129,6 @@ catch(PDOException $e) {
   <script type="text/javascript" src="/theme.php"></script>
   <script type="text/javascript" src="/common.js"></script>
   <!-- The actual main logic for this page -->
-  <!-- <script src="index-logic.js"></script> -->
+<script src="list-logic.js"></script>
 </body>
 </html>
