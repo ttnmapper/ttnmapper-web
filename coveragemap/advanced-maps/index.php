@@ -265,7 +265,7 @@
 
 
     <div class="card mt-4">
-        <h5 class="card-header">Show Experiment Data</h5>
+        <h5 class="card-header">Experiment Data</h5>
         <div class="card-body">
 
             <p>Draw circles or radials for every measurement made using a specific experiment on a specific day or range
@@ -396,84 +396,6 @@
                 <button type="submit" class="btn btn-primary" formaction="/experiments/list.php">Search</button>
 
             </form>
-        </div>
-    </div>
-
-
-    <div class="card mt-4">
-        <h5 class="card-header">Aggregated data for specific gateways</h5>
-        <div class="card-body">
-
-            <form id="agg-gateways-form">
-
-                <div class="form-group">
-                    <div class="col-md-4 mb-0">
-                        <label>Gateway IDs</label>
-                        <small id="emailHelp" class="form-text text-muted">Click + to view multiple.</small>
-                    </div>
-
-                    <div id="agg-gateway-list">
-                        <div class="entry input-group col-md-4">
-                            <input class="form-control"
-                                   type="text"
-                                   id="agg-gateways-gateway-id"
-                                   name="gateway[]"
-                                   placeholder="eui-0123456789abcdef"
-                                   autocomplete="on"
-                                   autocorrect="off"
-                                   autocapitalize="off"
-                                   spellcheck="false"
-                                   style="text-transform: lowercase;">
-                            <div class="input-group-apend">
-                                <button class="btn btn-success btn-gwid-add" type="button">
-                                    <span class="oi oi-plus"></span>
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="form-group">
-                    <div class="form-check">
-                        <input class="form-check-input" type="radio" name="agg-gateways-radio-type" id="alpha"
-                               value="alpha" checked>
-                        <label class="form-check-label" for="alpha">
-                            Area plot (alpha shapes)
-                        </label>
-                    </div>
-                    <div class="form-check">
-                        <input class="form-check-input" type="radio" name="agg-gateways-radio-type" id="radar"
-                               value="radar">
-                        <label class="form-check-label" for="radar">
-                            Colour radar plot
-                        </label>
-                    </div>
-                    <!-- <div class="form-check">
-                      <input class="form-check-input" type="radio" name="agg-gateways-radio-type" id="heatmap" value="heatmap" disabled>
-                      <label class="form-check-label" for="heatmap">
-                        Heatmap
-                      </label>
-                    </div>
-                    <div class="form-check">
-                      <input class="form-check-input" type="radio" name="agg-gateways-radio-type" id="circle" value="circle">
-                      <label class="form-check-label" for="circle">
-                        Circles
-                      </label>
-                    </div> -->
-                    <!-- <div class="form-check">
-                      <input class="form-check-input" type="radio" name="mapType" id="raw" value="raw" disabled>
-                      <label class="form-check-label" for="raw">
-                        Raw data points
-                      </label>
-                    </div> -->
-                </div>
-
-                <div class="form-group">
-                    <button id="agg-gateways-btn-map" class="btn btn-primary">View Map</button>
-                </div>
-
-            </form>
-
         </div>
     </div>
 
