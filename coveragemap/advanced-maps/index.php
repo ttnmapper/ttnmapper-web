@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
-<?php require getenv("TTNMAPPER_HOME") . '/web/head.php'; ?>
+<?php require getenv("TTNMAPPER_HOME").'/coveragemap/head.php'; ?>
 <body>
 
 
