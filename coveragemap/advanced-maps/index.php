@@ -59,19 +59,19 @@
             <form method="get" class="needs-validation" novalidate target="_blank">
                 <div class="form-row">
                     <div class="form-group col-md-6">
-                        <label for="device-id">Device ID</label>
+                        <label for="device-id">Device Name</label>
                         <input class="form-control"
                                type="text"
                                id="device-id"
                                name="device"
-                               placeholder="my-device-id"
+                               placeholder="my-device-name"
                                required
                                autocomplete="on"
                                autocorrect="off"
                                autocapitalize="off"
                                spellcheck="false">
                         <div class="invalid-feedback">
-                            Device ID can't be empty.
+                            Device Name can't be empty.
                         </div>
                     </div>
                 </div>
@@ -120,7 +120,7 @@
                                name="gateways"
                                checked>
                         <label class="form-check-label" for="deviceGateways">
-                            Show markers for gateways
+                            Show markers for hotspots
                         </label>
                     </div>
                     <div class="form-check">
@@ -130,7 +130,7 @@
                                name="lines"
                                checked>
                         <label class="form-check-label" for="deviceLines">
-                            Draw lines between gateway and measurement location
+                            Draw lines between hotspot and measurement location
                         </label>
                     </div>
                     <div class="form-check">
@@ -157,29 +157,29 @@
 
 
     <div class="card mt-4">
-        <h5 class="card-header">Gateway data</h5>
+        <h5 class="card-header">Hotspot data</h5>
         <div class="card-body">
 
 
-            <p>Draw circles or radials for every measurement made for a specific gateway on a specific day or range of
+            <p>Draw circles or radials for every measurement made for a specific hotspot on a specific day or range of
                 days. The result will be limited to the 10000 latest measurements for the selected time range.</p>
 
             <form method="get" class="needs-validation" novalidate target="_blank">
                 <div class="form-row">
                     <div class="form-group col-md-6">
-                        <label for="gateway-id">Gateway ID</label>
+                        <label for="gateway-id">Hotspot ID (three words)</label>
                         <input class="form-control"
                                type="text"
                                id="gateway-id"
                                name="gateway"
-                               placeholder="eui-0123456789abcdef"
+                               placeholder="nice silver shell"
                                required
                                autocomplete="on"
                                autocorrect="off"
                                autocapitalize="off"
                                spellcheck="false">
                         <div class="invalid-feedback">
-                            Gateway ID can't be empty.
+                            Hotspot ID can't be empty.
                         </div>
                     </div>
                 </div>
@@ -228,7 +228,7 @@
                                name="gateways"
                                checked>
                         <label class="form-check-label" for="gatewayGateways">
-                            Show marker for gateway
+                            Show marker for hotspot
                         </label>
                     </div>
                     <div class="form-check">
@@ -238,7 +238,7 @@
                                name="lines"
                                checked>
                         <label class="form-check-label" for="gatewayLines">
-                            Draw lines between gateway and measurement location
+                            Draw lines between hotspot and measurement location
                         </label>
                     </div>
                     <div class="form-check">
@@ -335,7 +335,7 @@
                                onclick="this.checked ? document.getElementById('experimentShowGateways').value = 'on' : document.getElementById('experimentShowGateways').value = 'off' "
                                checked>
                         <label class="form-check-label" for="experimentGateways">
-                            Show marker for gateway
+                            Show marker for hotspot
                         </label>
                     </div>
                     <div class="form-check">
@@ -345,7 +345,7 @@
                                onclick="this.checked ? document.getElementById('experimentShowLines').value = 'on' : document.getElementById('experimentShowLines').value = 'off' "
                                checked>
                         <label class="form-check-label" for="experimentLines">
-                            Draw lines between gateway and measurement location
+                            Draw lines between hotspot and measurement location
                         </label>
                     </div>
                     <div class="form-check">
