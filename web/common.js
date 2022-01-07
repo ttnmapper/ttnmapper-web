@@ -698,19 +698,19 @@ function iconByNetworkId(networkId, lastHeardDate) {
 function popUpHeader(gateway) {
   let header = `<b>${he.encode(gateway.gateway_id)}</b>`
 
-  if(gateway.network_id !== "NS_HELIUM://000024" && gateway.description !== "") {
-    header = `<b>${he.encode(gateway.description)}</b>`
-    header = `${header}<br>${gateway.gateway_id}`
+  if(gateway.name !== "") {
+    header = `<b>${he.encode(gateway.name)}</b>`
+    header += `<br>ID: ${gateway.gateway_id}`
   }
 
   // Add the EUI if it is set
   if (gateway.gateway_eui !== "") {
-    header = `${header}<br>EUI: ${gateway.gateway_eui}`
+    header += `<br>EUI: ${gateway.gateway_eui}`
   }
 
   // Add the network ID if it is set
   if (gateway.network_id !== "") {
-    header = `${header}<br>Network: ${gateway.network_id}`
+    header += `<br>Network: ${gateway.network_id}`
   }
 
   return header
@@ -719,13 +719,11 @@ function popUpHeader(gateway) {
 function popUpDescription(gateway) {
   var description = "";
 
-  if(gateway.network_id === "NS_HELIUM://000024") {
-    var details = JSON.parse(gateway.description);
-
-    description += `
-<br>Mode: ${details.mode}
-<br>Added: ${new Date(details.timestamp_added/1000000).toISOString()}
-`;
+  if(gateway.attributes.mode !== undefined) {
+    description += `<br>Mode: ${gateway.attributes.mode}`;
+  }
+  if(gateway.attributes.timestamp_added !== undefined) {
+    description += `<br>Added: ${new Date(gateway.attributes.timestamp_added/1000000).toISOString()}`;
   }
 
   description += `
