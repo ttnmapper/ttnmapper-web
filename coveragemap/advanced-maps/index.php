@@ -167,12 +167,12 @@
             <form method="get" class="needs-validation" novalidate target="_blank">
                 <div class="form-row">
                     <div class="form-group col-md-6">
-                        <label for="gateway-id">Hotspot ID (three words)</label>
+                        <label for="gateway-id">Hotspot ID (address)</label>
                         <input class="form-control"
                                type="text"
                                id="gateway-id"
                                name="gateway"
-                               placeholder="nice silver shell"
+                               placeholder="11iGjBKQDh1nk9Mt8GXU9wrxeBF8qD5LjaMB9xp5W6YvYpcMk28"
                                required
                                autocomplete="on"
                                autocorrect="off"
