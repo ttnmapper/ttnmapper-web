@@ -14,20 +14,17 @@ function setUp() {
 
   initMap();
 
-  addBackgroundLayers();
-  if(findGetParameter("gateways")!="off") {
-    console.log("Gateways on");
-    gatewayMarkers.addTo(map);
-    gatewayMarkersNoCluster.addTo(map);
-  }
-  if(findGetParameter("points")!="off") {
-    console.log("Points on");
-    pointMarkers.addTo(map);
-  }
-  if(findGetParameter("lines")!="off") {
-    console.log("Lines on");
-    lineMarkers.addTo(map);
-  }
+    addBackgroundLayers();
+    if(findGetParameter("gateways")==="on") {
+        gatewayMarkers.addTo(map);
+        gatewayMarkersNoCluster.addTo(map);
+    }
+    if(findGetParameter("points")==="on") {
+        pointMarkers.addTo(map);
+    }
+    if(findGetParameter("lines")==="on") {
+        lineMarkers.addTo(map);
+    }
   getData();
 }
 
@@ -54,8 +51,9 @@ function getData()
     var startTime = moment(findGetParameter("startdate"));
     var endTime = moment(findGetParameter("enddate"));
 
+    // If no start and end times provided, use today
     if(!startTime.isValid()) {
-        startTime = moment.unix(0);
+        startTime = moment().startOf('day');
     }
     if(!endTime.isValid()) {
         endTime = moment().startOf('day');
