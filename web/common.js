@@ -677,11 +677,17 @@ function iconByNetworkId(networkId, lastHeardDate) {
     }
     return gatewayMarkerOnline;
   }
-  if(networkId.startsWith("NS_TTS_V3://")) {
+  if(networkId === "NS_TTS_V3://ttn@000013") {
     if(lastHeardDate < (Date.now() - (1*60*60*1000)) ) {
       return gatewayMarkerV3Offline;
     }
     return gatewayMarkerV3Online;
+  }
+  if(networkId.startsWith("NS_TTS_V3://")) {
+    if(lastHeardDate < (Date.now() - (1*60*60*1000)) ) {
+      return gatewayMarkerV3Offline;
+    }
+    return gatewayMarkerV3Private;
   }
   if(networkId.startsWith("NS_CHIRP://")) {
     return gatewayMarkerChirpV3;
@@ -713,11 +719,21 @@ function popUpHeader(gateway) {
     header += `<br>Network: ${gateway.network_id}`
   }
 
+  if (gateway.network_id !== "NS_TTS_V3://ttn@000013" && gateway.network_id !== "thethingsnetwork.org" && gateway.network_id !== "NS_HELIUM://000024") {
+    header = `<b>${he.encode(gateway.network_id)}</b>`
+    header += `<br>private network peering with TTN`
+  }
+
   return header
 }
 
 function popUpDescription(gateway) {
   var description = "";
+
+
+  if(Date.parse(gateway.last_heard) < (Date.now() - (1*60*60*1000)) ) {
+    description += `<br>currently offline`;
+  }
 
   if(gateway.attributes.mode !== undefined) {
     description += `<br>Mode: ${gateway.attributes.mode}`;

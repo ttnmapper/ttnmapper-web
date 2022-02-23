@@ -38,6 +38,9 @@ if(isset($settings['theming']['gateway_v3_online'])) {
 } else {
   $gatewayMarkerV3Online = "/resources/TTS_V3_GW_flags.svg";
 }
+
+$gatewayMarkerV3Private = "/resources/TTS_V3_GW_flags_h200.svg";
+
 if(isset($settings['theming']['gateway_v3_offline'])) {
   $gatewayMarkerV3Offline = $settings['theming']['gateway_v3_offline'];
 } else {
@@ -197,6 +200,13 @@ var gatewayMarkerV3Offline = L.icon({
   iconSize:     [<?php echo $gatewayIconSizeX; ?>, <?php echo $gatewayIconSizeY; ?>],
   iconAnchor:   [<?php echo $gatewayIconAnchorX; ?>, <?php echo $gatewayIconAnchorY; ?>],
   popupAnchor:  [<?php echo $gatewayPopupAnchorX; ?>, <?php echo $gatewayPopupAnchorY; ?>]
+});
+
+var gatewayMarkerV3Private = L.icon({
+iconUrl: "<?php echo $gatewayMarkerV3Private; ?>",
+iconSize:     [<?php echo $gatewayIconSizeX; ?>, <?php echo $gatewayIconSizeY; ?>],
+iconAnchor:   [<?php echo $gatewayIconAnchorX; ?>, <?php echo $gatewayIconAnchorY; ?>],
+popupAnchor:  [<?php echo $gatewayPopupAnchorX; ?>, <?php echo $gatewayPopupAnchorY; ?>]
 });
 
 var gatewayMarkerChirpV3 = L.icon({

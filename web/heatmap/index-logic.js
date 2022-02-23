@@ -27,7 +27,7 @@ function addForegroundLayers() {
     {
       network_id: 'thethingsnetwork.org',
       network_name: 'The Things Network (v2)',
-      default_shown: true
+      default_shown: false
 
     },
     {
