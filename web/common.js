@@ -730,7 +730,6 @@ function popUpHeader(gateway) {
 function popUpDescription(gateway) {
   var description = "";
 
-
   if(Date.parse(gateway.last_heard) < (Date.now() - (1*60*60*1000)) ) {
     description += `<br>currently offline`;
   }
